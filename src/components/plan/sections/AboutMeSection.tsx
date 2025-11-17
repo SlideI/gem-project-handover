@@ -1,60 +1,139 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { usePlan } from "@/contexts/PlanContext";
 
 export const AboutMeSection = () => {
   const { sections, updateField } = usePlan();
-  const data = sections["about-me"];
+  const section = sections["about-me"];
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">About Me</h2>
-        <p className="text-muted-foreground">Tell us about yourself and your family</p>
+        <h1 className="text-3xl font-bold mb-2">About Me</h1>
       </div>
 
       <div className="space-y-4">
         <div>
-          <Label htmlFor="siblings">My siblings and other people living with me</Label>
+          <Label htmlFor="my-name">My name is</Label>
+          <Input
+            id="my-name"
+            value="James Andrew Cameron"
+            readOnly
+            className="mt-1 bg-muted"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="preferred-name">My preferred name is</Label>
+          <Input
+            id="preferred-name"
+            value="Jamie"
+            readOnly
+            className="mt-1 bg-muted"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="gender">My gender is</Label>
+            <Input
+              id="gender"
+              value="Male"
+              readOnly
+              className="mt-1 bg-muted"
+            />
+          </div>
+          <div>
+            <Label htmlFor="pronouns">My pronouns are</Label>
+            <Input
+              id="pronouns"
+              value="He/Him"
+              readOnly
+              className="mt-1 bg-muted"
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="parents">My parents' names are</Label>
+          <Input
+            id="parents"
+            value="Robert Jackson (Stepdad), John Cameron (Father), Sarah Anne Cudby (Mother)"
+            readOnly
+            className="mt-1 bg-muted"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="age">My age is</Label>
+            <Input
+              id="age"
+              value="16"
+              readOnly
+              className="mt-1 bg-muted"
+            />
+          </div>
+          <div>
+            <Label htmlFor="dob">My date of birth is</Label>
+            <Input
+              id="dob"
+              value="12 July 2009"
+              readOnly
+              className="mt-1 bg-muted"
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="siblings">My brothers and sisters are</Label>
           <Textarea
             id="siblings"
-            value={data?.fields?.siblings || ""}
+            value={section.fields.siblings || ""}
             onChange={(e) => updateField("about-me", "siblings", e.target.value)}
-            placeholder="Tell us about your siblings and who you live with..."
-            className="min-h-[120px] mt-2"
+            placeholder="List your siblings here..."
+            className="mt-1"
           />
         </div>
 
         <div>
-          <Label htmlFor="likes">Things I like</Label>
-          <Textarea
-            id="likes"
-            value={data?.fields?.likes || ""}
-            onChange={(e) => updateField("about-me", "likes", e.target.value)}
-            placeholder="What do you enjoy doing? What are your hobbies and interests?"
-            className="min-h-[120px] mt-2"
+          <Label htmlFor="ethnicity">Mātā waka/Ethnicity or Ethnicities</Label>
+          <Input
+            id="ethnicity"
+            value="New Zealand European"
+            readOnly
+            className="mt-1 bg-muted"
           />
         </div>
 
         <div>
-          <Label htmlFor="good-at">Things I'm good at</Label>
-          <Textarea
-            id="good-at"
-            value={data?.fields?.["good-at"] || ""}
-            onChange={(e) => updateField("about-me", "good-at", e.target.value)}
-            placeholder="What are your strengths and talents?"
-            className="min-h-[120px] mt-2"
+          <Label htmlFor="iwi">My Iwi</Label>
+          <Input
+            id="iwi"
+            value="Ngāti Kurī"
+            readOnly
+            className="mt-1 bg-muted"
           />
         </div>
 
         <div>
-          <Label htmlFor="dreams">My dreams and aspirations</Label>
-          <Textarea
-            id="dreams"
-            value={data?.fields?.dreams || ""}
-            onChange={(e) => updateField("about-me", "dreams", e.target.value)}
-            placeholder="What do you hope for your future?"
-            className="min-h-[120px] mt-2"
+          <Label htmlFor="hapu">My Hapū <span className="text-sm text-muted-foreground">(Maternal, Paternal)</span></Label>
+          <Input
+            id="hapu"
+            value="Ngāi Tahu (Maternal), Ngāti Porou (Paternal)"
+            readOnly
+            className="mt-1 bg-muted"
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="marae">My Marae <span className="text-sm text-muted-foreground">(Maternal, Paternal)</span></Label>
+          <Input
+            id="marae"
+            value="Ngāi Tūāhuriri"
+            readOnly
+            className="mt-1 bg-muted"
           />
         </div>
       </div>
