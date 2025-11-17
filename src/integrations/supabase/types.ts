@@ -14,7 +14,145 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      actions: {
+        Row: {
+          action: string
+          completed: boolean
+          created_at: string
+          deadline: string | null
+          id: string
+          responsible: string
+          section_id: string
+          support: string
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          completed?: boolean
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          responsible?: string
+          section_id: string
+          support?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          completed?: boolean
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          responsible?: string
+          section_id?: string
+          support?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "actions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "plan_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_sections: {
+        Row: {
+          category: string
+          created_at: string
+          fields: Json
+          id: string
+          plan_id: string
+          section_key: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          fields?: Json
+          id?: string
+          plan_id: string
+          section_key: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          fields?: Json
+          id?: string
+          plan_id?: string
+          section_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_sections_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          background_picture_url: string | null
+          created_at: string
+          id: string
+          profile_picture_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          background_picture_url?: string | null
+          created_at?: string
+          id?: string
+          profile_picture_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          background_picture_url?: string | null
+          created_at?: string
+          id?: string
+          profile_picture_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          preferred_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          preferred_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          preferred_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
