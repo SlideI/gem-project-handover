@@ -19,6 +19,10 @@ interface PlanContextType {
   updateSection: (sectionId: string, data: Partial<SectionData>) => void;
   updateField: (sectionId: string, fieldId: string, value: string) => void;
   saveProgress: () => void;
+  planId: string | null;
+  profilePicture: string | null;
+  backgroundPicture: string | null;
+  updatePlanImages: (profileUrl: string | null, backgroundUrl: string | null) => void;
 }
 
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
@@ -81,8 +85,11 @@ const initialSections: Record<string, SectionData> = {
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
   const [sections, setSections] = useState<Record<string, SectionData>>(initialSections);
+  const [planId, setPlanId] = useState<string | null>(null);
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [backgroundPicture, setBackgroundPicture] = useState<string | null>(null);
 
-  // Load data from localStorage on mount
+  // Load data from localStorage on mount (fallback)
   useEffect(() => {
     const saved = localStorage.getItem("aampPlanData");
     if (saved) {
@@ -94,6 +101,11 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   }, []);
+
+  const updatePlanImages = (profileUrl: string | null, backgroundUrl: string | null) => {
+    setProfilePicture(profileUrl);
+    setBackgroundPicture(backgroundUrl);
+  };
 
   const saveProgress = () => {
     localStorage.setItem("aampPlanData", JSON.stringify(sections));
@@ -126,7 +138,16 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
   }, [sections]);
 
   return (
-    <PlanContext.Provider value={{ sections, updateSection, updateField, saveProgress }}>
+    <PlanContext.Provider value={{ 
+      sections, 
+      updateSection, 
+      updateField, 
+      saveProgress,
+      planId,
+      profilePicture,
+      backgroundPicture,
+      updatePlanImages
+    }}>
       {children}
     </PlanContext.Provider>
   );
