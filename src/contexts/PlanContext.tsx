@@ -1,4 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { Session } from "@supabase/supabase-js";
 
 interface Action {
   action: string;
@@ -88,19 +91,65 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
   const [planId, setPlanId] = useState<string | null>(null);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [backgroundPicture, setBackgroundPicture] = useState<string | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const navigate = useNavigate();
 
-  // Load data from localStorage on mount (fallback)
+  // Auth state listener
   useEffect(() => {
-    const saved = localStorage.getItem("aampPlanData");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setSections(prev => ({ ...prev, ...parsed }));
-      } catch (e) {
-        console.error("Failed to parse saved data:", e);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      if (!session) {
+        navigate("/auth");
       }
-    }
-  }, []);
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  // Fetch or create plan for authenticated user
+  useEffect(() => {
+    if (!session?.user) return;
+
+    const fetchOrCreatePlan = async () => {
+      try {
+        const { data: existingPlans, error: fetchError } = await supabase
+          .from("plans")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .limit(1);
+
+        if (fetchError) throw fetchError;
+
+        if (existingPlans && existingPlans.length > 0) {
+          const plan = existingPlans[0];
+          setPlanId(plan.id);
+          setProfilePicture(plan.profile_picture_url);
+          setBackgroundPicture(plan.background_picture_url);
+        } else {
+          const { data: newPlan, error: createError } = await supabase
+            .from("plans")
+            .insert({ user_id: session.user.id, title: "My Plan" })
+            .select()
+            .single();
+
+          if (createError) throw createError;
+
+          setPlanId(newPlan.id);
+        }
+      } catch (error) {
+        console.error("Error with plan:", error);
+      }
+    };
+
+    fetchOrCreatePlan();
+  }, [session]);
 
   const updatePlanImages = (profileUrl: string | null, backgroundUrl: string | null) => {
     setProfilePicture(profileUrl);
