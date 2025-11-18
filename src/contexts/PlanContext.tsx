@@ -132,6 +132,27 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
           setPlanId(plan.id);
           setProfilePicture(plan.profile_picture_url);
           setBackgroundPicture(plan.background_picture_url);
+
+          // Load plan sections from database
+          const { data: planSections } = await supabase
+            .from("plan_sections")
+            .select("*")
+            .eq("plan_id", plan.id);
+
+          if (planSections) {
+            setSections(prev => {
+              const updated = { ...prev };
+              planSections.forEach(section => {
+                if (updated[section.section_key]) {
+                  updated[section.section_key] = {
+                    ...updated[section.section_key],
+                    fields: (section.fields as Record<string, string>) || {},
+                  };
+                }
+              });
+              return updated;
+            });
+          }
         } else {
           const { data: newPlan, error: createError } = await supabase
             .from("plans")
@@ -157,7 +178,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const saveProgress = () => {
-    localStorage.setItem("aampPlanData", JSON.stringify(sections));
+    // Data is now saved automatically to database in updateField
+    // This function is kept for backward compatibility
   };
 
   const updateSection = (sectionId: string, data: Partial<SectionData>) => {
@@ -167,7 +189,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
-  const updateField = (sectionId: string, fieldId: string, value: string) => {
+  const updateField = async (sectionId: string, fieldId: string, value: string) => {
+    // Update local state immediately
     setSections(prev => ({
       ...prev,
       [sectionId]: {
@@ -178,13 +201,44 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         },
       },
     }));
+
+    // Save to database
+    if (!planId) return;
+
+    try {
+      const { data: existingSection } = await supabase
+        .from("plan_sections")
+        .select("*")
+        .eq("plan_id", planId)
+        .eq("section_key", sectionId)
+        .maybeSingle();
+
+      const newFields = {
+        ...(existingSection?.fields as Record<string, string> || {}),
+        [fieldId]: value,
+      };
+
+      if (existingSection) {
+        await supabase
+          .from("plan_sections")
+          .update({ fields: newFields })
+          .eq("id", existingSection.id);
+      } else {
+        await supabase
+          .from("plan_sections")
+          .insert({
+            plan_id: planId,
+            section_key: sectionId,
+            category: sections[sectionId].category,
+            fields: newFields,
+          });
+      }
+    } catch (error) {
+      console.error("Error saving field:", error);
+    }
   };
 
-  // Auto-save every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(saveProgress, 30000);
-    return () => clearInterval(interval);
-  }, [sections]);
+  // Auto-save removed - now saves immediately to database
 
   return (
     <PlanContext.Provider value={{ 
