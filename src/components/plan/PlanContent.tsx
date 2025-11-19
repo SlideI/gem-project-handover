@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Save } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
 import { usePlan } from "@/contexts/PlanContext";
 import { toast } from "sonner";
 import { AboutMeSection } from "./sections/AboutMeSection";
@@ -13,13 +13,15 @@ import { TransitionSection } from "./sections/TransitionSection";
 import { YouthJusticeSection } from "./sections/YouthJusticeSection";
 import { ResidenceSection } from "./sections/ResidenceSection";
 import { SummarySection } from "./sections/SummarySection";
+import { SectionNavigation } from "./SectionNavigation";
 
 interface PlanContentProps {
   currentSection: string;
+  onSectionChange: (section: string) => void;
 }
 
-export const PlanContent = ({ currentSection }: PlanContentProps) => {
-  const { saveProgress } = usePlan();
+export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProps) => {
+  const { saveProgress, isSaving } = usePlan();
 
   const handleSave = () => {
     saveProgress();
@@ -55,17 +57,28 @@ export const PlanContent = ({ currentSection }: PlanContentProps) => {
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      <Button
-        onClick={handleSave}
-        className="fixed bottom-8 right-8 shadow-lg"
-        size="lg"
-      >
-        <Save className="h-4 w-4 mr-2" />
-        Save Progress
-      </Button>
+      <div className="fixed bottom-8 right-8 shadow-lg flex items-center gap-3">
+        {isSaving && (
+          <span className="text-sm text-muted-foreground flex items-center gap-2 bg-background px-3 py-2 rounded-md border">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Saving...
+          </span>
+        )}
+        <Button
+          onClick={handleSave}
+          size="lg"
+        >
+          <Save className="h-4 w-4 mr-2" />
+          Save Progress
+        </Button>
+      </div>
 
       <Card className="p-8">
         {renderSection()}
+        <SectionNavigation 
+          currentSection={currentSection}
+          onSectionChange={onSectionChange}
+        />
       </Card>
     </div>
   );

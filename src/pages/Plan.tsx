@@ -14,7 +14,10 @@ const Plan = () => {
           onSectionChange={setCurrentSection}
         />
         <main className="flex-1 ml-64">
-          <PlanContent currentSection={currentSection} />
+          <PlanContent 
+            currentSection={currentSection} 
+            onSectionChange={setCurrentSection}
+          />
         </main>
       </div>
     </PlanProvider>
