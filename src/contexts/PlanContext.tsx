@@ -20,12 +20,14 @@ interface SectionData {
 interface PlanContextType {
   sections: Record<string, SectionData>;
   updateSection: (sectionId: string, data: Partial<SectionData>) => void;
-  updateField: (sectionId: string, fieldId: string, value: string) => void;
+  updateField: (sectionId: string, fieldId: string, value: string) => Promise<void>;
   saveProgress: () => void;
   planId: string | null;
   profilePicture: string | null;
   backgroundPicture: string | null;
   updatePlanImages: (profileUrl: string | null, backgroundUrl: string | null) => void;
+  isLoading: boolean;
+  isSaving: boolean;
 }
 
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
@@ -92,6 +94,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [backgroundPicture, setBackgroundPicture] = useState<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
 
   // Auth state listener
@@ -205,6 +209,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     // Save to database
     if (!planId) return;
 
+    setIsSaving(true);
     try {
       const { data: existingSection } = await supabase
         .from("plan_sections")
@@ -235,6 +240,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error("Error saving field:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -249,7 +256,9 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
       planId,
       profilePicture,
       backgroundPicture,
-      updatePlanImages
+      updatePlanImages,
+      isLoading,
+      isSaving,
     }}>
       {children}
     </PlanContext.Provider>
