@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { usePlan } from "@/contexts/PlanContext";
+import { ActionDialog } from "./ActionDialog";
 
 interface ActionTableProps {
   sectionId: string;
@@ -15,7 +13,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
   const { sections, updateSection } = usePlan();
   const section = sections[sectionId];
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-  const [isEditPanelOpen, setIsEditPanelOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (!section) return null;
 
@@ -23,7 +21,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
 
   const handleRowClick = (index: number) => {
     setSelectedIndex(index);
-    setIsEditPanelOpen(true);
+    setIsDialogOpen(true);
   };
 
   const handleAddAction = () => {
@@ -37,33 +35,15 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
     const updatedActions = [...actions, newAction];
     updateSection(sectionId, { actions: updatedActions });
     setSelectedIndex(updatedActions.length - 1);
-    setIsEditPanelOpen(true);
+    setIsDialogOpen(true);
   };
 
-  const handleUpdate = () => {
+  const handleSaveAction = (updatedAction: any) => {
     if (selectedIndex === -1) return;
-    
-    const actionInput = document.getElementById(`${sectionId}-action`) as HTMLTextAreaElement;
-    const responsibleInput = document.getElementById(`${sectionId}-responsible`) as HTMLInputElement;
-    const deadlineInput = document.getElementById(`${sectionId}-deadline`) as HTMLInputElement;
-    const supportInput = document.getElementById(`${sectionId}-support`) as HTMLInputElement;
 
     const updatedActions = [...actions];
-    updatedActions[selectedIndex] = {
-      ...updatedActions[selectedIndex],
-      action: actionInput.value,
-      responsible: responsibleInput.value,
-      deadline: deadlineInput.value,
-      support: supportInput.value,
-    };
-
+    updatedActions[selectedIndex] = updatedAction;
     updateSection(sectionId, { actions: updatedActions });
-    setIsEditPanelOpen(false);
-    setSelectedIndex(-1);
-  };
-
-  const handleClose = () => {
-    setIsEditPanelOpen(false);
     setSelectedIndex(-1);
   };
 
@@ -94,54 +74,13 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
       <h2 className="text-2xl font-semibold">My Plan - {section.category}</h2>
       <p className="text-sm text-muted-foreground">Click on the table below to enter or change any information.</p>
       
-      {isEditPanelOpen && currentAction && (
-        <div className="border rounded-lg p-6 bg-accent/10 space-y-4">
-          <h3 className="font-semibold">The needs and goals to support me...</h3>
-          
-          <div>
-            <Label htmlFor={`${sectionId}-action`}>Action</Label>
-            <Textarea
-              id={`${sectionId}-action`}
-              defaultValue={currentAction.action}
-              className="mt-1"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor={`${sectionId}-responsible`}>Who is responsible</Label>
-            <Input
-              id={`${sectionId}-responsible`}
-              defaultValue={currentAction.responsible}
-              className="mt-1"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor={`${sectionId}-deadline`}>By when</Label>
-              <Input
-                type="date"
-                id={`${sectionId}-deadline`}
-                defaultValue={currentAction.deadline}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor={`${sectionId}-support`}>Additional support/services</Label>
-              <Input
-                id={`${sectionId}-support`}
-                defaultValue={currentAction.support}
-                className="mt-1"
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <Button onClick={handleUpdate}>Update</Button>
-            <Button variant="secondary" onClick={handleClose}>Close</Button>
-          </div>
-        </div>
-      )}
+      <ActionDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        action={currentAction}
+        onSave={handleSaveAction}
+        sectionId={sectionId}
+      />
 
       <div className="rounded-lg border overflow-hidden">
         <Table>
