@@ -23,6 +23,14 @@ interface PlanContextType {
   updateField: (sectionId: string, fieldId: string, value: string) => Promise<void>;
   saveProgress: () => void;
   planId: string | null;
+  planData: {
+    id: string;
+    title: string;
+    status: string;
+    version_number: number;
+    profile_picture_url: string | null;
+    background_picture_url: string | null;
+  } | null;
   profilePicture: string | null;
   backgroundPicture: string | null;
   updatePlanImages: (profileUrl: string | null, backgroundUrl: string | null) => void;
@@ -92,6 +100,14 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
   const [sections, setSections] = useState<Record<string, SectionData>>(initialSections);
   const [sectionDbIds, setSectionDbIds] = useState<Record<string, string>>({});
   const [planId, setPlanId] = useState<string | null>(null);
+  const [planData, setPlanData] = useState<{
+    id: string;
+    title: string;
+    status: string;
+    version_number: number;
+    profile_picture_url: string | null;
+    background_picture_url: string | null;
+  } | null>(null);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [backgroundPicture, setBackgroundPicture] = useState<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -128,13 +144,24 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
           .from("plans")
           .select("*")
           .eq("user_id", session.user.id)
-          .limit(1);
+          .order("created_at", { ascending: false })
+          .limit(10);
 
         if (fetchError) throw fetchError;
 
-        if (existingPlans && existingPlans.length > 0) {
-          const plan = existingPlans[0];
+        // Find the first active plan, or use the most recent one
+        const plan = existingPlans?.find(p => p.status === 'active') || existingPlans?.[0];
+
+        if (plan) {
           setPlanId(plan.id);
+          setPlanData({
+            id: plan.id,
+            title: plan.title,
+            status: plan.status || 'active',
+            version_number: plan.version_number || 1,
+            profile_picture_url: plan.profile_picture_url,
+            background_picture_url: plan.background_picture_url,
+          });
           setProfilePicture(plan.profile_picture_url);
           setBackgroundPicture(plan.background_picture_url);
 
@@ -201,6 +228,14 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
           if (createError) throw createError;
 
           setPlanId(newPlan.id);
+          setPlanData({
+            id: newPlan.id,
+            title: newPlan.title,
+            status: newPlan.status || 'active',
+            version_number: newPlan.version_number || 1,
+            profile_picture_url: newPlan.profile_picture_url,
+            background_picture_url: newPlan.background_picture_url,
+          });
         }
       } catch (error) {
         console.error("Error with plan:", error);
@@ -357,6 +392,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
       updateField, 
       saveProgress,
       planId,
+      planData,
       profilePicture,
       backgroundPicture,
       updatePlanImages,

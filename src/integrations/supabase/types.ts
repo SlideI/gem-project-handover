@@ -101,30 +101,47 @@ export type Database = {
           background_picture_url: string | null
           created_at: string
           id: string
+          parent_plan_id: string | null
           profile_picture_url: string | null
+          status: string
           title: string
           updated_at: string
           user_id: string
+          version_number: number
         }
         Insert: {
           background_picture_url?: string | null
           created_at?: string
           id?: string
+          parent_plan_id?: string | null
           profile_picture_url?: string | null
+          status?: string
           title?: string
           updated_at?: string
           user_id: string
+          version_number?: number
         }
         Update: {
           background_picture_url?: string | null
           created_at?: string
           id?: string
+          parent_plan_id?: string | null
           profile_picture_url?: string | null
+          status?: string
           title?: string
           updated_at?: string
           user_id?: string
+          version_number?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "plans_parent_plan_id_fkey"
+            columns: ["parent_plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
