@@ -1,22 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone } from "lucide-react";
+import { Phone, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { KPICards } from "@/components/dashboard/KPICards";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
+import { PlanTimeline } from "@/components/dashboard/PlanTimeline";
 import { DocumentsPanel } from "@/components/dashboard/DocumentsPanel";
 import { ContactsPanel } from "@/components/dashboard/ContactsPanel";
 import { HistoryPanel } from "@/components/dashboard/HistoryPanel";
+import { PlanProvider } from "@/contexts/PlanContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [showContactDetails, setShowContactDetails] = useState(false);
 
+  const handleNewPlan = () => {
+    // TODO: Implement versioning logic with modal
+    console.log("Create new plan version");
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <PlanProvider>
+      <div className="min-h-screen bg-background">
+        <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <Card className="p-6">
           <div className="space-y-4">
@@ -64,9 +72,18 @@ const Dashboard = () => {
         {/* KPI Cards */}
         <KPICards />
 
+        {/* Plan Timeline */}
+        <PlanTimeline />
+
         {/* Summary Section */}
         <Card className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">Plan Summary</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold">Plan Summary</h2>
+            <Button onClick={handleNewPlan} className="gap-2">
+              <Plus className="h-4 w-4" />
+              New Plan
+            </Button>
+          </div>
           <SummaryTable />
         </Card>
 
@@ -75,7 +92,7 @@ const Dashboard = () => {
           <Tabs defaultValue="documents">
             <TabsList>
               <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="contacts">Contacts</TabsTrigger>
+              <TabsTrigger value="files">Files</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
 
@@ -83,7 +100,7 @@ const Dashboard = () => {
               <DocumentsPanel />
             </TabsContent>
 
-            <TabsContent value="contacts" className="mt-4">
+            <TabsContent value="files" className="mt-4">
               <ContactsPanel />
             </TabsContent>
 
@@ -92,8 +109,9 @@ const Dashboard = () => {
             </TabsContent>
           </Tabs>
         </Card>
+        </div>
       </div>
-    </div>
+    </PlanProvider>
   );
 };
 
