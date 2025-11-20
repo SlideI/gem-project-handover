@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PlanSidebar } from "@/components/plan/PlanSidebar";
 import { PlanContent } from "@/components/plan/PlanContent";
 import { PlanProvider } from "@/contexts/PlanContext";
 
 const Plan = () => {
   const [currentSection, setCurrentSection] = useState("about-me");
+  const mainRef = useRef<HTMLElement>(null);
 
   // Handle hash navigation from timeline links
   useEffect(() => {
@@ -23,6 +24,16 @@ const Plan = () => {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
+  // Smooth scroll animation when section changes
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+  }, [currentSection]);
+
   return (
     <PlanProvider>
       <div className="flex min-h-screen bg-background">
@@ -30,7 +41,7 @@ const Plan = () => {
           currentSection={currentSection}
           onSectionChange={setCurrentSection}
         />
-        <main className="flex-1 ml-64">
+        <main ref={mainRef} className="flex-1 ml-64 overflow-y-auto scroll-smooth">
           <PlanContent 
             currentSection={currentSection} 
             onSectionChange={setCurrentSection}
