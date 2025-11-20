@@ -77,13 +77,7 @@ const Dashboard = () => {
 
         {/* Summary Section */}
         <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Plan Summary</h2>
-            <Button onClick={handleNewPlan} className="gap-2">
-              <Plus className="h-4 w-4" />
-              New Plan
-            </Button>
-          </div>
+          <h2 className="text-2xl font-semibold mb-4">Plan Summary</h2>
           <SummaryTable />
         </Card>
 
