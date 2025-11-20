@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,18 +9,61 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const DocumentsPanel = () => {
   const navigate = useNavigate();
+  const [showNewPlanDialog, setShowNewPlanDialog] = useState(false);
+
+  const handleCreateNewVersion = () => {
+    // TODO: Implement the logic to lock current version and create new one
+    console.log("Creating new plan version and locking current version");
+    setShowNewPlanDialog(false);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Documents</h3>
-        <Button variant="outline" size="sm">
+        <Button 
+          onClick={() => setShowNewPlanDialog(true)}
+          size="sm"
+          className="bg-success hover:bg-success/90 text-white"
+        >
           + New Plan
         </Button>
       </div>
+
+      <AlertDialog open={showNewPlanDialog} onOpenChange={setShowNewPlanDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Create New Plan Version?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Creating a new plan version will automatically lock the current version, 
+              making it a snapshot of all data entered until now. This ensures your 
+              existing plan data is preserved. Do you want to proceed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleCreateNewVersion}
+              className="bg-success hover:bg-success/90"
+            >
+              Create New Version
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="rounded-md border">
         <Table>
