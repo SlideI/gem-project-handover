@@ -19,7 +19,7 @@ interface SectionData {
 
 interface PlanContextType {
   sections: Record<string, SectionData>;
-  updateSection: (sectionId: string, data: Partial<SectionData>) => void;
+  updateSection: (sectionId: string, data: Partial<SectionData>) => Promise<void>;
   updateField: (sectionId: string, fieldId: string, value: string) => Promise<void>;
   saveProgress: () => void;
   planId: string | null;
@@ -90,6 +90,7 @@ const initialSections: Record<string, SectionData> = {
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
   const [sections, setSections] = useState<Record<string, SectionData>>(initialSections);
+  const [sectionDbIds, setSectionDbIds] = useState<Record<string, string>>({});
   const [planId, setPlanId] = useState<string | null>(null);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [backgroundPicture, setBackgroundPicture] = useState<string | null>(null);
@@ -143,14 +144,47 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
             .select("*")
             .eq("plan_id", plan.id);
 
+          // Load actions from database
+          const { data: actionsData } = await supabase
+            .from("actions")
+            .select("*, section_id")
+            .in("section_id", planSections?.map(s => s.id) || []);
+
           if (planSections) {
+            // Store the mapping of section_key to database section ID
+            const dbIdMap: Record<string, string> = {};
+            planSections.forEach(section => {
+              dbIdMap[section.section_key] = section.id;
+            });
+            setSectionDbIds(dbIdMap);
+
             setSections(prev => {
               const updated = { ...prev };
+              
+              // Create a map of section_id to actions
+              const actionsBySection: Record<string, Action[]> = {};
+              if (actionsData) {
+                actionsData.forEach(action => {
+                  if (!actionsBySection[action.section_id]) {
+                    actionsBySection[action.section_id] = [];
+                  }
+                  actionsBySection[action.section_id].push({
+                    action: action.action,
+                    responsible: action.responsible,
+                    deadline: action.deadline || "",
+                    support: action.support,
+                    completed: action.completed,
+                  });
+                });
+              }
+              
               planSections.forEach(section => {
                 if (updated[section.section_key]) {
+                  const sectionActions = actionsBySection[section.id] || [];
                   updated[section.section_key] = {
                     ...updated[section.section_key],
                     fields: (section.fields as Record<string, string>) || {},
+                    actions: sectionActions.length > 0 ? sectionActions : updated[section.section_key].actions,
                   };
                 }
               });
@@ -186,11 +220,80 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     // This function is kept for backward compatibility
   };
 
-  const updateSection = (sectionId: string, data: Partial<SectionData>) => {
+  const updateSection = async (sectionId: string, data: Partial<SectionData>) => {
+    // Update local state immediately
     setSections(prev => ({
       ...prev,
       [sectionId]: { ...prev[sectionId], ...data },
     }));
+
+    // If actions are being updated, save to database
+    if (data.actions && planId) {
+      setIsSaving(true);
+      try {
+        // Get or create the section in the database
+        let sectionDbId = sectionDbIds[sectionId];
+        
+        if (!sectionDbId) {
+          const { data: existingSection } = await supabase
+            .from("plan_sections")
+            .select("id")
+            .eq("plan_id", planId)
+            .eq("section_key", sectionId)
+            .maybeSingle();
+
+          if (existingSection) {
+            sectionDbId = existingSection.id;
+          } else {
+            const { data: newSection } = await supabase
+              .from("plan_sections")
+              .insert({
+                plan_id: planId,
+                section_key: sectionId,
+                category: sections[sectionId].category,
+                fields: {},
+              })
+              .select("id")
+              .single();
+            
+            if (newSection) {
+              sectionDbId = newSection.id;
+              setSectionDbIds(prev => ({ ...prev, [sectionId]: sectionDbId }));
+            }
+          }
+        }
+
+        if (sectionDbId) {
+          // Delete all existing actions for this section
+          await supabase
+            .from("actions")
+            .delete()
+            .eq("section_id", sectionDbId);
+
+          // Insert new actions (only non-empty ones)
+          const actionsToInsert = data.actions
+            .filter(action => action.action && action.action.trim() !== "")
+            .map(action => ({
+              section_id: sectionDbId,
+              action: action.action,
+              responsible: action.responsible || "",
+              deadline: action.deadline || null,
+              support: action.support || "",
+              completed: action.completed || false,
+            }));
+
+          if (actionsToInsert.length > 0) {
+            await supabase
+              .from("actions")
+              .insert(actionsToInsert);
+          }
+        }
+      } catch (error) {
+        console.error("Error saving actions:", error);
+      } finally {
+        setIsSaving(false);
+      }
+    }
   };
 
   const updateField = async (sectionId: string, fieldId: string, value: string) => {
