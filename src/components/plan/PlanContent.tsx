@@ -9,9 +9,11 @@ import { ConnectionsSection } from "./sections/ConnectionsSection";
 import { HealthSection } from "./sections/HealthSection";
 import { DisabilitySection } from "./sections/DisabilitySection";
 import { EducationSection } from "./sections/EducationSection";
+import { PlanningWithSection } from "./sections/PlanningWithSection";
 import { TransitionSection } from "./sections/TransitionSection";
 import { YouthJusticeSection } from "./sections/YouthJusticeSection";
 import { ResidenceSection } from "./sections/ResidenceSection";
+import { CareRequestSection } from "./sections/CareRequestSection";
 import { SummarySection } from "./sections/SummarySection";
 import { SectionNavigation } from "./SectionNavigation";
 
@@ -42,12 +44,16 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
         return <DisabilitySection />;
       case "education":
         return <EducationSection />;
+      case "planning-with":
+        return <PlanningWithSection />;
       case "transition":
         return <TransitionSection />;
       case "youth-justice":
         return <YouthJusticeSection />;
       case "residence":
         return <ResidenceSection />;
+      case "care-request":
+        return <CareRequestSection />;
       case "summary":
         return <SummarySection />;
       default:

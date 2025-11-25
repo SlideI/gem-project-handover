@@ -13,9 +13,11 @@ const sections: Section[] = [
   { id: "health", label: "Health & Wellbeing Needs" },
   { id: "disability", label: "Disability Needs" },
   { id: "education", label: "Education, Training or Employment Needs" },
+  { id: "planning-with", label: "Planning With" },
   { id: "transition", label: "Transition to Adulthood" },
   { id: "youth-justice", label: "Youth Justice" },
   { id: "residence", label: "Residence & Homes" },
+  { id: "care-request", label: "Care Request" },
   { id: "summary", label: "My Plan Summary" },
 ];
 

@@ -1,12 +1,23 @@
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
+import { DatePickerField } from "@/components/plan/DatePickerField";
+import { CheckboxField } from "@/components/plan/CheckboxField";
+import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
+import { TableField } from "@/components/plan/TableField";
+import { PrePopulatedField } from "@/components/plan/PrePopulatedField";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export const ResidenceSection = () => {
   const { sections, updateField } = usePlan();
   const data = sections["residence"];
+
+  const advisedRights = [
+    "Grievance / complaints process",
+    "How to seek advocacy support",
+    "My rights to contact including (mail, visits, phone calls)"
+  ];
 
   return (
     <div className="space-y-6">
@@ -18,49 +29,49 @@ export const ResidenceSection = () => {
       </div>
 
       <div className="space-y-4">
-        <div>
-          <Label htmlFor="current-residence">Current residence</Label>
-          <Input
-            id="current-residence"
-            value={data?.fields?.["current-residence"] || ""}
-            onChange={(e) => updateField("residence", "current-residence", e.target.value)}
-            placeholder="Where are you currently living?"
-            className="mt-2"
-          />
-        </div>
+        <PrePopulatedField
+          label="I arrived on"
+          value="15 March 2024"
+        />
 
-        <div>
-          <Label htmlFor="residence-type">Type of placement</Label>
-          <Input
-            id="residence-type"
-            value={data?.fields?.["residence-type"] || ""}
-            onChange={(e) => updateField("residence", "residence-type", e.target.value)}
-            placeholder="e.g., Family home, foster care, residential, etc."
-            className="mt-2"
-          />
-        </div>
+        <DatePickerField
+          label="My early leaving date / expected leaving date"
+          value={data?.fields?.["expected-leaving-date"] ? new Date(data.fields["expected-leaving-date"]) : undefined}
+          onChange={(date) => updateField("residence", "expected-leaving-date", date?.toISOString() || "")}
+        />
 
-        <div>
-          <Label htmlFor="residence-satisfaction">How I feel about where I live</Label>
+        <FieldWithPrompt label="I have been advised of:">
+          <div className="space-y-2">
+            {advisedRights.map((right) => (
+              <div key={right} className="flex items-center space-x-2">
+                <Checkbox id={`right-${right}`} />
+                <Label htmlFor={`right-${right}`} className="font-normal cursor-pointer">{right}</Label>
+              </div>
+            ))}
+          </div>
+        </FieldWithPrompt>
+
+        <TableField
+          label="Have I behaved or acted in a way that has been unsafe to myself and/or others"
+          columns={[
+            { key: "behaviour", label: "What was the behaviour?", type: "textarea" },
+            { key: "helped", label: "What helped?", type: "textarea" }
+          ]}
+          value={typeof data?.fields?.["unsafe-behaviour"] === 'string' ? JSON.parse(data?.fields?.["unsafe-behaviour"] || '[]') : (data?.fields?.["unsafe-behaviour"] || [])}
+          onChange={(value) => updateField("residence", "unsafe-behaviour", JSON.stringify(value))}
+        />
+
+        <FieldWithPrompt
+          label="What are my preferences and comfort levels regarding my living arrangements, including whether I am okay sharing a room with another young person?"
+          prompt="Consider how this young person's gender identity or sexual identity may influence their care needs. What supports, affirmations, or considerations are required to ensure their care arrangements are safe, respectful, and aligned with their identity?"
+        >
           <Textarea
-            id="residence-satisfaction"
-            value={data?.fields?.["residence-satisfaction"] || ""}
-            onChange={(e) => updateField("residence", "residence-satisfaction", e.target.value)}
-            placeholder="Share your feelings about your current living situation..."
-            className="min-h-[100px] mt-2"
+            value={data?.fields?.["living-preferences"] || ""}
+            onChange={(e) => updateField("residence", "living-preferences", e.target.value)}
+            placeholder="Describe your living arrangement preferences..."
+            className="min-h-[120px]"
           />
-        </div>
-
-        <div>
-          <Label htmlFor="residence-future">Future housing goals</Label>
-          <Textarea
-            id="residence-future"
-            value={data?.fields?.["residence-future"] || ""}
-            onChange={(e) => updateField("residence", "residence-future", e.target.value)}
-            placeholder="Where would you like to live in the future?"
-            className="min-h-[100px] mt-2"
-          />
-        </div>
+        </FieldWithPrompt>
       </div>
 
       <div className="pt-6">
