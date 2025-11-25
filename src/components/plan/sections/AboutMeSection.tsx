@@ -8,6 +8,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Upload, Trash2, User } from "lucide-react";
+import { PrePopulatedField } from "../PrePopulatedField";
+import { FieldWithPrompt } from "../FieldWithPrompt";
+import { TableField } from "../TableField";
+import { ConditionalField } from "../ConditionalField";
+import { DatePickerField } from "../DatePickerField";
+import { SelectField } from "../SelectField";
+import { ActionTable } from "../ActionTable";
 
 export const AboutMeSection = () => {
   const { sections, updateField, planId, profilePicture, backgroundPicture, updatePlanImages } = usePlan();
@@ -217,130 +224,231 @@ export const AboutMeSection = () => {
         <h1 className="text-3xl font-bold text-center mt-4">About Me</h1>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="my-name">My name is</Label>
-          <Input
-            id="my-name"
-            value="James Andrew Cameron"
-            readOnly
-            className="mt-1 bg-muted"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="preferred-name">My preferred name is</Label>
-          <Input
-            id="preferred-name"
-            value="Jamie"
-            readOnly
-            className="mt-1 bg-muted"
-          />
+      <div className="space-y-6">
+        {/* Pre-populated fields */}
+        <PrePopulatedField label="My name is" value="James Andrew Cameron" />
+        
+        <PrePopulatedField label="I like to be called" value="Jamie" />
+        
+        <div className="grid grid-cols-2 gap-4">
+          <PrePopulatedField label="My gender is" value="Male" />
+          
+          <FieldWithPrompt 
+            label="My pronouns are"
+            prompt="Everyone has pronouns - they help us refer to someone without using their name. Using the correct pronouns is respectful and helpful not just for gender diverse people but can be helpful when a tamariki has a gender neutral name or a culturally specific name so that we know how best to address them."
+          >
+            <Input
+              value={section.fields.pronouns || ""}
+              onChange={(e) => updateField("about-me", "pronouns", e.target.value)}
+              placeholder="e.g., He/Him, She/Her, They/Them"
+            />
+          </FieldWithPrompt>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="gender">My gender is</Label>
-            <Input
-              id="gender"
-              value="Male"
-              readOnly
-              className="mt-1 bg-muted"
-            />
-          </div>
-          <div>
-            <Label htmlFor="pronouns">My pronouns are</Label>
-            <Input
-              id="pronouns"
-              value="He/Him"
-              readOnly
-              className="mt-1 bg-muted"
-            />
-          </div>
+          <PrePopulatedField label="My age is" value="16" />
+          <PrePopulatedField label="My date of birth is" value="12 July 2009" />
         </div>
 
-        <div>
-          <Label htmlFor="parents">My parents' names are</Label>
-          <Input
-            id="parents"
-            value="Robert Jackson (Stepdad), John Cameron (Father), Sarah Anne Cudby (Mother)"
-            readOnly
-            className="mt-1 bg-muted"
-          />
-        </div>
+        <PrePopulatedField label="My parents' names are" value="Robert Jackson (Stepdad), John Cameron (Father), Sarah Anne Cudby (Mother)" />
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="age">My age is</Label>
-            <Input
-              id="age"
-              value="16"
-              readOnly
-              className="mt-1 bg-muted"
-            />
-          </div>
-          <div>
-            <Label htmlFor="dob">My date of birth is</Label>
-            <Input
-              id="dob"
-              value="12 July 2009"
-              readOnly
-              className="mt-1 bg-muted"
-            />
-          </div>
-        </div>
+        <PrePopulatedField label="My brothers and sisters are" value="2 siblings - step/half siblings options available" />
 
-        <div>
-          <Label htmlFor="siblings">My brothers and sisters are</Label>
+        <TableField
+          label="My whānau or family and significant people are"
+          prompt="Clearly specify whether this is a whakapapa connection or define the nature of the relationship"
+          columns={[
+            { key: "name", label: "Person Name" },
+            { key: "relationship", label: "Relationship to tamaiti" }
+          ]}
+          value={typeof section.fields.whanau === 'string' ? JSON.parse(section.fields.whanau || '[]') : (section.fields.whanau || [])}
+          onChange={(value) => updateField("about-me", "whanau", JSON.stringify(value))}
+        />
+
+        <PrePopulatedField label="Mātā waka/ethnicity or ethnicities (maternal, paternal)" value="New Zealand European, Māori" />
+
+        {/* Conditional Māori fields */}
+        <ConditionalField show={true}>
+          <div className="space-y-4 pl-4 border-l-2 border-primary/30">
+            <PrePopulatedField label="My iwi: maternal, paternal" value="Ngāti Kurī (Maternal), Ngāti Porou (Paternal)" />
+            <PrePopulatedField label="My hapū: maternal, paternal" value="Ngāi Tahu (Maternal), Ngāti Porou (Paternal)" />
+            <PrePopulatedField label="My marae: maternal, paternal" value="Ngāi Tūāhuriri" />
+          </div>
+        </ConditionalField>
+
+        <PrePopulatedField label="My island/village: maternal, paternal" value="Christchurch, New Zealand" />
+
+        <PrePopulatedField label="The languages that are important to me and my family or whānau are" value="English, Te Reo Māori" />
+
+        <FieldWithPrompt
+          label="My preferred way to communicate is"
+          prompt="What is their preferred language. Also consider the following: dialects, sign language, using my iPad, using my Communication Book, using PECS (Picture Exchange Communication System), using Augmentative Communication, using Letter Boards, using other visual, oral, story-board options"
+        >
           <Textarea
-            id="siblings"
-            value={section.fields.siblings || ""}
-            onChange={(e) => updateField("about-me", "siblings", e.target.value)}
-            placeholder="List your siblings here..."
-            className="mt-1"
+            value={section.fields.communication || ""}
+            onChange={(e) => updateField("about-me", "communication", e.target.value)}
+            placeholder="Describe your preferred communication method..."
           />
+        </FieldWithPrompt>
+
+        <FieldWithPrompt label="How I would like to be involved in decisions that will affect me">
+          <Textarea
+            value={section.fields.decisionInvolvement || ""}
+            onChange={(e) => updateField("about-me", "decisionInvolvement", e.target.value)}
+            placeholder="Share how you'd like to be involved..."
+          />
+        </FieldWithPrompt>
+
+        <TableField
+          label="People supporting me and my whānau"
+          prompt="Consider care provider social worker, youth worker, kaimahi, teacher, coaches, Kapa Haka rangatira etc"
+          columns={[
+            { key: "name", label: "Name" },
+            { key: "email", label: "Email" },
+            { key: "mobile", label: "Mobile" },
+            { key: "office", label: "Office" }
+          ]}
+          value={typeof section.fields.supportPeople === 'string' ? JSON.parse(section.fields.supportPeople || '[]') : (section.fields.supportPeople || [])}
+          onChange={(value) => updateField("about-me", "supportPeople", JSON.stringify(value))}
+        />
+
+        <FieldWithPrompt label="Why is Oranga Tamariki involved with me and my whānau, and what is my current situation">
+          <Textarea
+            value={section.fields.otInvolvement || ""}
+            onChange={(e) => updateField("about-me", "otInvolvement", e.target.value)}
+            placeholder="Describe the situation..."
+          />
+        </FieldWithPrompt>
+
+        <PrePopulatedField label="My Legal status or orders" value="Care and Protection Order - Section 101(1)(a)" />
+
+        <SelectField
+          label="My current permanent care goal and concurrent permanent care goal"
+          prompt="Ensure goals align with the goals outlined in the Family Group Conference (FGC) or court-approved plan, unless a change has been formally agreed to."
+          value={section.fields.careGoal || ""}
+          onChange={(value) => updateField("about-me", "careGoal", value)}
+          options={[
+            { value: "return-home", label: "Return home" },
+            { value: "independence", label: "Independence" },
+            { value: "family-whanau", label: "Family/whānau group" },
+            { value: "non-family-whanau", label: "Non family/whānau group" },
+            { value: "other", label: "Other" }
+          ]}
+        />
+
+        <PrePopulatedField label="My next court date or family group conference (review) date is on" value="15 March 2026, 10:00 AM at Wellington Family Court" />
+
+        <TableField
+          label="My routines are"
+          prompt="Consider regular routines and commitments — not just daily, but also weekly or monthly. This could include things like: Meal times, Bed times, Transport needs, School activities, After school activities, Cultural or spiritual practices (e.g. church, marae visits, family traditions), Medical or specialist appointments, Monthly check-ins, support groups, or community events, Anything else that's part of their rhythm or important to them"
+          columns={[
+            { key: "routine", label: "Routine", type: "textarea" },
+            { key: "frequency", label: "Frequency" }
+          ]}
+          value={typeof section.fields.routines === 'string' ? JSON.parse(section.fields.routines || '[]') : (section.fields.routines || [])}
+          onChange={(value) => updateField("about-me", "routines", JSON.stringify(value))}
+        />
+
+        <FieldWithPrompt
+          label="My strengths"
+          prompt="Consider using practice tools (eg Three houses) appropriate to the individual and collective uniqueness of te tamaiti or rangatahi to help identify strengths - Ensure any goals or aspirations are covered in the plan below"
+        >
+          <Textarea
+            value={section.fields.strengths || ""}
+            onChange={(e) => updateField("about-me", "strengths", e.target.value)}
+            placeholder="Describe your strengths..."
+          />
+        </FieldWithPrompt>
+
+        <TableField
+          label="The things I enjoy doing or am interested in"
+          prompt="Consider what te tamaiti or rangatahi enjoys or is interested in, including activities they currently engage in and those they haven't tried but would like to experience."
+          columns={[
+            { key: "activity", label: "Activity/Interest", type: "textarea" }
+          ]}
+          value={typeof section.fields.interests === 'string' ? JSON.parse(section.fields.interests || '[]') : (section.fields.interests || [])}
+          onChange={(value) => updateField("about-me", "interests", JSON.stringify(value))}
+        />
+
+        <div className="grid grid-cols-2 gap-4">
+          <FieldWithPrompt label="Kai and drinks that I like">
+            <Textarea
+              value={section.fields.foodLikes || ""}
+              onChange={(e) => updateField("about-me", "foodLikes", e.target.value)}
+              placeholder="Foods and drinks you enjoy..."
+            />
+          </FieldWithPrompt>
+          
+          <FieldWithPrompt label="Kai and drinks that I don't like">
+            <Textarea
+              value={section.fields.foodDislikes || ""}
+              onChange={(e) => updateField("about-me", "foodDislikes", e.target.value)}
+              placeholder="Foods and drinks you don't like..."
+            />
+          </FieldWithPrompt>
         </div>
 
-        <div>
-          <Label htmlFor="ethnicity">Mātā waka/Ethnicity or Ethnicities</Label>
-          <Input
-            id="ethnicity"
-            value="New Zealand European"
-            readOnly
-            className="mt-1 bg-muted"
-          />
-        </div>
+        <TableField
+          label="The things I find hard, my worries, how I feel safe, and people who support me"
+          prompt="Consider difficulties such as getting angry or being impulsive, getting to sleep at night, going to school, doing maths. Consider emotional distress also. Consider who is important to te tamaiti or rangatahi. Who might they want to talk to if they need support, are feeling upset, worried, or unsafe?"
+          columns={[
+            { key: "challenge", label: "1) The things I find hard and what helps me", type: "textarea" },
+            { key: "worries", label: "2) My Worries and how I may show these", type: "textarea" },
+            { key: "safety", label: "3) How I feel safe and comforted", type: "textarea" },
+            { key: "supporters", label: "4) The people who support me are", type: "textarea" }
+          ]}
+          value={typeof section.fields.challengesSupport === 'string' ? JSON.parse(section.fields.challengesSupport || '[]') : (section.fields.challengesSupport || [])}
+          onChange={(value) => updateField("about-me", "challengesSupport", JSON.stringify(value))}
+        />
 
-        <div>
-          <Label htmlFor="iwi">My Iwi</Label>
-          <Input
-            id="iwi"
-            value="Ngāti Kurī"
-            readOnly
-            className="mt-1 bg-muted"
-          />
-        </div>
+        <TableField
+          label="My important belongings or taonga and how they are kept safe"
+          prompt="Where are the belongings or taonga currently kept? Are there any actions required to ensure they are stored safely and respectfully?"
+          columns={[
+            { key: "belonging", label: "Belonging" },
+            { key: "safety", label: "How I keep it Safe" }
+          ]}
+          value={typeof section.fields.belongings === 'string' ? JSON.parse(section.fields.belongings || '[]') : (section.fields.belongings || [])}
+          onChange={(value) => updateField("about-me", "belongings", JSON.stringify(value))}
+        />
 
-        <div>
-          <Label htmlFor="hapu">My Hapū <span className="text-sm text-muted-foreground">(Maternal, Paternal)</span></Label>
-          <Input
-            id="hapu"
-            value="Ngāi Tahu (Maternal), Ngāti Porou (Paternal)"
-            readOnly
-            className="mt-1 bg-muted"
+        <FieldWithPrompt
+          label="Social and/or community activities I am a part of/or interested in"
+          prompt="Being involved in social and community groups can support connections and interests. Explore with te tamaiti or rangatahi any groups they may be interested in joining."
+        >
+          <Textarea
+            value={section.fields.communityActivities || ""}
+            onChange={(e) => updateField("about-me", "communityActivities", e.target.value)}
+            placeholder="Community groups and activities..."
           />
-        </div>
+        </FieldWithPrompt>
 
-        <div>
-          <Label htmlFor="marae">My Marae <span className="text-sm text-muted-foreground">(Maternal, Paternal)</span></Label>
-          <Input
-            id="marae"
-            value="Ngāi Tūāhuriri"
-            readOnly
-            className="mt-1 bg-muted"
+        <FieldWithPrompt
+          label="Sport, hobbies or other activities I enjoy are"
+          prompt="Consider what activities, sports and hobbies they are currently involved in, and explore any others they may be interested in trying."
+        >
+          <Textarea
+            value={section.fields.hobbies || ""}
+            onChange={(e) => updateField("about-me", "hobbies", e.target.value)}
+            placeholder="Sports, hobbies, and activities..."
           />
-        </div>
+        </FieldWithPrompt>
+
+        <FieldWithPrompt
+          label="My views, wishes and aspirations"
+          prompt="Support te tamaiti to express their views, wishes, and aspirations in ways that reflect their unique identity, culture, and experiences. This includes what matters to them now and what they hope for in the future. If te tamaiti requires support to express themselves — for example, due to age, development, or disability — ensure appropriate assistance is provided. This may include a whānau or family member, youth advocate, community leader, or another trusted person who can help them communicate in a way that feels safe and meaningful."
+        >
+          <Textarea
+            value={section.fields.aspirations || ""}
+            onChange={(e) => updateField("about-me", "aspirations", e.target.value)}
+            placeholder="Share your views, wishes and what you aspire to..."
+            className="min-h-[120px]"
+          />
+        </FieldWithPrompt>
       </div>
+
+      {/* Action Plan Table */}
+      <ActionTable sectionId="about-me" />
     </div>
   );
 };
