@@ -79,6 +79,11 @@ const initialSections: Record<string, SectionData> = {
     actions: [{ ...defaultAction }],
     fields: {},
   },
+  "planning-with": {
+    category: "Planning With",
+    actions: [{ ...defaultAction }],
+    fields: {},
+  },
   transition: {
     category: "Transition to Adulthood",
     actions: [{ ...defaultAction }],
@@ -91,6 +96,11 @@ const initialSections: Record<string, SectionData> = {
   },
   residence: {
     category: "Residence & Homes",
+    actions: [{ ...defaultAction }],
+    fields: {},
+  },
+  "care-request": {
+    category: "Care Request",
     actions: [{ ...defaultAction }],
     fields: {},
   },
