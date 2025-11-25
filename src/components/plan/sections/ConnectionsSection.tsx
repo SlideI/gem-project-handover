@@ -1,7 +1,8 @@
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
+import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
+import { TableField } from "@/components/plan/TableField";
 
 export const ConnectionsSection = () => {
   const { sections, updateField } = usePlan();
@@ -17,38 +18,67 @@ export const ConnectionsSection = () => {
       </div>
 
       <div className="space-y-4">
-        <div>
-          <Label htmlFor="friends">My friends and important people</Label>
+        <FieldWithPrompt
+          label="Friends who are important to me are:"
+          prompt="Consider existing friendships they may want to stay connected to and how they can do this."
+        >
           <Textarea
-            id="friends"
             value={data?.fields?.friends || ""}
             onChange={(e) => updateField("connections", "friends", e.target.value)}
-            placeholder="Who are the people that matter to you?"
-            className="min-h-[120px] mt-2"
+            placeholder="Who are the friends that matter to you?"
+            className="min-h-[120px]"
           />
-        </div>
+        </FieldWithPrompt>
 
-        <div>
-          <Label htmlFor="no-contact-people">People I don't want contact with</Label>
+        <TableField
+          label="My Connections are:"
+          columns={[
+            { key: "name", label: "Person name" },
+            { key: "relationship", label: "Relationship" },
+            { key: "contact", label: "Contact details" },
+            { key: "arrangements", label: "Contact arrangements", type: "textarea" },
+            { key: "support", label: "Support needed to maintain connection", type: "textarea" }
+          ]}
+          value={typeof data?.fields?.connections === 'string' ? JSON.parse(data?.fields?.connections || '[]') : (data?.fields?.connections || [])}
+          onChange={(value) => updateField("connections", "connections", JSON.stringify(value))}
+          prompt="Consider any significant people for te tamaiti or rangatahi - Include any court orders and what the current whānau or family contact arrangements look like, such as how often they will be visited and by whom, whether it is supervised, where they will be visited"
+        />
+
+        <FieldWithPrompt
+          label="People currently unable to have contact with me and why:"
+          prompt="Consider any court orders, including non associations orders and what the current whānau or family contact arrangements look like."
+        >
           <Textarea
-            id="no-contact-people"
             value={data?.fields?.["no-contact-people"] || ""}
             onChange={(e) => updateField("connections", "no-contact-people", e.target.value)}
-            placeholder="Any people you prefer to avoid contact with..."
-            className="min-h-[100px] mt-2"
+            placeholder="List people and rationale..."
+            className="min-h-[100px]"
           />
-        </div>
+        </FieldWithPrompt>
 
-        <div>
-          <Label htmlFor="whanau-wishes">My whānau's wishes for me</Label>
+        <FieldWithPrompt
+          label="My family, whānau, hapū, iwi, island and village views, wishes and aspirations for me."
+          prompt="Views relate to what is thought/expressed about the current situation for the tamaiti. Ensure these perspectives are heard and reflected in planning, recognising their importance in shaping wellbeing, identity, and future goals."
+        >
           <Textarea
-            id="whanau-wishes"
             value={data?.fields?.["whanau-wishes"] || ""}
             onChange={(e) => updateField("connections", "whanau-wishes", e.target.value)}
             placeholder="What does your family hope for you?"
-            className="min-h-[100px] mt-2"
+            className="min-h-[100px]"
           />
-        </div>
+        </FieldWithPrompt>
+
+        <FieldWithPrompt
+          label="Other important people in my life and their views, wishes and aspirations for me."
+          prompt="Other important people are people the tamaiti or their whānau or family have identified as important for the tamaiti to maintain contact with, who are not related to the tamaiti by whakapapa. Ensure these perspectives are heard and reflected in planning, recognising their importance in shaping wellbeing, identity, and future goals."
+        >
+          <Textarea
+            value={data?.fields?.["other-important-people"] || ""}
+            onChange={(e) => updateField("connections", "other-important-people", e.target.value)}
+            placeholder="Other important people and their views..."
+            className="min-h-[100px]"
+          />
+        </FieldWithPrompt>
       </div>
 
       <div className="pt-6">

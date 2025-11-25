@@ -1,8 +1,9 @@
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
+import { CheckboxField } from "@/components/plan/CheckboxField";
+import { ConditionalField } from "@/components/plan/ConditionalField";
+import { TableField } from "@/components/plan/TableField";
 
 export const DisabilitySection = () => {
   const { sections, updateField } = usePlan();
@@ -18,37 +19,38 @@ export const DisabilitySection = () => {
       </div>
 
       <div className="space-y-4">
-        <div>
-          <Label htmlFor="disability-diagnosis">My diagnosis or condition</Label>
-          <Input
-            id="disability-diagnosis"
-            value={data?.fields?.["disability-diagnosis"] || ""}
-            onChange={(e) => updateField("disability", "disability-diagnosis", e.target.value)}
-            placeholder="Any diagnosed conditions..."
-            className="mt-2"
+        <div className="space-y-2">
+          <CheckboxField
+            id="no-disability-needs"
+            label="No needs identified"
+            checked={data?.fields?.["no-disability-needs"] === "true"}
+            onCheckedChange={(checked) => updateField("disability", "no-disability-needs", String(checked))}
           />
-        </div>
+          <ConditionalField show={data?.fields?.["no-disability-needs"] !== "true"}>
+            <div className="space-y-4">
+              <TableField
+                label="I have a disability"
+                columns={[
+                  { key: "disability", label: "Disability" },
+                  { key: "status", label: "Status (diagnosed/suspected/requires assessment/assessment in progress)" },
+                  { key: "description", label: "Description", type: "textarea" }
+                ]}
+                value={typeof data?.fields?.disability === 'string' ? JSON.parse(data?.fields?.disability || '[]') : (data?.fields?.disability || [])}
+                onChange={(value) => updateField("disability", "disability", JSON.stringify(value))}
+              />
 
-        <div>
-          <Label htmlFor="disability-info">Information about my disability</Label>
-          <Textarea
-            id="disability-info"
-            value={data?.fields?.["disability-info"] || ""}
-            onChange={(e) => updateField("disability", "disability-info", e.target.value)}
-            placeholder="Describe how your condition affects you..."
-            className="min-h-[120px] mt-2"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="disability-communication">Communication needs</Label>
-          <Textarea
-            id="disability-communication"
-            value={data?.fields?.["disability-communication"] || ""}
-            onChange={(e) => updateField("disability", "disability-communication", e.target.value)}
-            placeholder="Any special communication methods or supports needed..."
-            className="min-h-[100px] mt-2"
-          />
+              <TableField
+                label="Disability services and supports currently involved"
+                columns={[
+                  { key: "services", label: "Disability services", type: "textarea" },
+                  { key: "supports", label: "Supports currently involved", type: "textarea" }
+                ]}
+                value={typeof data?.fields?.["disability-services"] === 'string' ? JSON.parse(data?.fields?.["disability-services"] || '[]') : (data?.fields?.["disability-services"] || [])}
+                onChange={(value) => updateField("disability", "disability-services", JSON.stringify(value))}
+                prompt="Record who is currently involved in supporting te tamaiti or rangatahi, and describe their role. Include any scheduled appointments, and consider whether additional appointments or assessments may be needed. Make sure these are included in the plan, with clear actions and timeframes."
+              />
+            </div>
+          </ConditionalField>
         </div>
       </div>
 
