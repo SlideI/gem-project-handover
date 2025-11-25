@@ -1,8 +1,10 @@
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
+import { PrePopulatedField } from "@/components/plan/PrePopulatedField";
+import { CheckboxField } from "@/components/plan/CheckboxField";
+import { ConditionalField } from "@/components/plan/ConditionalField";
+import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
 
 export const EducationSection = () => {
   const { sections, updateField } = usePlan();
@@ -20,49 +22,72 @@ export const EducationSection = () => {
       </div>
 
       <div className="space-y-4">
-        <div>
-          <Label htmlFor="edu-provider">School or training provider</Label>
-          <Input
-            id="edu-provider"
-            value={data?.fields?.["edu-provider"] || ""}
-            onChange={(e) => updateField("education", "edu-provider", e.target.value)}
-            placeholder="Name of your school or training provider"
-            className="mt-2"
+        <div className="space-y-2">
+          <PrePopulatedField
+            label="My school, kura, early childhood, kōhanga or tertiary education provider is"
+            value="Auckland Secondary College"
           />
+          <CheckboxField
+            id="not-enrolled"
+            label="Not enrolled"
+            checked={data?.fields?.["not-enrolled"] === "true"}
+            onCheckedChange={(checked) => updateField("education", "not-enrolled", String(checked))}
+          />
+          <ConditionalField show={data?.fields?.["not-enrolled"] === "true"}>
+            <FieldWithPrompt label="Rationale for not being enrolled">
+              <Textarea
+                value={data?.fields?.["not-enrolled-rationale"] || ""}
+                onChange={(e) => updateField("education", "not-enrolled-rationale", e.target.value)}
+                placeholder="Explain why not enrolled..."
+                className="min-h-[80px]"
+              />
+            </FieldWithPrompt>
+          </ConditionalField>
         </div>
 
-        <div>
-          <Label htmlFor="edu-year">Current year/level</Label>
-          <Input
-            id="edu-year"
-            value={data?.fields?.["edu-year"] || ""}
-            onChange={(e) => updateField("education", "edu-year", e.target.value)}
-            placeholder="e.g., Year 10, Level 2, etc."
-            className="mt-2"
-          />
-        </div>
+        <ConditionalField show={data?.fields?.["not-enrolled"] !== "true"}>
+          <FieldWithPrompt label="I am in year/class">
+            <Textarea
+              value={data?.fields?.["year-class"] || ""}
+              onChange={(e) => updateField("education", "year-class", e.target.value)}
+              placeholder="e.g., Year 10, Level 2..."
+              className="min-h-[60px]"
+            />
+          </FieldWithPrompt>
 
-        <div>
-          <Label htmlFor="edu-support-people">Key support people</Label>
+          <FieldWithPrompt
+            label="My kaiako, teacher, principal, teacher's aid or other people who support me at school are"
+            prompt="Consider who te tamaiti or rangatahi feels they can talk to at school when they need help, support, or someone to listen."
+          >
+            <Textarea
+              value={data?.fields?.["school-support-people"] || ""}
+              onChange={(e) => updateField("education", "school-support-people", e.target.value)}
+              placeholder="List support people at school..."
+              className="min-h-[100px]"
+            />
+          </FieldWithPrompt>
+
+          <FieldWithPrompt
+            label="How am I doing at school and anything and support I may require to engage and attend?"
+            prompt="Consider the educational progress of te tamaiti or rangatahi, including how they are engaging with learning and participating in school or other learning environments. Identify any specific learning needs, strengths, or challenges, and explore what supports or adjustments may help them thrive academically and socially."
+          >
+            <Textarea
+              value={data?.fields?.["school-progress"] || ""}
+              onChange={(e) => updateField("education", "school-progress", e.target.value)}
+              placeholder="Describe school progress and support needs..."
+              className="min-h-[120px]"
+            />
+          </FieldWithPrompt>
+        </ConditionalField>
+
+        <FieldWithPrompt label="My employment or apprenticeship is, the hours I work and the contact details are:">
           <Textarea
-            id="edu-support-people"
-            value={data?.fields?.["edu-support-people"] || ""}
-            onChange={(e) => updateField("education", "edu-support-people", e.target.value)}
-            placeholder="Teachers, counselors, or other support people at your school/workplace..."
-            className="min-h-[100px] mt-2"
+            value={data?.fields?.employment || ""}
+            onChange={(e) => updateField("education", "employment", e.target.value)}
+            placeholder="Employment details (for those 14 years and over)..."
+            className="min-h-[100px]"
           />
-        </div>
-
-        <div>
-          <Label htmlFor="edu-goals">My education or career goals</Label>
-          <Textarea
-            id="edu-goals"
-            value={data?.fields?.["edu-goals"] || ""}
-            onChange={(e) => updateField("education", "edu-goals", e.target.value)}
-            placeholder="What are your education or career aspirations?"
-            className="min-h-[100px] mt-2"
-          />
-        </div>
+        </FieldWithPrompt>
       </div>
 
       <div className="pt-6">
