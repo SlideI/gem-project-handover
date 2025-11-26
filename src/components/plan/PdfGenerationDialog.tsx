@@ -91,25 +91,25 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Generate PDF</DialogTitle>
           <DialogDescription>
-            Select the sections you want to include in your PDF. The PDF will be formatted for printing with spaces to fill in by hand.
+            Select sections to include in your print-friendly PDF.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b">
-            <Label className="text-sm font-semibold">Sections to Include</Label>
-            <Button variant="ghost" size="sm" onClick={toggleAll}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium">Sections</Label>
+            <Button variant="ghost" size="sm" onClick={toggleAll} className="h-8 text-xs">
               {selectedSections.length === sections.length ? "Deselect All" : "Select All"}
             </Button>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-2">
             {sections.map((section) => (
-              <div key={section.id} className="flex items-center space-x-3">
+              <div key={section.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={section.id}
                   checked={selectedSections.includes(section.id)}
@@ -117,7 +117,7 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
                 />
                 <Label
                   htmlFor={section.id}
-                  className="text-sm font-normal cursor-pointer flex-1"
+                  className="text-sm font-normal cursor-pointer flex-1 leading-tight"
                 >
                   {section.label}
                 </Label>
