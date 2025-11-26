@@ -26,7 +26,8 @@ export const ConnectionsSection = () => {
             value={data?.fields?.friends || ""}
             onChange={(e) => updateField("connections", "friends", e.target.value)}
             placeholder="Who are the friends that matter to you?"
-            className="min-h-[120px]"
+            autoComplete="off"
+            className="min-h-[120px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -52,7 +53,8 @@ export const ConnectionsSection = () => {
             value={data?.fields?.["no-contact-people"] || ""}
             onChange={(e) => updateField("connections", "no-contact-people", e.target.value)}
             placeholder="List people and rationale..."
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -64,7 +66,8 @@ export const ConnectionsSection = () => {
             value={data?.fields?.["whanau-wishes"] || ""}
             onChange={(e) => updateField("connections", "whanau-wishes", e.target.value)}
             placeholder="What does your family hope for you?"
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -76,7 +79,8 @@ export const ConnectionsSection = () => {
             value={data?.fields?.["other-important-people"] || ""}
             onChange={(e) => updateField("connections", "other-important-people", e.target.value)}
             placeholder="Other important people and their views..."
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
       </div>

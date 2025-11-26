@@ -241,6 +241,7 @@ export const AboutMeSection = () => {
               value={section.fields.pronouns || ""}
               onChange={(e) => updateField("about-me", "pronouns", e.target.value)}
               placeholder="e.g., He/Him, She/Her, They/Them"
+              autoComplete="off"
             />
           </FieldWithPrompt>
         </div>
@@ -288,6 +289,8 @@ export const AboutMeSection = () => {
             value={section.fields.communication || ""}
             onChange={(e) => updateField("about-me", "communication", e.target.value)}
             placeholder="Describe your preferred communication method..."
+            autoComplete="off"
+            className="min-h-[80px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -296,6 +299,8 @@ export const AboutMeSection = () => {
             value={section.fields.decisionInvolvement || ""}
             onChange={(e) => updateField("about-me", "decisionInvolvement", e.target.value)}
             placeholder="Share how you'd like to be involved..."
+            autoComplete="off"
+            className="min-h-[80px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -317,6 +322,8 @@ export const AboutMeSection = () => {
             value={section.fields.otInvolvement || ""}
             onChange={(e) => updateField("about-me", "otInvolvement", e.target.value)}
             placeholder="Describe the situation..."
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -357,6 +364,8 @@ export const AboutMeSection = () => {
             value={section.fields.strengths || ""}
             onChange={(e) => updateField("about-me", "strengths", e.target.value)}
             placeholder="Describe your strengths..."
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -376,6 +385,8 @@ export const AboutMeSection = () => {
               value={section.fields.foodLikes || ""}
               onChange={(e) => updateField("about-me", "foodLikes", e.target.value)}
               placeholder="Foods and drinks you enjoy..."
+              autoComplete="off"
+              className="resize-none"
             />
           </FieldWithPrompt>
           
@@ -384,6 +395,8 @@ export const AboutMeSection = () => {
               value={section.fields.foodDislikes || ""}
               onChange={(e) => updateField("about-me", "foodDislikes", e.target.value)}
               placeholder="Foods and drinks you don't like..."
+              autoComplete="off"
+              className="resize-none"
             />
           </FieldWithPrompt>
         </div>

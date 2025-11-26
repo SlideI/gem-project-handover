@@ -66,7 +66,8 @@ export const HealthSection = () => {
             value={data?.fields?.dentist || ""}
             onChange={(e) => updateField("health", "dentist", e.target.value)}
             placeholder="Dentist's name..."
-            className="min-h-[60px]"
+            autoComplete="off"
+            className="min-h-[60px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -92,7 +93,8 @@ export const HealthSection = () => {
                 value={data?.fields?.["oral-health-needs"] || ""}
                 onChange={(e) => updateField("health", "oral-health-needs", e.target.value)}
                 placeholder="Describe oral health needs..."
-                className="min-h-[100px]"
+                autoComplete="off"
+                className="min-h-[100px] resize-none"
               />
             </FieldWithPrompt>
           </ConditionalField>

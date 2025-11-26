@@ -142,7 +142,10 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
       </div>
 
       <div>
-        <Button onClick={handleAddAction}>＋ Add Action</Button>
+        <Button onClick={handleAddAction} className="gap-2">
+          <span className="material-icons-outlined text-base">add</span>
+          Add Action
+        </Button>
       </div>
     </div>
   );
