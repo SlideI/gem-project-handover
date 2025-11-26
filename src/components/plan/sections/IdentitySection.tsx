@@ -24,7 +24,8 @@ export const IdentitySection = () => {
             value={data?.fields?.from || ""}
             onChange={(e) => updateField("identity", "from", e.target.value)}
             placeholder="Your place of origin..."
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -33,7 +34,8 @@ export const IdentitySection = () => {
             value={data?.fields?.whakapapa || ""}
             onChange={(e) => updateField("identity", "whakapapa", e.target.value)}
             placeholder="Your family lineage and heritage..."
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -42,7 +44,8 @@ export const IdentitySection = () => {
             value={data?.fields?.religious || ""}
             onChange={(e) => updateField("identity", "religious", e.target.value)}
             placeholder="Your spiritual beliefs and practices..."
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -51,7 +54,8 @@ export const IdentitySection = () => {
             value={data?.fields?.["cultural-important"] || ""}
             onChange={(e) => updateField("identity", "cultural-important", e.target.value)}
             placeholder="Cultural practices and values that matter to you..."
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
 
@@ -60,7 +64,8 @@ export const IdentitySection = () => {
             value={data?.fields?.["faith-needs"] || ""}
             onChange={(e) => updateField("identity", "faith-needs", e.target.value)}
             placeholder="Specific cultural or faith-based support you need..."
-            className="min-h-[100px]"
+            autoComplete="off"
+            className="min-h-[100px] resize-none"
           />
         </FieldWithPrompt>
       </div>

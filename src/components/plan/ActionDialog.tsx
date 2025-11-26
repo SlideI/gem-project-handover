@@ -57,49 +57,54 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
         </DialogHeader>
         
         <div className="space-y-4 py-4">
-          <div>
+          <div className="space-y-2">
             <Label htmlFor={`${sectionId}-action`}>Action</Label>
             <Textarea
               id={`${sectionId}-action`}
               value={formData.action}
               onChange={(e) => setFormData({ ...formData, action: e.target.value })}
-              className="mt-1"
+              placeholder="Describe the action needed"
+              autoComplete="off"
+              rows={3}
+              className="resize-none"
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor={`${sectionId}-responsible`}>Who is responsible</Label>
             <Input
               id={`${sectionId}-responsible`}
               value={formData.responsible}
               onChange={(e) => setFormData({ ...formData, responsible: e.target.value })}
-              className="mt-1"
+              placeholder="Enter responsible person"
+              autoComplete="off"
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor={`${sectionId}-deadline`}>By when</Label>
             <Input
               id={`${sectionId}-deadline`}
               type="date"
               value={formData.deadline}
               onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-              className="mt-1"
+              autoComplete="off"
             />
           </div>
 
-          <div>
+          <div className="space-y-2">
             <Label htmlFor={`${sectionId}-support`}>Additional support/services</Label>
             <Input
               id={`${sectionId}-support`}
               value={formData.support}
               onChange={(e) => setFormData({ ...formData, support: e.target.value })}
-              className="mt-1"
+              placeholder="Enter additional support needed"
+              autoComplete="off"
             />
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>

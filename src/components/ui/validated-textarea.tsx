@@ -44,6 +44,7 @@ export const ValidatedTextarea = React.forwardRef<HTMLTextAreaElement, Validated
             error && touched && "border-destructive focus-visible:ring-destructive",
             className
           )}
+          autoComplete="off"
           {...props}
           onBlur={handleBlur}
           onChange={handleChange}

@@ -44,6 +44,7 @@ export const ValidatedInput = React.forwardRef<HTMLInputElement, ValidatedInputP
             error && touched && "border-destructive focus-visible:ring-destructive",
             className
           )}
+          autoComplete="off"
           {...props}
           onBlur={handleBlur}
           onChange={handleChange}
