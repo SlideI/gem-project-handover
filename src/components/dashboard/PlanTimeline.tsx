@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isFuture, isToday, parseISO } from "date-fns";
 
@@ -50,24 +51,29 @@ export const PlanTimeline = () => {
     return null;
   }
 
+  const truncateText = (text: string, maxLength: number = 45) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
+
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Plan Timeline</h3>
       <ScrollArea className="w-full">
         <div className="relative pb-4">
-          <div className="flex gap-6 min-w-max">
+          <div className="flex gap-6 min-w-max items-start pt-8">
             {timelineActions.map((action, index) => (
               <div key={index} className="relative flex flex-col items-center min-w-[200px]">
                 {/* Timeline point */}
-                <div className="relative">
+                <div className="relative z-10">
                   <div
                     className={`w-4 h-4 rounded-full border-2 ${
                       action.isToday
                         ? "bg-primary border-primary"
                         : action.isPastDue
                         ? "bg-destructive border-destructive"
-                        : "bg-muted border-border"
-                    }`}
+                        : "bg-background border-border"
+                    } shadow-sm`}
                   />
                   {index === todayIndex && (
                     <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap">
@@ -80,21 +86,32 @@ export const PlanTimeline = () => {
 
                 {/* Connecting line */}
                 {index < timelineActions.length - 1 && (
-                  <div className="absolute top-2 left-1/2 w-full h-0.5 bg-border" />
+                  <div className="absolute top-2 left-1/2 w-full h-0.5 bg-border z-0" />
                 )}
 
                 {/* Action details */}
-                <div className="mt-4 text-center space-y-1">
-                  <a
-                    href={`/plan#${action.sectionId}`}
-                    className="text-sm font-medium hover:text-primary transition-colors line-clamp-2"
-                  >
-                    {action.title}
-                  </a>
-                  <p className="text-xs text-muted-foreground">
+                <div className="mt-4 border border-border rounded-lg p-3 bg-card shadow-sm min-w-[180px] max-w-[200px]">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          href={`/plan#${action.sectionId}`}
+                          className="text-sm font-medium hover:text-primary transition-colors block mb-2"
+                        >
+                          {truncateText(action.title)}
+                        </a>
+                      </TooltipTrigger>
+                      {action.title.length > 45 && (
+                        <TooltipContent>
+                          <p className="max-w-xs">{action.title}</p>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  </TooltipProvider>
+                  <p className="text-xs text-muted-foreground mb-1">
                     {format(action.date, "dd/MM/yyyy")}
                   </p>
-                  <p className="text-xs text-muted-foreground line-clamp-1">
+                  <p className="text-xs text-muted-foreground truncate">
                     {action.category}
                   </p>
                 </div>
