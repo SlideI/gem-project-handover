@@ -107,7 +107,7 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
             </Button>
           </div>
 
-          <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-2">
+          <div className="space-y-2">
             {sections.map((section) => (
               <div key={section.id} className="flex items-center space-x-2">
                 <Checkbox
