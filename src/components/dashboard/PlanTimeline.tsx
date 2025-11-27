@@ -23,7 +23,7 @@ export const PlanTimeline = () => {
     
     Object.entries(sections).forEach(([sectionId, section]) => {
       section.actions.forEach((action) => {
-        if (action.deadline && action.action) {
+        if (action.deadline && action.action && action.show_in_timeline !== false) {
           try {
             const date = parseISO(action.deadline);
             actions.push({

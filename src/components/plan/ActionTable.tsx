@@ -31,6 +31,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
       deadline: "",
       support: "",
       completed: false,
+      show_in_timeline: true,
     };
     const updatedActions = [...actions, newAction];
     updateSection(sectionId, { actions: updatedActions });
@@ -52,6 +53,15 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
     updatedActions[index] = {
       ...updatedActions[index],
       completed: checked,
+    };
+    updateSection(sectionId, { actions: updatedActions });
+  };
+
+  const handleTimelineCheckboxChange = (index: number, checked: boolean) => {
+    const updatedActions = [...actions];
+    updatedActions[index] = {
+      ...updatedActions[index],
+      show_in_timeline: checked,
     };
     updateSection(sectionId, { actions: updatedActions });
   };
@@ -91,6 +101,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
               <TableHead>Who is responsible</TableHead>
               <TableHead>By when</TableHead>
               <TableHead>Additional support/services</TableHead>
+              <TableHead className="w-[100px]">Timeline</TableHead>
               <TableHead className="w-[120px]">Action Complete</TableHead>
             </TableRow>
           </TableHeader>
@@ -125,6 +136,14 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                   </TableCell>
                   <TableCell>
                     {action.support || <span className="text-muted-foreground italic">...</span>}
+                  </TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-center">
+                      <Checkbox
+                        checked={action.show_in_timeline !== false}
+                        onCheckedChange={(checked) => handleTimelineCheckboxChange(originalIndex, checked as boolean)}
+                      />
+                    </div>
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center">

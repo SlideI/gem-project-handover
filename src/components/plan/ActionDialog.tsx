@@ -11,6 +11,7 @@ interface Action {
   deadline: string;
   support: string;
   completed: boolean;
+  show_in_timeline?: boolean;
 }
 
 interface ActionDialogProps {
@@ -28,6 +29,7 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
     deadline: "",
     support: "",
     completed: false,
+    show_in_timeline: true,
   });
 
   useEffect(() => {
@@ -40,6 +42,7 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
         deadline: "",
         support: "",
         completed: false,
+        show_in_timeline: true,
       });
     }
   }, [action, open]);
