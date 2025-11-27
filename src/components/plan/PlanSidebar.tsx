@@ -30,41 +30,31 @@ interface PlanSidebarProps {
 export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProps) => {
   const [previousSection, setPreviousSection] = useState<string>(currentSection);
   const [animating, setAnimating] = useState(false);
-  const [animationStyle, setAnimationStyle] = useState<React.CSSProperties>({});
+  const [dotPosition, setDotPosition] = useState<{ startTop: number; endTop: number } | null>(null);
   const sectionRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (currentSection !== previousSection) {
-      const prevIndex = sections.findIndex(s => s.id === previousSection);
-      const currIndex = sections.findIndex(s => s.id === currentSection);
-      
+    if (currentSection !== previousSection && containerRef.current) {
       const prevEl = sectionRefs.current.get(previousSection);
       const currEl = sectionRefs.current.get(currentSection);
       
       if (prevEl && currEl) {
+        const containerRect = containerRef.current.getBoundingClientRect();
         const prevRect = prevEl.getBoundingClientRect();
         const currRect = currEl.getBoundingClientRect();
-        const containerRect = prevEl.closest('.relative')?.getBoundingClientRect();
         
-        if (containerRect) {
-          const startTop = prevRect.top - containerRect.top + 6; // center of the dot
-          const endTop = currRect.top - containerRect.top + 6;
-          
-          setAnimationStyle({
-            position: 'absolute',
-            left: '18px',
-            top: `${startTop}px`,
-            transform: 'translateX(-50%)',
-            '--end-top': `${endTop}px`,
-          } as React.CSSProperties);
-          
-          setAnimating(true);
-          
-          setTimeout(() => {
-            setAnimating(false);
-            setPreviousSection(currentSection);
-          }, 400);
-        }
+        const startTop = prevRect.top - containerRect.top + prevRect.height / 2;
+        const endTop = currRect.top - containerRect.top + currRect.height / 2;
+        
+        setDotPosition({ startTop, endTop });
+        setAnimating(true);
+        
+        setTimeout(() => {
+          setAnimating(false);
+          setDotPosition(null);
+          setPreviousSection(currentSection);
+        }, 400);
       } else {
         setPreviousSection(currentSection);
       }
@@ -73,12 +63,17 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
 
   return (
     <aside className="w-64 bg-sidebar border-r border-sidebar-border fixed h-screen overflow-y-auto">
-      <div className="p-6 space-y-6 relative">
+      <div ref={containerRef} className="p-6 space-y-6 relative">
         {/* Animated yellow dot */}
-        {animating && (
+        {animating && dotPosition && (
           <div
-            className="w-3 h-3 rounded-full bg-yellow-400 z-20 animate-drop-dot"
-            style={animationStyle}
+            className="w-3 h-3 rounded-full bg-yellow-400 z-20 absolute pointer-events-none animate-drop-dot"
+            style={{
+              left: '18px',
+              top: `${dotPosition.startTop}px`,
+              transform: 'translateX(-50%) translateY(-50%)',
+              ['--end-top' as string]: `${dotPosition.endTop}px`,
+            } as React.CSSProperties}
           />
         )}
         
