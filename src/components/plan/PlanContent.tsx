@@ -63,7 +63,7 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      <div className="fixed bottom-8 right-8 shadow-lg flex items-center gap-3">
+      <div className="fixed bottom-20 right-8 shadow-2xl flex items-center gap-3">
         {isSaving && (
           <span className="text-sm text-muted-foreground flex items-center gap-2 bg-background px-3 py-2 rounded-md border">
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -73,6 +73,7 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
         <Button
           onClick={handleSave}
           size="lg"
+          className="border border-black shadow-xl"
         >
           <Save className="h-4 w-4 mr-2" />
           Save Progress
