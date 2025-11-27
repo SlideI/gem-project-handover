@@ -44,7 +44,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
       if (prevEl && currEl) {
         const prevRect = prevEl.getBoundingClientRect();
         const currRect = currEl.getBoundingClientRect();
-        const containerRect = prevEl.closest('aside')?.getBoundingClientRect();
+        const containerRect = prevEl.closest('.relative')?.getBoundingClientRect();
         
         if (containerRect) {
           const startTop = prevRect.top - containerRect.top + 6; // center of the dot
@@ -52,7 +52,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
           
           setAnimationStyle({
             position: 'absolute',
-            left: '24px',
+            left: '18px',
             top: `${startTop}px`,
             transform: 'translateX(-50%)',
             '--end-top': `${endTop}px`,
@@ -88,9 +88,9 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
               <button
                 onClick={() => onSectionChange(section.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 p-3 rounded-lg text-sm transition-colors text-left",
+                  "w-full flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors text-left",
                   currentSection === section.id
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold"
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
                     : "text-sidebar-foreground hover:bg-sidebar-accent/50"
                 )}
               >
