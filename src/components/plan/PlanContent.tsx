@@ -1,7 +1,9 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Save, Loader2 } from "lucide-react";
 import { usePlan } from "@/contexts/PlanContext";
+import { ThemeSelector } from "./ThemeSelector";
 import { toast } from "sonner";
 import { AboutMeSection } from "./sections/AboutMeSection";
 import { IdentitySection } from "./sections/IdentitySection";
@@ -24,6 +26,12 @@ interface PlanContentProps {
 
 export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProps) => {
   const { saveProgress, isSaving } = usePlan();
+  const [selectedTheme, setSelectedTheme] = useState("default");
+
+  useEffect(() => {
+    // Apply theme to document root
+    document.documentElement.setAttribute('data-theme', selectedTheme);
+  }, [selectedTheme]);
 
   const handleSave = () => {
     saveProgress();
@@ -63,6 +71,8 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
+      <ThemeSelector selectedTheme={selectedTheme} onThemeChange={setSelectedTheme} />
+      
       <div className="fixed bottom-8 right-8 shadow-lg flex items-center gap-3">
         {isSaving && (
           <span className="text-sm text-muted-foreground flex items-center gap-2 bg-background px-3 py-2 rounded-md border">
