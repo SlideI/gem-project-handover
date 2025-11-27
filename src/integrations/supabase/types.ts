@@ -23,6 +23,7 @@ export type Database = {
           id: string
           responsible: string
           section_id: string
+          show_in_timeline: boolean
           support: string
           updated_at: string
         }
@@ -34,6 +35,7 @@ export type Database = {
           id?: string
           responsible?: string
           section_id: string
+          show_in_timeline?: boolean
           support?: string
           updated_at?: string
         }
@@ -45,6 +47,7 @@ export type Database = {
           id?: string
           responsible?: string
           section_id?: string
+          show_in_timeline?: boolean
           support?: string
           updated_at?: string
         }

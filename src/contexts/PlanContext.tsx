@@ -9,6 +9,7 @@ interface Action {
   deadline: string;
   support: string;
   completed: boolean;
+  show_in_timeline?: boolean;
 }
 
 interface SectionData {
@@ -46,6 +47,7 @@ const defaultAction: Action = {
   deadline: "",
   support: "",
   completed: false,
+  show_in_timeline: true,
 };
 
 const initialSections: Record<string, SectionData> = {
