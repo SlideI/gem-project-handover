@@ -130,6 +130,118 @@ All colors MUST be HSL.
     --gradient-header: linear-gradient(135deg, hsl(207 90% 35%), hsl(207 90% 45%));
     --gradient-subtle: linear-gradient(180deg, hsl(215 28% 17%), hsl(215 28% 20%));
   }
+
+  /* Arctic Blue Theme */
+  [data-theme="arctic-blue"] {
+    --primary: 200 95% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 200 85% 85%;
+    --secondary: 195 85% 92%;
+    --secondary-foreground: 200 60% 25%;
+    --accent: 210 90% 92%;
+    --accent-foreground: 200 95% 45%;
+    --muted: 200 20% 94%;
+    --sidebar-primary: 200 95% 45%;
+    --sidebar-accent: 200 50% 92%;
+    --progress-fill: 200 95% 45%;
+    --kpi-upcoming: 200 95% 45%;
+  }
+
+  /* Forest Green Theme */
+  [data-theme="forest-green"] {
+    --primary: 140 70% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 140 60% 85%;
+    --secondary: 130 50% 92%;
+    --secondary-foreground: 140 60% 25%;
+    --accent: 150 65% 90%;
+    --accent-foreground: 140 70% 35%;
+    --muted: 140 15% 94%;
+    --sidebar-primary: 140 70% 35%;
+    --sidebar-accent: 140 50% 90%;
+    --progress-fill: 140 70% 35%;
+    --kpi-upcoming: 140 70% 35%;
+  }
+
+  /* Sunset Orange Theme */
+  [data-theme="sunset-orange"] {
+    --primary: 25 95% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 25 85% 85%;
+    --secondary: 35 90% 90%;
+    --secondary-foreground: 25 70% 30%;
+    --accent: 15 100% 92%;
+    --accent-foreground: 25 95% 55%;
+    --muted: 30 20% 94%;
+    --sidebar-primary: 25 95% 55%;
+    --sidebar-accent: 25 80% 90%;
+    --progress-fill: 25 95% 55%;
+    --kpi-upcoming: 25 95% 55%;
+  }
+
+  /* Lavender Dream Theme */
+  [data-theme="lavender-dream"] {
+    --primary: 270 60% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 270 50% 85%;
+    --secondary: 280 50% 92%;
+    --secondary-foreground: 270 50% 30%;
+    --accent: 260 55% 92%;
+    --accent-foreground: 270 60% 65%;
+    --muted: 270 20% 95%;
+    --sidebar-primary: 270 60% 65%;
+    --sidebar-accent: 270 40% 90%;
+    --progress-fill: 270 60% 65%;
+    --kpi-upcoming: 270 60% 65%;
+  }
+
+  /* Ocean Teal Theme */
+  [data-theme="ocean-teal"] {
+    --primary: 180 70% 40%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 180 60% 85%;
+    --secondary: 175 65% 92%;
+    --secondary-foreground: 180 60% 25%;
+    --accent: 185 75% 90%;
+    --accent-foreground: 180 70% 40%;
+    --muted: 180 15% 94%;
+    --sidebar-primary: 180 70% 40%;
+    --sidebar-accent: 180 55% 90%;
+    --progress-fill: 180 70% 40%;
+    --kpi-upcoming: 180 70% 40%;
+  }
+
+  /* Crazy Colours Theme */
+  [data-theme="crazy-colours"] {
+    --primary: 330 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 330 80% 85%;
+    --secondary: 120 90% 85%;
+    --secondary-foreground: 120 80% 20%;
+    --accent: 60 100% 85%;
+    --accent-foreground: 330 100% 50%;
+    --muted: 280 50% 92%;
+    --sidebar-primary: 330 100% 50%;
+    --sidebar-accent: 280 60% 90%;
+    --progress-fill: 330 100% 50%;
+    --kpi-upcoming: 330 100% 50%;
+  }
+
+  /* Random Mix-up Theme */
+  [data-theme="random-mixup"] {
+    --primary: 45 95% 55%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 45 80% 85%;
+    --secondary: 310 70% 90%;
+    --secondary-foreground: 310 70% 25%;
+    --accent: 160 85% 88%;
+    --accent-foreground: 45 95% 55%;
+    --muted: 200 30% 94%;
+    --sidebar-primary: 45 95% 55%;
+    --sidebar-accent: 160 65% 88%;
+    --progress-fill: 45 95% 55%;
+    --kpi-upcoming: 45 95% 55%;
+  }
 }
 
 @layer base {
