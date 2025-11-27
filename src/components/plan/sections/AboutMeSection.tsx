@@ -317,7 +317,7 @@ export const AboutMeSection = () => {
           onChange={(value) => updateField("about-me", "supportPeople", JSON.stringify(value))}
         />
 
-        <FieldWithPrompt label="Why is Oranga Tamariki involved with me and my whānau, and what is my current situation">
+        <FieldWithPrompt label="Why is the service involved with me and my whānau, and what is my current situation">
           <Textarea
             value={section.fields.otInvolvement || ""}
             onChange={(e) => updateField("about-me", "otInvolvement", e.target.value)}

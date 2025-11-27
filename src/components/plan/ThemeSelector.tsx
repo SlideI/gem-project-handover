@@ -8,7 +8,7 @@ export interface Theme {
 }
 
 export const themes: Theme[] = [
-  { id: "default", name: "Oranga Tamariki", description: "Default brand theme" },
+  { id: "default", name: "Default", description: "Default brand theme" },
   { id: "arctic-blue", name: "Arctic Blue", description: "Cool and calming blue tones" },
   { id: "forest-green", name: "Forest Green", description: "Natural green palette" },
   { id: "sunset-orange", name: "Sunset Orange", description: "Warm orange and amber hues" },
