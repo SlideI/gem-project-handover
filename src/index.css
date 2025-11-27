@@ -133,6 +133,10 @@ All colors MUST be HSL.
 
   /* Arctic Blue Theme */
   [data-theme="arctic-blue"] {
+    --background: 200 40% 97%;
+    --foreground: 200 60% 20%;
+    --card: 200 50% 99%;
+    --card-foreground: 200 60% 20%;
     --primary: 200 95% 45%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 200 85% 85%;
@@ -141,6 +145,9 @@ All colors MUST be HSL.
     --accent: 210 90% 92%;
     --accent-foreground: 200 95% 45%;
     --muted: 200 20% 94%;
+    --border: 200 30% 88%;
+    --input: 200 30% 88%;
+    --sidebar-background: 200 50% 99%;
     --sidebar-primary: 200 95% 45%;
     --sidebar-accent: 200 50% 92%;
     --progress-fill: 200 95% 45%;
@@ -149,6 +156,10 @@ All colors MUST be HSL.
 
   /* Forest Green Theme */
   [data-theme="forest-green"] {
+    --background: 140 30% 97%;
+    --foreground: 140 60% 20%;
+    --card: 140 40% 99%;
+    --card-foreground: 140 60% 20%;
     --primary: 140 70% 35%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 140 60% 85%;
@@ -157,6 +168,9 @@ All colors MUST be HSL.
     --accent: 150 65% 90%;
     --accent-foreground: 140 70% 35%;
     --muted: 140 15% 94%;
+    --border: 140 30% 88%;
+    --input: 140 30% 88%;
+    --sidebar-background: 140 40% 99%;
     --sidebar-primary: 140 70% 35%;
     --sidebar-accent: 140 50% 90%;
     --progress-fill: 140 70% 35%;
@@ -165,6 +179,10 @@ All colors MUST be HSL.
 
   /* Sunset Orange Theme */
   [data-theme="sunset-orange"] {
+    --background: 35 45% 97%;
+    --foreground: 25 70% 20%;
+    --card: 35 55% 99%;
+    --card-foreground: 25 70% 20%;
     --primary: 25 95% 55%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 25 85% 85%;
@@ -173,6 +191,9 @@ All colors MUST be HSL.
     --accent: 15 100% 92%;
     --accent-foreground: 25 95% 55%;
     --muted: 30 20% 94%;
+    --border: 30 35% 88%;
+    --input: 30 35% 88%;
+    --sidebar-background: 35 55% 99%;
     --sidebar-primary: 25 95% 55%;
     --sidebar-accent: 25 80% 90%;
     --progress-fill: 25 95% 55%;
@@ -181,6 +202,10 @@ All colors MUST be HSL.
 
   /* Lavender Dream Theme */
   [data-theme="lavender-dream"] {
+    --background: 270 35% 97%;
+    --foreground: 270 50% 25%;
+    --card: 270 45% 99%;
+    --card-foreground: 270 50% 25%;
     --primary: 270 60% 65%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 270 50% 85%;
@@ -189,6 +214,9 @@ All colors MUST be HSL.
     --accent: 260 55% 92%;
     --accent-foreground: 270 60% 65%;
     --muted: 270 20% 95%;
+    --border: 270 25% 90%;
+    --input: 270 25% 90%;
+    --sidebar-background: 270 45% 99%;
     --sidebar-primary: 270 60% 65%;
     --sidebar-accent: 270 40% 90%;
     --progress-fill: 270 60% 65%;
@@ -197,6 +225,10 @@ All colors MUST be HSL.
 
   /* Ocean Teal Theme */
   [data-theme="ocean-teal"] {
+    --background: 180 35% 97%;
+    --foreground: 180 60% 20%;
+    --card: 180 45% 99%;
+    --card-foreground: 180 60% 20%;
     --primary: 180 70% 40%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 180 60% 85%;
@@ -205,6 +237,9 @@ All colors MUST be HSL.
     --accent: 185 75% 90%;
     --accent-foreground: 180 70% 40%;
     --muted: 180 15% 94%;
+    --border: 180 30% 88%;
+    --input: 180 30% 88%;
+    --sidebar-background: 180 45% 99%;
     --sidebar-primary: 180 70% 40%;
     --sidebar-accent: 180 55% 90%;
     --progress-fill: 180 70% 40%;
@@ -213,6 +248,10 @@ All colors MUST be HSL.
 
   /* Crazy Colours Theme */
   [data-theme="crazy-colours"] {
+    --background: 280 55% 96%;
+    --foreground: 330 80% 25%;
+    --card: 290 65% 98%;
+    --card-foreground: 330 80% 25%;
     --primary: 330 100% 50%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 330 80% 85%;
@@ -221,6 +260,9 @@ All colors MUST be HSL.
     --accent: 60 100% 85%;
     --accent-foreground: 330 100% 50%;
     --muted: 280 50% 92%;
+    --border: 280 40% 88%;
+    --input: 280 40% 88%;
+    --sidebar-background: 290 65% 98%;
     --sidebar-primary: 330 100% 50%;
     --sidebar-accent: 280 60% 90%;
     --progress-fill: 330 100% 50%;
@@ -229,6 +271,10 @@ All colors MUST be HSL.
 
   /* Random Mix-up Theme */
   [data-theme="random-mixup"] {
+    --background: 200 40% 96%;
+    --foreground: 45 70% 25%;
+    --card: 180 50% 98%;
+    --card-foreground: 45 70% 25%;
     --primary: 45 95% 55%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 45 80% 85%;
@@ -237,6 +283,9 @@ All colors MUST be HSL.
     --accent: 160 85% 88%;
     --accent-foreground: 45 95% 55%;
     --muted: 200 30% 94%;
+    --border: 200 35% 88%;
+    --input: 200 35% 88%;
+    --sidebar-background: 180 50% 98%;
     --sidebar-primary: 45 95% 55%;
     --sidebar-accent: 160 65% 88%;
     --progress-fill: 45 95% 55%;
