@@ -221,8 +221,9 @@ export const AboutMeSection = () => {
           onChange={(e) => handleFileSelect(e, 'background')}
         />
 
-        <h1 className="text-3xl font-bold text-center mt-4">About Me</h1>
       </div>
+
+      <h2 className="text-2xl font-semibold text-primary">About Me</h2>
 
       <div className="space-y-6">
         {/* Pre-populated fields */}
