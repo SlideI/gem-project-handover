@@ -76,7 +76,7 @@ export const YouthJusticeSection = () => {
 
         <FieldWithPrompt
           label="What are the views of my significant people in relation to me being placed in residence, remand home, remain in police custody, or bailed to the community?"
-          prompt="Outline whānau or family, community, Police and Oranga Tamariki views and their rationale"
+          prompt="Outline whānau or family, community, Police and case management views and their rationale"
         >
           <SelectField
             label=""
