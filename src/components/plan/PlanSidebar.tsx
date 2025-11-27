@@ -1,9 +1,4 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Home, FileText } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { PdfGenerationDialog } from "./PdfGenerationDialog";
 
 interface Section {
   id: string;
@@ -32,12 +27,7 @@ interface PlanSidebarProps {
 }
 
 export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProps) => {
-  const navigate = useNavigate();
-  const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
-
   return (
-    <>
-      <PdfGenerationDialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen} />
     <aside className="w-64 bg-sidebar border-r border-sidebar-border fixed h-screen overflow-y-auto">
       <div className="p-6 space-y-6">
         <div className="space-y-2">
@@ -73,27 +63,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
             </div>
           ))}
         </div>
-
-        <div className="pt-6 border-t border-sidebar-border space-y-2">
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={() => navigate("/")}
-          >
-            <Home className="h-4 w-4 mr-2" />
-            Home
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-start"
-            onClick={() => setPdfDialogOpen(true)}
-          >
-            <FileText className="h-4 w-4 mr-2" />
-            Generate PDF
-          </Button>
-        </div>
       </div>
     </aside>
-    </>
   );
 };
