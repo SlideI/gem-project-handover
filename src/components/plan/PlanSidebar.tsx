@@ -44,10 +44,8 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
         const prevRect = prevEl.getBoundingClientRect();
         const currRect = currEl.getBoundingClientRect();
         
-        // Calculate positions relative to container
         const startTop = prevRect.top - containerRect.top + prevRect.height / 2;
         const endTop = currRect.top - containerRect.top + currRect.height / 2;
-        // Get the horizontal center of the circle (they should all be aligned)
         const left = prevRect.left - containerRect.left + prevRect.width / 2;
         
         setDotPosition({ startTop, endTop, left });
@@ -66,7 +64,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
 
   return (
     <aside className="w-64 bg-sidebar border-r border-sidebar-border fixed h-screen overflow-y-auto">
-      <div ref={containerRef} className="p-6 space-y-6 relative">
+      <div ref={containerRef} className="p-6 relative">
         {/* Animated yellow dot */}
         {animating && dotPosition && (
           <div
@@ -80,47 +78,54 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
           />
         )}
         
-        <div className="space-y-0">
+        <nav>
           {sections.map((section, index) => (
             <div key={section.id} className="relative">
               <button
                 onClick={() => onSectionChange(section.id)}
-                className={cn(
-                  "w-full flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors text-left min-h-[48px]",
-                  currentSection === section.id
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-                )}
+                className="w-full flex items-start gap-3 py-3 px-2 text-sm font-medium text-left"
               >
+                {/* Circle indicator */}
                 <div
                   ref={(el) => sectionRefs.current.set(section.id, el)}
                   className={cn(
-                    "w-3 h-3 rounded-full flex-shrink-0 z-10 relative transition-colors",
+                    "w-3 h-3 rounded-full flex-shrink-0 mt-0.5 transition-colors",
                     currentSection === section.id
                       ? "bg-sidebar-primary"
                       : "bg-border"
                   )}
                 />
-                <span className="flex-1">{section.label}</span>
+                {/* Label */}
+                <span
+                  className={cn(
+                    "flex-1 transition-colors",
+                    currentSection === section.id
+                      ? "text-sidebar-accent-foreground"
+                      : "text-sidebar-foreground hover:text-sidebar-accent-foreground"
+                  )}
+                >
+                  {section.label}
+                </span>
                 {section.progress && (
                   <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                     {section.progress}
                   </span>
                 )}
               </button>
+              {/* Connecting line */}
               {index < sections.length - 1 && (
                 <div 
                   className="absolute w-0.5 bg-border"
                   style={{
-                    height: '8px',
-                    left: '18px',
-                    bottom: '-8px',
+                    height: '12px',
+                    left: '14px',
+                    bottom: '-6px',
                   }}
                 />
               )}
             </div>
           ))}
-        </div>
+        </nav>
       </div>
     </aside>
   );
