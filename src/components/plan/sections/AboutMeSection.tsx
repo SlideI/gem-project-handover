@@ -223,7 +223,12 @@ export const AboutMeSection = () => {
 
       </div>
 
-      <h2 className="text-2xl font-semibold text-primary">About Me</h2>
+      <div>
+        <h2 className="text-3xl font-bold text-foreground mb-2">About Me</h2>
+        <p className="text-muted-foreground">
+          Tell us about yourself
+        </p>
+      </div>
 
       <div className="space-y-6">
         {/* Pre-populated fields */}
