@@ -35,7 +35,7 @@ export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: Floating
   return (
     <>
       <PdfGenerationDialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen} />
-      <div className="fixed top-4 right-4 z-50 bg-primary px-3 py-2 rounded-lg shadow-lg flex items-center gap-2">
+      <div className="fixed top-4 right-4 z-50 bg-primary px-3 py-2 rounded-lg shadow-2xl border border-black flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
