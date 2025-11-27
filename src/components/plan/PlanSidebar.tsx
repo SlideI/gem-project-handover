@@ -30,7 +30,7 @@ interface PlanSidebarProps {
 export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProps) => {
   const [previousSection, setPreviousSection] = useState<string>(currentSection);
   const [animating, setAnimating] = useState(false);
-  const [dotPosition, setDotPosition] = useState<{ startTop: number; endTop: number } | null>(null);
+  const [dotPosition, setDotPosition] = useState<{ startTop: number; endTop: number; left: number } | null>(null);
   const sectionRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -44,10 +44,13 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
         const prevRect = prevEl.getBoundingClientRect();
         const currRect = currEl.getBoundingClientRect();
         
+        // Calculate positions relative to container
         const startTop = prevRect.top - containerRect.top + prevRect.height / 2;
         const endTop = currRect.top - containerRect.top + currRect.height / 2;
+        // Get the horizontal center of the circle (they should all be aligned)
+        const left = prevRect.left - containerRect.left + prevRect.width / 2;
         
-        setDotPosition({ startTop, endTop });
+        setDotPosition({ startTop, endTop, left });
         setAnimating(true);
         
         setTimeout(() => {
@@ -69,9 +72,9 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
           <div
             className="w-3 h-3 rounded-full bg-yellow-400 z-20 absolute pointer-events-none animate-drop-dot"
             style={{
-              left: '18px',
+              left: `${dotPosition.left}px`,
               top: `${dotPosition.startTop}px`,
-              transform: 'translateX(-50%) translateY(-50%)',
+              transform: 'translate(-50%, -50%)',
               ['--end-top' as string]: `${dotPosition.endTop}px`,
             } as React.CSSProperties}
           />
@@ -83,7 +86,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
               <button
                 onClick={() => onSectionChange(section.id)}
                 className={cn(
-                  "w-full flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors text-left",
+                  "w-full flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-colors text-left min-h-[48px]",
                   currentSection === section.id
                     ? "bg-sidebar-accent text-sidebar-accent-foreground"
                     : "text-sidebar-foreground hover:bg-sidebar-accent/50"
@@ -92,7 +95,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
                 <div
                   ref={(el) => sectionRefs.current.set(section.id, el)}
                   className={cn(
-                    "w-3 h-3 rounded-full flex-shrink-0 z-10 relative",
+                    "w-3 h-3 rounded-full flex-shrink-0 z-10 relative transition-colors",
                     currentSection === section.id
                       ? "bg-sidebar-primary"
                       : "bg-border"
@@ -106,7 +109,14 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
                 )}
               </button>
               {index < sections.length - 1 && (
-                <div className="h-8 w-0.5 bg-border ml-[18px]" />
+                <div 
+                  className="absolute w-0.5 bg-border"
+                  style={{
+                    height: '8px',
+                    left: '18px',
+                    bottom: '-8px',
+                  }}
+                />
               )}
             </div>
           ))}
