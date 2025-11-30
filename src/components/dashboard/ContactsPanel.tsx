@@ -17,8 +17,8 @@ interface UploadedFile {
   uploadedAt: string;
   type: string;
   size: string;
-  planTitle: string;
   sectionName: string;
+  planVersion: number;
 }
 
 const SECTION_NAMES: Record<string, string> = {
@@ -85,7 +85,7 @@ export const ContactsPanel = () => {
         // Get all plans for the user
         const { data: plans } = await supabase
           .from('plans')
-          .select('id, title')
+          .select('id, title, version_number')
           .eq('user_id', user.user.id);
 
         if (!plans || plans.length === 0) {
@@ -109,8 +109,8 @@ export const ContactsPanel = () => {
         sections.forEach(section => {
           const fields = section.fields as Record<string, unknown>;
           const plan = plans.find(p => p.id === section.plan_id);
-          const planTitle = plan?.title || 'Unknown Plan';
           const sectionName = SECTION_NAMES[section.section_key] || section.section_key;
+          const planVersion = plan?.version_number || 1;
 
           // Look for attachment fields (they end with '-attachments')
           Object.entries(fields).forEach(([key, value]) => {
@@ -125,8 +125,8 @@ export const ContactsPanel = () => {
                       uploadedAt: attachment.uploadedAt,
                       type: getFileType(attachment.name),
                       size: formatFileSize(attachment.url),
-                      planTitle,
                       sectionName,
+                      planVersion,
                     });
                   });
                 }
@@ -163,7 +163,8 @@ export const ContactsPanel = () => {
               <TableHead>Filename</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Size</TableHead>
-              <TableHead>Plan Uploaded To</TableHead>
+              <TableHead>Section Uploaded</TableHead>
+              <TableHead>Plan Version</TableHead>
               <TableHead>Date Uploaded</TableHead>
               <TableHead className="w-[60px]"></TableHead>
             </TableRow>
@@ -171,13 +172,13 @@ export const ContactsPanel = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                   Loading files...
                 </TableCell>
               </TableRow>
             ) : files.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                   No files uploaded yet
                 </TableCell>
               </TableRow>
@@ -194,12 +195,8 @@ export const ContactsPanel = () => {
                   </TableCell>
                   <TableCell>{file.type}</TableCell>
                   <TableCell>{file.size}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-col">
-                      <span className="font-medium">{file.planTitle}</span>
-                      <span className="text-xs text-muted-foreground">{file.sectionName}</span>
-                    </div>
-                  </TableCell>
+                  <TableCell>{file.sectionName}</TableCell>
+                  <TableCell>{file.planVersion}</TableCell>
                   <TableCell>{formatDate(file.uploadedAt)}</TableCell>
                   <TableCell>
                     <Button
