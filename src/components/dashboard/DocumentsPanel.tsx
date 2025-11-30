@@ -138,12 +138,22 @@ export const DocumentsPanel = () => {
     }
   };
 
+  const handleNewPlanClick = () => {
+    if (planData?.id) {
+      // Plan exists - show confirmation modal
+      setShowNewPlanDialog(true);
+    } else {
+      // No plan exists - navigate directly to create plan
+      navigate("/plan");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Documents</h3>
         <Button 
-          onClick={() => setShowNewPlanDialog(true)}
+          onClick={handleNewPlanClick}
           size="sm"
           className="bg-success hover:bg-success/90 text-white"
         >
@@ -154,21 +164,21 @@ export const DocumentsPanel = () => {
       <AlertDialog open={showNewPlanDialog} onOpenChange={setShowNewPlanDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Create New Plan Version?</AlertDialogTitle>
+            <AlertDialogTitle>Create New Plan</AlertDialogTitle>
             <AlertDialogDescription>
-              Creating a new plan version will automatically lock the current version, 
-              making it a snapshot of all data entered until now. This ensures your 
-              existing plan data is preserved. Do you want to proceed?
+              You have selected to create a new plan when there is an active plan already in progress. 
+              Creating a new plan will archive a snapshot of the existing plan, copying the data entered 
+              so far into the new plan. Are you sure you wish to proceed?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isCreating}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isCreating}>No</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleCreateNewVersion}
               disabled={isCreating}
               className="bg-success hover:bg-success/90"
             >
-              {isCreating ? "Creating..." : "Create New Version"}
+              {isCreating ? "Creating..." : "Yes"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
