@@ -15,12 +15,15 @@ import { ConditionalField } from "../ConditionalField";
 import { DatePickerField } from "../DatePickerField";
 import { SelectField } from "../SelectField";
 import { ActionTable } from "../ActionTable";
+import { ImageCropDialog } from "../ImageCropDialog";
 
 export const AboutMeSection = () => {
   const { sections, updateField, planId, profilePicture, backgroundPicture, updatePlanImages } = usePlan();
   const section = sections["about-me"];
   const [showMenu, setShowMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
 
@@ -106,7 +109,58 @@ export const AboutMeSection = () => {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>, type: 'profile' | 'background') => {
     const file = e.target.files?.[0];
     if (file) {
-      uploadImage(file, type);
+      if (type === 'profile') {
+        // Open crop dialog for profile pictures
+        setSelectedFile(file);
+        setCropDialogOpen(true);
+      } else {
+        // Upload background directly
+        uploadImage(file, type);
+      }
+    }
+    // Reset the input so the same file can be selected again
+    e.target.value = '';
+  };
+
+  const handleCroppedImage = async (croppedBlob: Blob) => {
+    if (!planId) {
+      toast.error("Please create a plan first");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error("Not authenticated");
+
+      const fileName = `${user.id}/profile-${Date.now()}.jpg`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('profile-images')
+        .upload(fileName, croppedBlob, { upsert: true, contentType: 'image/jpeg' });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('profile-images')
+        .getPublicUrl(fileName);
+
+      const { error: updateError } = await supabase
+        .from('plans')
+        .update({ profile_picture_url: publicUrl })
+        .eq('id', planId);
+
+      if (updateError) throw updateError;
+
+      updatePlanImages(publicUrl, backgroundPicture);
+
+      toast.success("Profile picture updated");
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error("Failed to upload image");
+    } finally {
+      setUploading(false);
+      setSelectedFile(null);
     }
   };
 
@@ -219,6 +273,14 @@ export const AboutMeSection = () => {
           accept="image/*"
           className="hidden"
           onChange={(e) => handleFileSelect(e, 'background')}
+        />
+
+        {/* Image Crop Dialog */}
+        <ImageCropDialog
+          open={cropDialogOpen}
+          onOpenChange={setCropDialogOpen}
+          imageFile={selectedFile}
+          onConfirm={handleCroppedImage}
         />
 
       </div>
