@@ -68,6 +68,7 @@ export const DocumentsPanel = () => {
   }, []);
 
   const activePlan = plans.find(p => p.status === 'active');
+  const latestVersionedPlan = plans.find(p => p.status === 'versioned');
 
   const handleCreateNewVersion = async () => {
     if (!activePlan?.id) return;
@@ -177,13 +178,114 @@ export const DocumentsPanel = () => {
     }
   };
 
-  const handleNewPlanClick = () => {
+  const handleNewPlanClick = async () => {
     if (activePlan?.id) {
-      // Plan exists - show confirmation modal
+      // Active plan exists - show confirmation modal
       setShowNewPlanDialog(true);
+    } else if (latestVersionedPlan) {
+      // No active plan but versioned exists - create new plan and copy from versioned
+      await handleCreateFromVersioned();
     } else {
       // No plan exists - navigate directly to create plan
       navigate("/plan");
+    }
+  };
+
+  const handleCreateFromVersioned = async () => {
+    if (!latestVersionedPlan) return;
+    
+    setIsCreating(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("User not authenticated");
+
+      // Create new active plan
+      const { data: newPlan, error: createError } = await supabase
+        .from('plans')
+        .insert({
+          user_id: user.user.id,
+          title: latestVersionedPlan.title,
+          profile_picture_url: latestVersionedPlan.profile_picture_url,
+          background_picture_url: latestVersionedPlan.background_picture_url,
+          status: 'active',
+          version_number: (latestVersionedPlan.version_number || 1) + 1,
+          parent_plan_id: latestVersionedPlan.id,
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      // Copy all plan_sections from versioned plan to new plan
+      const { data: sections, error: sectionsError } = await supabase
+        .from('plan_sections')
+        .select('*')
+        .eq('plan_id', latestVersionedPlan.id);
+
+      if (sectionsError) throw sectionsError;
+
+      if (sections && sections.length > 0) {
+        const newSections = sections.map(section => ({
+          plan_id: newPlan.id,
+          section_key: section.section_key,
+          category: section.category,
+          fields: section.fields,
+        }));
+
+        const { data: insertedSections, error: insertError } = await supabase
+          .from('plan_sections')
+          .insert(newSections)
+          .select();
+
+        if (insertError) throw insertError;
+
+        // Copy all actions from old sections to new sections
+        const oldSectionIds = sections.map(s => s.id);
+        const { data: actions, error: actionsError } = await supabase
+          .from('actions')
+          .select('*')
+          .in('section_id', oldSectionIds);
+
+        if (actionsError) throw actionsError;
+
+        if (actions && actions.length > 0 && insertedSections) {
+          const sectionMapping = sections.reduce((acc, oldSection, idx) => {
+            acc[oldSection.id] = insertedSections[idx].id;
+            return acc;
+          }, {} as Record<string, string>);
+
+          const newActions = actions.map(action => ({
+            section_id: sectionMapping[action.section_id],
+            action: action.action,
+            support: action.support,
+            responsible: action.responsible,
+            deadline: action.deadline,
+            completed: action.completed,
+          }));
+
+          const { error: actionsInsertError } = await supabase
+            .from('actions')
+            .insert(newActions);
+
+          if (actionsInsertError) throw actionsInsertError;
+        }
+      }
+
+      toast({
+        title: "New plan created",
+        description: "Data copied from previous version.",
+      });
+
+      navigate("/plan");
+    } catch (error) {
+      console.error("Error creating plan from versioned:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create new plan. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
     }
   };
 

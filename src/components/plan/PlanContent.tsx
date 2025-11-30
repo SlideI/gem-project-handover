@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Save, Loader2, Lock } from "lucide-react";
+import { Save, Loader2, Lock, X } from "lucide-react";
 import { usePlan } from "@/contexts/PlanContext";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { AboutMeSection } from "./sections/AboutMeSection";
 import { IdentitySection } from "./sections/IdentitySection";
 import { ConnectionsSection } from "./sections/ConnectionsSection";
@@ -17,6 +19,16 @@ import { CareRequestSection } from "./sections/CareRequestSection";
 import { SummarySection } from "./sections/SummarySection";
 import { SectionNavigation } from "./SectionNavigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface PlanContentProps {
   currentSection: string;
@@ -24,11 +36,28 @@ interface PlanContentProps {
 }
 
 export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProps) => {
-  const { saveProgress, isSaving, isReadOnly, planData } = usePlan();
+  const { saveProgress, isSaving, isReadOnly, planData, isDirty, resetDirty } = usePlan();
+  const navigate = useNavigate();
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const handleSave = () => {
     saveProgress();
+    resetDirty();
     toast.success("Progress saved successfully");
+  };
+
+  const handleCancel = () => {
+    if (isDirty) {
+      setShowCancelDialog(true);
+    } else {
+      navigate("/");
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    setShowCancelDialog(false);
+    resetDirty();
+    navigate("/");
   };
 
   const renderSection = () => {
@@ -83,6 +112,15 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
             </span>
           )}
           <Button
+            onClick={handleCancel}
+            size="lg"
+            variant="outline"
+            className="shadow-xl"
+          >
+            <X className="h-4 w-4 mr-2" />
+            Cancel
+          </Button>
+          <Button
             onClick={handleSave}
             size="lg"
             className="border border-black shadow-xl"
@@ -92,6 +130,24 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
           </Button>
         </div>
       )}
+
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
+            <AlertDialogDescription>
+              You have made changes that have not been saved. Are you sure you wish to go back to the landing page? 
+              Any unsaved changes will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No, stay here</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmCancel}>
+              Yes, go back
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Card className="p-8">
         {renderSection()}
