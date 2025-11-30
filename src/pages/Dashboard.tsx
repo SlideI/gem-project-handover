@@ -85,7 +85,7 @@ const Dashboard = () => {
         <Card className="p-6">
           <Tabs defaultValue="documents">
             <TabsList>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
+              <TabsTrigger value="documents">All About Me Plans</TabsTrigger>
               <TabsTrigger value="files">Files</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>

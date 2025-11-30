@@ -37,6 +37,7 @@ interface PlanContextType {
   updatePlanImages: (profileUrl: string | null, backgroundUrl: string | null) => void;
   isLoading: boolean;
   isSaving: boolean;
+  isReadOnly: boolean;
 }
 
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
@@ -108,7 +109,12 @@ const initialSections: Record<string, SectionData> = {
   },
 };
 
-export const PlanProvider = ({ children }: { children: ReactNode }) => {
+interface PlanProviderProps {
+  children: ReactNode;
+  requestedPlanId?: string | null;
+}
+
+export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) => {
   const [sections, setSections] = useState<Record<string, SectionData>>(initialSections);
   const [sectionDbIds, setSectionDbIds] = useState<Record<string, string>>({});
   const [planId, setPlanId] = useState<string | null>(null);
@@ -125,6 +131,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isReadOnly, setIsReadOnly] = useState(false);
   const navigate = useNavigate();
 
   // Auth state listener
@@ -152,17 +159,39 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
     const fetchOrCreatePlan = async () => {
       try {
-        const { data: existingPlans, error: fetchError } = await supabase
-          .from("plans")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .order("created_at", { ascending: false })
-          .limit(10);
+        let plan;
+        
+        // If a specific plan ID is requested, load that plan
+        if (requestedPlanId) {
+          const { data: requestedPlan, error: planError } = await supabase
+            .from("plans")
+            .select("*")
+            .eq("id", requestedPlanId)
+            .eq("user_id", session.user.id)
+            .maybeSingle();
 
-        if (fetchError) throw fetchError;
+          if (planError) throw planError;
+          plan = requestedPlan;
+          
+          // Set read-only mode for versioned plans
+          if (plan?.status === 'versioned') {
+            setIsReadOnly(true);
+          }
+        } else {
+          // Default behavior: find active plan or most recent
+          const { data: existingPlans, error: fetchError } = await supabase
+            .from("plans")
+            .select("*")
+            .eq("user_id", session.user.id)
+            .order("created_at", { ascending: false })
+            .limit(10);
 
-        // Find the first active plan, or use the most recent one
-        const plan = existingPlans?.find(p => p.status === 'active') || existingPlans?.[0];
+          if (fetchError) throw fetchError;
+
+          // Find the first active plan, or use the most recent one
+          plan = existingPlans?.find(p => p.status === 'active') || existingPlans?.[0];
+          setIsReadOnly(false);
+        }
 
         if (plan) {
           setPlanId(plan.id);
@@ -255,7 +284,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchOrCreatePlan();
-  }, [session]);
+  }, [session, requestedPlanId]);
 
   const updatePlanImages = (profileUrl: string | null, backgroundUrl: string | null) => {
     setProfilePicture(profileUrl);
@@ -410,6 +439,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
       updatePlanImages,
       isLoading,
       isSaving,
+      isReadOnly,
     }}>
       {children}
     </PlanContext.Provider>

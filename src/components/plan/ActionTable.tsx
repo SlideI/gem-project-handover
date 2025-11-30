@@ -10,7 +10,7 @@ interface ActionTableProps {
 }
 
 export const ActionTable = ({ sectionId }: ActionTableProps) => {
-  const { sections, updateSection } = usePlan();
+  const { sections, updateSection, isReadOnly } = usePlan();
   const section = sections[sectionId];
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -20,11 +20,13 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
   const actions = section.actions || [];
 
   const handleRowClick = (index: number) => {
+    if (isReadOnly) return;
     setSelectedIndex(index);
     setIsDialogOpen(true);
   };
 
   const handleAddAction = () => {
+    if (isReadOnly) return;
     const newAction = {
       action: "",
       responsible: "",
@@ -49,6 +51,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
   };
 
   const handleCheckboxChange = (index: number, checked: boolean) => {
+    if (isReadOnly) return;
     const updatedActions = [...actions];
     updatedActions[index] = {
       ...updatedActions[index],
@@ -58,6 +61,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
   };
 
   const handleTimelineCheckboxChange = (index: number, checked: boolean) => {
+    if (isReadOnly) return;
     const updatedActions = [...actions];
     updatedActions[index] = {
       ...updatedActions[index],
@@ -82,7 +86,12 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold">My Plan - {section.category}</h2>
-      <p className="text-sm text-muted-foreground">Click on the table below to enter or change any information.</p>
+      <p className="text-sm text-muted-foreground">
+        {isReadOnly 
+          ? "This is a versioned plan. You can view the content but cannot make changes."
+          : "Click on the table below to enter or change any information."
+        }
+      </p>
       
       <ActionDialog
         open={isDialogOpen}
@@ -114,7 +123,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                 <TableRow
                   key={originalIndex}
                   onClick={() => handleRowClick(originalIndex)}
-                  className={`cursor-pointer ${action.completed ? 'opacity-60' : ''}`}
+                  className={`${!isReadOnly ? 'cursor-pointer' : ''} ${action.completed ? 'opacity-60' : ''}`}
                 >
                   {isFirstRow && (
                     <TableCell rowSpan={sortedActions.length} className="align-top font-medium bg-muted/30">
@@ -142,6 +151,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                       <Checkbox
                         checked={action.show_in_timeline !== false}
                         onCheckedChange={(checked) => handleTimelineCheckboxChange(originalIndex, checked as boolean)}
+                        disabled={isReadOnly}
                       />
                     </div>
                   </TableCell>
@@ -150,6 +160,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                       <Checkbox
                         checked={action.completed}
                         onCheckedChange={(checked) => handleCheckboxChange(originalIndex, checked as boolean)}
+                        disabled={isReadOnly}
                       />
                     </div>
                   </TableCell>
@@ -160,12 +171,14 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
         </Table>
       </div>
 
-      <div>
-        <Button onClick={handleAddAction} className="gap-2">
-          <span className="material-icons-outlined text-base">add</span>
-          Add Action
-        </Button>
-      </div>
+      {!isReadOnly && (
+        <div>
+          <Button onClick={handleAddAction} className="gap-2">
+            <span className="material-icons-outlined text-base">add</span>
+            Add Action
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Save, Loader2 } from "lucide-react";
+import { Save, Loader2, Lock } from "lucide-react";
 import { usePlan } from "@/contexts/PlanContext";
 import { toast } from "sonner";
 import { AboutMeSection } from "./sections/AboutMeSection";
@@ -16,6 +16,7 @@ import { ResidenceSection } from "./sections/ResidenceSection";
 import { CareRequestSection } from "./sections/CareRequestSection";
 import { SummarySection } from "./sections/SummarySection";
 import { SectionNavigation } from "./SectionNavigation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface PlanContentProps {
   currentSection: string;
@@ -23,7 +24,7 @@ interface PlanContentProps {
 }
 
 export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProps) => {
-  const { saveProgress, isSaving } = usePlan();
+  const { saveProgress, isSaving, isReadOnly, planData } = usePlan();
 
   const handleSave = () => {
     saveProgress();
@@ -63,22 +64,34 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
 
   return (
     <div className="p-8 max-w-5xl mx-auto">
-      <div className="fixed bottom-20 right-8 shadow-2xl flex items-center gap-3 z-50">
-        {isSaving && (
-          <span className="text-sm text-muted-foreground flex items-center gap-2 bg-background px-3 py-2 rounded-md border">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Saving...
-          </span>
-        )}
-        <Button
-          onClick={handleSave}
-          size="lg"
-          className="border border-black shadow-xl"
-        >
-          <Save className="h-4 w-4 mr-2" />
-          Save Progress
-        </Button>
-      </div>
+      {isReadOnly && (
+        <Alert className="mb-6 border-warning bg-warning/10">
+          <Lock className="h-4 w-4" />
+          <AlertDescription className="ml-2">
+            <strong>Read-only mode:</strong> This is a versioned plan (v{planData?.version_number}). 
+            You can view the content but cannot make changes.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {!isReadOnly && (
+        <div className="fixed bottom-20 right-8 shadow-2xl flex items-center gap-3 z-50">
+          {isSaving && (
+            <span className="text-sm text-muted-foreground flex items-center gap-2 bg-background px-3 py-2 rounded-md border">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Saving...
+            </span>
+          )}
+          <Button
+            onClick={handleSave}
+            size="lg"
+            className="border border-black shadow-xl"
+          >
+            <Save className="h-4 w-4 mr-2" />
+            Save Progress
+          </Button>
+        </div>
+      )}
 
       <Card className="p-8">
         {renderSection()}

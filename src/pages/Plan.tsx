@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { PlanSidebar } from "@/components/plan/PlanSidebar";
 import { PlanContent } from "@/components/plan/PlanContent";
 import { PlanProvider } from "@/contexts/PlanContext";
 import { FloatingActionButtons } from "@/components/plan/FloatingActionButtons";
 
 const Plan = () => {
+  const [searchParams] = useSearchParams();
+  const requestedPlanId = searchParams.get("id");
   const [currentSection, setCurrentSection] = useState("about-me");
   const [selectedTheme, setSelectedTheme] = useState("default");
   const mainRef = useRef<HTMLElement>(null);
@@ -42,7 +45,7 @@ const Plan = () => {
   }, [currentSection]);
 
   return (
-    <PlanProvider>
+    <PlanProvider requestedPlanId={requestedPlanId}>
       <div className="flex min-h-screen bg-background">
         <FloatingActionButtons 
           selectedTheme={selectedTheme}
