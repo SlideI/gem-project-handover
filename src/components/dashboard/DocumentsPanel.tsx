@@ -397,13 +397,6 @@ export const DocumentsPanel = () => {
           </TableBody>
         </Table>
       </div>
-
-      <div className="mt-8">
-        <h3 className="text-lg font-semibold mb-4">Plan Timeline</h3>
-        <div className="border rounded-lg p-8 text-center text-muted-foreground">
-          No timeline events yet
-        </div>
-      </div>
     </div>
   );
 };

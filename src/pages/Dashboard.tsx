@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Plus } from "lucide-react";
+import { Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { KPICards } from "@/components/dashboard/KPICards";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
@@ -11,15 +11,30 @@ import { DocumentsPanel } from "@/components/dashboard/DocumentsPanel";
 import { ContactsPanel } from "@/components/dashboard/ContactsPanel";
 import { HistoryPanel } from "@/components/dashboard/HistoryPanel";
 import { PlanProvider } from "@/contexts/PlanContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [showContactDetails, setShowContactDetails] = useState(false);
+  const [hasActivePlan, setHasActivePlan] = useState(false);
 
-  const handleNewPlan = () => {
-    // TODO: Implement versioning logic with modal
-    console.log("Create new plan version");
-  };
+  useEffect(() => {
+    const checkActivePlan = async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const { data } = await supabase
+        .from('plans')
+        .select('id')
+        .eq('user_id', user.user.id)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      setHasActivePlan(!!data);
+    };
+
+    checkActivePlan();
+  }, []);
 
   return (
     <PlanProvider>
@@ -54,6 +69,14 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
+              {hasActivePlan && (
+                <Button 
+                  onClick={() => navigate("/plan")}
+                  className="bg-success hover:bg-success/90 text-white"
+                >
+                  Update Existing Plan
+                </Button>
+              )}
             </div>
             
             {showContactDetails && (
