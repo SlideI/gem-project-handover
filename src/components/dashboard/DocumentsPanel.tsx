@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,19 +19,58 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { usePlan } from "@/contexts/PlanContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+
+interface Plan {
+  id: string;
+  title: string;
+  status: string;
+  version_number: number;
+  updated_at: string;
+  created_at: string;
+  profile_picture_url: string | null;
+  background_picture_url: string | null;
+}
 
 export const DocumentsPanel = () => {
   const navigate = useNavigate();
-  const { planData } = usePlan();
   const { toast } = useToast();
   const [showNewPlanDialog, setShowNewPlanDialog] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch all plans for the user
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const { data: user } = await supabase.auth.getUser();
+        if (!user.user) return;
+
+        const { data, error } = await supabase
+          .from('plans')
+          .select('*')
+          .eq('user_id', user.user.id)
+          .order('version_number', { ascending: false });
+
+        if (error) throw error;
+        setPlans(data || []);
+      } catch (error) {
+        console.error("Error fetching plans:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
+
+  const activePlan = plans.find(p => p.status === 'active');
 
   const handleCreateNewVersion = async () => {
-    if (!planData?.id) return;
+    if (!activePlan?.id) return;
     
     setIsCreating(true);
     try {
@@ -39,7 +78,7 @@ export const DocumentsPanel = () => {
       const { error: updateError } = await supabase
         .from('plans')
         .update({ status: 'versioned' })
-        .eq('id', planData.id);
+        .eq('id', activePlan.id);
 
       if (updateError) throw updateError;
 
@@ -51,12 +90,12 @@ export const DocumentsPanel = () => {
         .from('plans')
         .insert({
           user_id: user.user.id,
-          title: planData.title,
-          profile_picture_url: planData.profile_picture_url,
-          background_picture_url: planData.background_picture_url,
+          title: activePlan.title,
+          profile_picture_url: activePlan.profile_picture_url,
+          background_picture_url: activePlan.background_picture_url,
           status: 'active',
-          version_number: (planData.version_number || 1) + 1,
-          parent_plan_id: planData.id,
+          version_number: (activePlan.version_number || 1) + 1,
+          parent_plan_id: activePlan.id,
         })
         .select()
         .single();
@@ -67,7 +106,7 @@ export const DocumentsPanel = () => {
       const { data: sections, error: sectionsError } = await supabase
         .from('plan_sections')
         .select('*')
-        .eq('plan_id', planData.id);
+        .eq('plan_id', activePlan.id);
 
       if (sectionsError) throw sectionsError;
 
@@ -139,7 +178,7 @@ export const DocumentsPanel = () => {
   };
 
   const handleNewPlanClick = () => {
-    if (planData?.id) {
+    if (activePlan?.id) {
       // Plan exists - show confirmation modal
       setShowNewPlanDialog(true);
     } else {
@@ -148,10 +187,19 @@ export const DocumentsPanel = () => {
     }
   };
 
+  const handleViewPlan = (planId: string) => {
+    navigate(`/plan?id=${planId}`);
+  };
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "-";
+    return format(new Date(dateString), "dd/MM/yyyy");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Documents</h3>
+        <h3 className="text-lg font-semibold">All About Me Plans</h3>
         <Button 
           onClick={handleNewPlanClick}
           size="sm"
@@ -190,40 +238,60 @@ export const DocumentsPanel = () => {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Progress</TableHead>
+              <TableHead>Last Updated</TableHead>
+              <TableHead>Version Date</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">
-                {planData?.title || "All About Me Plan"}
-                {planData?.version_number && planData.version_number > 1 && (
-                  <span className="ml-2 text-xs text-muted-foreground">
-                    (v{planData.version_number})
-                  </span>
-                )}
-              </TableCell>
-              <TableCell>
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  planData?.status === 'versioned' 
-                    ? 'bg-muted text-muted-foreground' 
-                    : 'bg-success/10 text-success'
-                }`}>
-                  {planData?.status === 'versioned' ? 'Versioned' : 'Active'}
-                </span>
-              </TableCell>
-              <TableCell>0%</TableCell>
-              <TableCell>
-                <Button
-                  onClick={() => navigate("/plan")}
-                  size="sm"
-                  variant={planData?.status === 'versioned' ? 'outline' : 'default'}
-                >
-                  {planData?.status === 'versioned' ? 'View' : 'View/Edit'}
-                </Button>
-              </TableCell>
-            </TableRow>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  Loading plans...
+                </TableCell>
+              </TableRow>
+            ) : plans.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  No plans yet. Click "+ New Plan" to create one.
+                </TableCell>
+              </TableRow>
+            ) : (
+              plans.map((plan) => (
+                <TableRow key={plan.id}>
+                  <TableCell className="font-medium">
+                    {plan.title || "All About Me Plan"}
+                    {plan.version_number > 1 && (
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        (v{plan.version_number})
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      plan.status === 'versioned' 
+                        ? 'bg-muted text-muted-foreground' 
+                        : 'bg-success/10 text-success'
+                    }`}>
+                      {plan.status === 'versioned' ? 'Versioned' : 'Active'}
+                    </span>
+                  </TableCell>
+                  <TableCell>{formatDate(plan.updated_at)}</TableCell>
+                  <TableCell>
+                    {plan.status === 'versioned' ? formatDate(plan.updated_at) : "-"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleViewPlan(plan.id)}
+                      size="sm"
+                      variant={plan.status === 'versioned' ? 'outline' : 'default'}
+                    >
+                      {plan.status === 'versioned' ? 'View' : 'Continue'}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
