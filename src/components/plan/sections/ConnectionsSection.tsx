@@ -5,8 +5,18 @@ import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
 import { TableField } from "@/components/plan/TableField";
 
 export const ConnectionsSection = () => {
-  const { sections, updateField } = usePlan();
+  const { sections, updateField, isReadOnly } = usePlan();
   const data = sections["connections"];
+
+  const parseAttachments = (fieldId: string) => {
+    try {
+      const val = data?.fields?.[fieldId];
+      if (!val) return [];
+      return typeof val === 'string' ? JSON.parse(val) : val;
+    } catch {
+      return [];
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -43,6 +53,9 @@ export const ConnectionsSection = () => {
           value={typeof data?.fields?.connections === 'string' ? JSON.parse(data?.fields?.connections || '[]') : (data?.fields?.connections || [])}
           onChange={(value) => updateField("connections", "connections", JSON.stringify(value))}
           prompt="Consider any significant people for te tamaiti or rangatahi - Include any court orders and what the current whānau or family contact arrangements look like, such as how often they will be visited and by whom, whether it is supervised, where they will be visited"
+          attachments={parseAttachments("connections-attachments")}
+          onAttachmentsChange={(attachments) => updateField("connections", "connections-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <FieldWithPrompt

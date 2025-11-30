@@ -8,8 +8,18 @@ import { SelectField } from "@/components/plan/SelectField";
 import { TableField } from "@/components/plan/TableField";
 
 export const PlanningWithSection = () => {
-  const { sections, updateField } = usePlan();
+  const { sections, updateField, isReadOnly } = usePlan();
   const data = sections["planning-with"];
+
+  const parseAttachments = (fieldId: string) => {
+    try {
+      const val = data?.fields?.[fieldId];
+      if (!val) return [];
+      return typeof val === 'string' ? JSON.parse(val) : val;
+    } catch {
+      return [];
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -62,6 +72,9 @@ export const PlanningWithSection = () => {
           value={typeof data?.fields?.["plan-shared"] === 'string' ? JSON.parse(data?.fields?.["plan-shared"] || '[]') : (data?.fields?.["plan-shared"] || [])}
           onChange={(value) => updateField("planning-with", "plan-shared", JSON.stringify(value))}
           prompt="Ensure you have consulted with te tamaiti or rangatahi before sharing this plan. While there may be legal or professional obligations to share information, it is essential that they understand who will receive the plan, what parts will be shared, and why. Their views must be heard, respected, and recorded. If they do not agree with sharing, the rationale for proceeding must be clearly documented."
+          attachments={parseAttachments("plan-shared-attachments")}
+          onAttachmentsChange={(attachments) => updateField("planning-with", "plan-shared-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <div className="space-y-2">
@@ -109,6 +122,9 @@ export const PlanningWithSection = () => {
             office: "Free call support"
           }])}
           onChange={(value) => updateField("planning-with", "concern-contacts", JSON.stringify(value))}
+          attachments={parseAttachments("concern-contacts-attachments")}
+          onAttachmentsChange={(attachments) => updateField("planning-with", "concern-contacts-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <div className="space-y-4">

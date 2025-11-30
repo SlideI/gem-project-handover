@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
 export const ResidenceSection = () => {
-  const { sections, updateField } = usePlan();
+  const { sections, updateField, isReadOnly } = usePlan();
   const data = sections["residence"];
 
   const advisedRights = [
@@ -18,6 +18,16 @@ export const ResidenceSection = () => {
     "How to seek advocacy support",
     "My rights to contact including (mail, visits, phone calls)"
   ];
+
+  const parseAttachments = (fieldId: string) => {
+    try {
+      const val = data?.fields?.[fieldId];
+      if (!val) return [];
+      return typeof val === 'string' ? JSON.parse(val) : val;
+    } catch {
+      return [];
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -59,6 +69,9 @@ export const ResidenceSection = () => {
           ]}
           value={typeof data?.fields?.["unsafe-behaviour"] === 'string' ? JSON.parse(data?.fields?.["unsafe-behaviour"] || '[]') : (data?.fields?.["unsafe-behaviour"] || [])}
           onChange={(value) => updateField("residence", "unsafe-behaviour", JSON.stringify(value))}
+          attachments={parseAttachments("unsafe-behaviour-attachments")}
+          onAttachmentsChange={(attachments) => updateField("residence", "unsafe-behaviour-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <FieldWithPrompt
