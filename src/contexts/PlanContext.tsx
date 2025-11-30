@@ -38,6 +38,8 @@ interface PlanContextType {
   isLoading: boolean;
   isSaving: boolean;
   isReadOnly: boolean;
+  isDirty: boolean;
+  resetDirty: () => void;
 }
 
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
@@ -132,7 +134,11 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isReadOnly, setIsReadOnly] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const navigate = useNavigate();
+
+  const resetDirty = () => setIsDirty(false);
 
   // Auth state listener
   useEffect(() => {
@@ -259,6 +265,8 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
               return updated;
             });
           }
+          // Mark initial load complete after data is loaded
+          setInitialLoadComplete(true);
         } else {
           const { data: newPlan, error: createError } = await supabase
             .from("plans")
@@ -277,6 +285,7 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
             profile_picture_url: newPlan.profile_picture_url,
             background_picture_url: newPlan.background_picture_url,
           });
+          setInitialLoadComplete(true);
         }
       } catch (error) {
         console.error("Error with plan:", error);
@@ -302,6 +311,11 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
       ...prev,
       [sectionId]: { ...prev[sectionId], ...data },
     }));
+
+    // Mark as dirty after initial load
+    if (initialLoadComplete) {
+      setIsDirty(true);
+    }
 
     // If actions are being updated, save to database
     if (data.actions && planId) {
@@ -385,6 +399,11 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
       },
     }));
 
+    // Mark as dirty after initial load
+    if (initialLoadComplete) {
+      setIsDirty(true);
+    }
+
     // Save to database
     if (!planId) return;
 
@@ -440,6 +459,8 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
       isLoading,
       isSaving,
       isReadOnly,
+      isDirty,
+      resetDirty,
     }}>
       {children}
     </PlanContext.Provider>
