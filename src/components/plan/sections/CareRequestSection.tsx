@@ -11,10 +11,20 @@ import { SelectField } from "@/components/plan/SelectField";
 import { TableField } from "@/components/plan/TableField";
 
 export const CareRequestSection = () => {
-  const { sections, updateField } = usePlan();
+  const { sections, updateField, isReadOnly } = usePlan();
   const data = sections["care-request"];
 
   const careArrangementNeeded = data?.fields?.["care-arrangement-needed"] === "true";
+
+  const parseAttachments = (fieldId: string) => {
+    try {
+      const val = data?.fields?.[fieldId];
+      if (!val) return [];
+      return typeof val === 'string' ? JSON.parse(val) : val;
+    } catch {
+      return [];
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -225,6 +235,9 @@ export const CareRequestSection = () => {
               ]}
               value={typeof data?.fields?.["care-history"] === 'string' ? JSON.parse(data?.fields?.["care-history"] || '[]') : (data?.fields?.["care-history"] || [])}
               onChange={(value) => updateField("care-request", "care-history", JSON.stringify(value))}
+              attachments={parseAttachments("care-history-attachments")}
+              onAttachmentsChange={(attachments) => updateField("care-request", "care-history-attachments", JSON.stringify(attachments))}
+              readOnly={isReadOnly}
             />
 
             <FieldWithPrompt label="Why is a care arrangement needed">

@@ -18,7 +18,7 @@ import { ActionTable } from "../ActionTable";
 import { ImageCropDialog } from "../ImageCropDialog";
 
 export const AboutMeSection = () => {
-  const { sections, updateField, planId, profilePicture, backgroundPicture, updatePlanImages } = usePlan();
+  const { sections, updateField, planId, profilePicture, backgroundPicture, updatePlanImages, isReadOnly } = usePlan();
   const section = sections["about-me"];
   const [showMenu, setShowMenu] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -26,6 +26,16 @@ export const AboutMeSection = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
+
+  const parseAttachments = (fieldId: string) => {
+    try {
+      const val = section?.fields?.[fieldId];
+      if (!val) return [];
+      return typeof val === 'string' ? JSON.parse(val) : val;
+    } catch {
+      return [];
+    }
+  };
 
   const uploadImage = async (file: File, type: 'profile' | 'background') => {
     if (!planId) {
@@ -332,6 +342,9 @@ export const AboutMeSection = () => {
           ]}
           value={typeof section.fields.whanau === 'string' ? JSON.parse(section.fields.whanau || '[]') : (section.fields.whanau || [])}
           onChange={(value) => updateField("about-me", "whanau", JSON.stringify(value))}
+          attachments={parseAttachments("whanau-attachments")}
+          onAttachmentsChange={(attachments) => updateField("about-me", "whanau-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <PrePopulatedField label="Mātā waka/ethnicity or ethnicities (maternal, paternal)" value="New Zealand European, Māori" />
@@ -383,6 +396,9 @@ export const AboutMeSection = () => {
           ]}
           value={typeof section.fields.supportPeople === 'string' ? JSON.parse(section.fields.supportPeople || '[]') : (section.fields.supportPeople || [])}
           onChange={(value) => updateField("about-me", "supportPeople", JSON.stringify(value))}
+          attachments={parseAttachments("supportPeople-attachments")}
+          onAttachmentsChange={(attachments) => updateField("about-me", "supportPeople-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <FieldWithPrompt label="Why is the service involved with me and my whānau, and what is my current situation">
@@ -422,6 +438,9 @@ export const AboutMeSection = () => {
           ]}
           value={typeof section.fields.routines === 'string' ? JSON.parse(section.fields.routines || '[]') : (section.fields.routines || [])}
           onChange={(value) => updateField("about-me", "routines", JSON.stringify(value))}
+          attachments={parseAttachments("routines-attachments")}
+          onAttachmentsChange={(attachments) => updateField("about-me", "routines-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <FieldWithPrompt
@@ -445,6 +464,9 @@ export const AboutMeSection = () => {
           ]}
           value={typeof section.fields.interests === 'string' ? JSON.parse(section.fields.interests || '[]') : (section.fields.interests || [])}
           onChange={(value) => updateField("about-me", "interests", JSON.stringify(value))}
+          attachments={parseAttachments("interests-attachments")}
+          onAttachmentsChange={(attachments) => updateField("about-me", "interests-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <div className="grid grid-cols-2 gap-4">
@@ -480,6 +502,9 @@ export const AboutMeSection = () => {
           ]}
           value={typeof section.fields.challengesSupport === 'string' ? JSON.parse(section.fields.challengesSupport || '[]') : (section.fields.challengesSupport || [])}
           onChange={(value) => updateField("about-me", "challengesSupport", JSON.stringify(value))}
+          attachments={parseAttachments("challengesSupport-attachments")}
+          onAttachmentsChange={(attachments) => updateField("about-me", "challengesSupport-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <TableField
@@ -491,6 +516,9 @@ export const AboutMeSection = () => {
           ]}
           value={typeof section.fields.belongings === 'string' ? JSON.parse(section.fields.belongings || '[]') : (section.fields.belongings || [])}
           onChange={(value) => updateField("about-me", "belongings", JSON.stringify(value))}
+          attachments={parseAttachments("belongings-attachments")}
+          onAttachmentsChange={(attachments) => updateField("about-me", "belongings-attachments", JSON.stringify(attachments))}
+          readOnly={isReadOnly}
         />
 
         <FieldWithPrompt
