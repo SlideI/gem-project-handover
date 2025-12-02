@@ -83,7 +83,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
             <div key={section.id} className="relative">
               <button
                 onClick={() => onSectionChange(section.id)}
-                className="w-full flex items-start gap-3 py-3 px-2 text-sm font-medium text-left"
+                className="w-full flex items-start gap-3 py-5 px-2 text-sm font-medium text-left"
               >
                 {/* Circle indicator */}
                 <div
@@ -117,9 +117,9 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
                 <div 
                   className="absolute w-0.5 bg-border"
                   style={{
-                    height: '12px',
+                    height: '34px',
                     left: '14px',
-                    bottom: '-6px',
+                    bottom: '-17px',
                   }}
                 />
               )}
