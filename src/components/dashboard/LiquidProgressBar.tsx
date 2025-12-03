@@ -2,23 +2,19 @@ import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { usePlan } from "@/contexts/PlanContext";
 
-// Define expected fillable fields per section (non-prepopulated fields that users need to complete)
-const EXPECTED_FIELDS: Record<string, string[]> = {
-  "about-me": [
-    "pronouns", "communication", "decisionInvolvement", "otInvolvement", "careGoal",
-    "whanau", "supportPeople", "routines", "myStrengths", "myWorries", "moreAboutMe",
-    "currentPlan", "feelingsAboutPlan", "planChanges"
-  ],
-  "identity": ["from", "whakapapa", "religious", "cultural-important", "faith-needs"],
-  "connections": ["importantConnections", "relationshipsToMaintain", "newConnections", "whatHelps", "additionalInfo"],
-  "health": ["currentHealth", "healthHistory", "medications", "mentalHealth", "healthGoals", "healthProviders"],
-  "disability": ["disabilityDetails", "supportNeeds", "assistiveDevices", "disabilityServices", "accommodations"],
-  "education": ["currentEducation", "learningStyle", "achievements", "challenges", "educationGoals", "supportServices"],
-  "planning-with": ["participants", "planningProcess", "agreements", "nextSteps"],
-  "transition": ["transitionGoals", "livingArrangements", "employmentGoals", "independentLiving", "supportNetwork"],
-  "youth-justice": ["currentStatus", "conditions", "supportServices", "rehabilitationGoals"],
-  "residence": ["currentResidence", "previousPlacements", "residenceGoals", "specialRequirements"],
-  "care-request": ["requestDetails", "urgency", "supportNeeded", "preferredOutcome"]
+// Minimum expected fields per section to calculate total (these are the key fillable fields)
+const SECTION_FIELD_COUNTS: Record<string, number> = {
+  "about-me": 10,
+  "identity": 5,
+  "connections": 4,
+  "health": 6,
+  "disability": 4,
+  "education": 5,
+  "planning-with": 4,
+  "transition": 5,
+  "youth-justice": 4,
+  "residence": 4,
+  "care-request": 4
 };
 
 export const LiquidProgressBar = () => {
@@ -29,23 +25,39 @@ export const LiquidProgressBar = () => {
     let total = 0;
 
     // Only count fields from enabled sections (or all if no enabled sections set)
-    const sectionsToCount = enabledSections || Object.keys(EXPECTED_FIELDS);
+    const sectionsToCount = enabledSections || Object.keys(SECTION_FIELD_COUNTS);
 
     sectionsToCount.forEach((sectionKey) => {
-      const expectedFields = EXPECTED_FIELDS[sectionKey];
-      if (!expectedFields) return;
+      // Skip summary section as it's auto-generated
+      if (sectionKey === "summary") return;
+      
+      const expectedCount = SECTION_FIELD_COUNTS[sectionKey];
+      if (!expectedCount) return;
 
       const sectionData = sections[sectionKey];
-      if (!sectionData) return;
+      if (!sectionData) {
+        total += expectedCount;
+        return;
+      }
 
-      expectedFields.forEach((fieldId) => {
-        total++;
-        const value = sectionData.fields[fieldId];
-        // Consider field filled if it has a non-empty value
-        if (value && typeof value === 'string' && value.trim() !== "" && value !== "[]" && value !== "{}") {
-          filled++;
+      // Count how many fields have non-empty values
+      let sectionFilled = 0;
+      Object.entries(sectionData.fields).forEach(([fieldId, value]) => {
+        // Skip attachment fields and boolean-only fields
+        if (fieldId.endsWith("-attachments")) return;
+        
+        if (value && typeof value === 'string') {
+          const trimmed = value.trim();
+          // Check for non-empty, non-default values
+          if (trimmed !== "" && trimmed !== "[]" && trimmed !== "{}" && trimmed !== "[{}]" && trimmed !== "false") {
+            sectionFilled++;
+          }
         }
       });
+
+      filled += sectionFilled;
+      // Use the greater of expected count or actual filled count for total
+      total += Math.max(expectedCount, sectionFilled);
     });
 
     const pct = total > 0 ? Math.round((filled / total) * 100) : 0;

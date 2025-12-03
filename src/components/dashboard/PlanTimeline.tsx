@@ -60,9 +60,9 @@ export const PlanTimeline = () => {
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Plan Timeline</h3>
-      <ScrollArea className="w-full">
-        <div className="relative pb-4">
-          <div className="flex gap-6 min-w-max items-start pt-8">
+      <ScrollArea className="w-full" type="always">
+        <div className="relative pb-6">
+          <div className="flex gap-6 min-w-max items-start pt-8 pb-2">
             {timelineActions.map((action, index) => (
               <div key={index} className="relative flex flex-col items-center min-w-[200px]">
                 {/* Timeline point */}
