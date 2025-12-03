@@ -170,7 +170,7 @@ export const DocumentsPanel = () => {
       });
 
       setShowNewPlanDialog(false);
-      window.location.reload(); // Reload to show new version
+      navigate(`/plan?id=${newPlan.id}#about-me`);
     } catch (error) {
       console.error("Error creating new version:", error);
       toast({
@@ -241,7 +241,7 @@ export const DocumentsPanel = () => {
         description: "Your new plan has been created successfully.",
       });
 
-      navigate(`/plan?id=${newPlan.id}`);
+      navigate(`/plan?id=${newPlan.id}#about-me`);
     } catch (error) {
       console.error("Error creating plan:", error);
       toast({
@@ -340,7 +340,7 @@ export const DocumentsPanel = () => {
         description: "Data copied from previous version.",
       });
 
-      navigate("/plan");
+      navigate(`/plan?id=${newPlan.id}#about-me`);
     } catch (error) {
       console.error("Error creating plan from versioned:", error);
       toast({
