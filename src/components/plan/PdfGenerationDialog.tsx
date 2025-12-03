@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -13,7 +13,7 @@ interface Section {
   label: string;
 }
 
-const sections: Section[] = [
+const allSections: Section[] = [
   { id: "about-me", label: "About Me" },
   { id: "identity", label: "Identity, Spirituality, and Cultural Needs" },
   { id: "connections", label: "My Connections" },
@@ -34,11 +34,22 @@ interface PdfGenerationDialogProps {
 }
 
 export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogProps) => {
+  const { sections: planSections, planData, enabledSections } = usePlan();
+  
+  // Filter sections based on enabled sections (null means all enabled)
+  const availableSections = enabledSections
+    ? allSections.filter(s => enabledSections.includes(s.id))
+    : allSections;
+
   const [selectedSections, setSelectedSections] = useState<string[]>(
-    sections.map(s => s.id)
+    availableSections.map(s => s.id)
   );
   const [isGenerating, setIsGenerating] = useState(false);
-  const { sections: planSections, planData } = usePlan();
+
+  // Update selected sections when available sections change
+  useEffect(() => {
+    setSelectedSections(availableSections.map(s => s.id));
+  }, [enabledSections]);
 
   const toggleSection = (sectionId: string) => {
     setSelectedSections(prev =>
@@ -49,10 +60,10 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
   };
 
   const toggleAll = () => {
-    if (selectedSections.length === sections.length) {
+    if (selectedSections.length === availableSections.length) {
       setSelectedSections([]);
     } else {
-      setSelectedSections(sections.map(s => s.id));
+      setSelectedSections(availableSections.map(s => s.id));
     }
   };
 
@@ -103,12 +114,12 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
           <div className="flex items-center justify-between">
             <Label className="text-sm font-medium">Sections</Label>
             <Button variant="ghost" size="sm" onClick={toggleAll} className="h-8 text-xs">
-              {selectedSections.length === sections.length ? "Deselect All" : "Select All"}
+              {selectedSections.length === availableSections.length ? "Deselect All" : "Select All"}
             </Button>
           </div>
 
           <div className="space-y-2">
-            {sections.map((section) => (
+            {availableSections.map((section) => (
               <div key={section.id} className="flex items-center space-x-2">
                 <Checkbox
                   id={section.id}

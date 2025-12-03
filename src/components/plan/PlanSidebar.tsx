@@ -1,5 +1,10 @@
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
+import { usePlan } from "@/contexts/PlanContext";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { AddSectionDialog } from "./AddSectionDialog";
+import { ALL_SECTIONS } from "./SectionSelectionDialog";
 
 interface Section {
   id: string;
@@ -7,7 +12,7 @@ interface Section {
   progress?: string;
 }
 
-const sections: Section[] = [
+const allSections: Section[] = [
   { id: "about-me", label: "About Me" },
   { id: "identity", label: "Identity, Spirituality, and Cultural Needs" },
   { id: "connections", label: "My Connections" },
@@ -28,11 +33,22 @@ interface PlanSidebarProps {
 }
 
 export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProps) => {
+  const { enabledSections, updateEnabledSections, isReadOnly } = usePlan();
   const [previousSection, setPreviousSection] = useState<string>(currentSection);
   const [animating, setAnimating] = useState(false);
   const [dotPosition, setDotPosition] = useState<{ startTop: number; endTop: number; left: number } | null>(null);
+  const [showAddSectionDialog, setShowAddSectionDialog] = useState(false);
+  const [isAddingSections, setIsAddingSections] = useState(false);
   const sectionRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Filter sections based on enabled sections (null means all enabled)
+  const sections = enabledSections
+    ? allSections.filter(s => enabledSections.includes(s.id))
+    : allSections;
+
+  // Check if there are sections that can be added
+  const hasOmittedSections = enabledSections !== null && enabledSections.length < allSections.length;
 
   useEffect(() => {
     if (currentSection !== previousSection && containerRef.current) {
@@ -61,6 +77,16 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
       }
     }
   }, [currentSection, previousSection]);
+
+  const handleAddSections = async (newSections: string[]) => {
+    setIsAddingSections(true);
+    try {
+      await updateEnabledSections(newSections);
+      setShowAddSectionDialog(false);
+    } finally {
+      setIsAddingSections(false);
+    }
+  };
 
   return (
     <aside className="w-64 bg-sidebar border-r border-sidebar-border fixed h-screen overflow-y-auto">
@@ -126,7 +152,30 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
             </div>
           ))}
         </nav>
+
+        {/* Add Sections Button */}
+        {!isReadOnly && hasOmittedSections && (
+          <div className="mt-6 px-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full justify-start gap-2"
+              onClick={() => setShowAddSectionDialog(true)}
+            >
+              <Plus className="h-4 w-4" />
+              Add Section
+            </Button>
+          </div>
+        )}
       </div>
+
+      <AddSectionDialog
+        open={showAddSectionDialog}
+        onOpenChange={setShowAddSectionDialog}
+        currentEnabledSections={enabledSections || allSections.map(s => s.id)}
+        onConfirm={handleAddSections}
+        isLoading={isAddingSections}
+      />
     </aside>
   );
 };

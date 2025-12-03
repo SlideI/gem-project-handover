@@ -103,6 +103,7 @@ export type Database = {
         Row: {
           background_picture_url: string | null
           created_at: string
+          enabled_sections: string[] | null
           id: string
           parent_plan_id: string | null
           profile_picture_url: string | null
@@ -115,6 +116,7 @@ export type Database = {
         Insert: {
           background_picture_url?: string | null
           created_at?: string
+          enabled_sections?: string[] | null
           id?: string
           parent_plan_id?: string | null
           profile_picture_url?: string | null
@@ -127,6 +129,7 @@ export type Database = {
         Update: {
           background_picture_url?: string | null
           created_at?: string
+          enabled_sections?: string[] | null
           id?: string
           parent_plan_id?: string | null
           profile_picture_url?: string | null

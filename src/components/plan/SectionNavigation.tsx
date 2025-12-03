@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { usePlan } from "@/contexts/PlanContext";
 
 interface Section {
   id: string;
   label: string;
 }
 
-const sections: Section[] = [
+const allSections: Section[] = [
   { id: "about-me", label: "About Me" },
   { id: "identity", label: "Identity, Spirituality, and Cultural Needs" },
   { id: "connections", label: "My Connections" },
@@ -27,6 +28,13 @@ interface SectionNavigationProps {
 }
 
 export const SectionNavigation = ({ currentSection, onSectionChange }: SectionNavigationProps) => {
+  const { enabledSections } = usePlan();
+  
+  // Filter sections based on enabled sections (null means all enabled)
+  const sections = enabledSections
+    ? allSections.filter(s => enabledSections.includes(s.id))
+    : allSections;
+
   const currentIndex = sections.findIndex(s => s.id === currentSection);
   const previousSection = currentIndex > 0 ? sections[currentIndex - 1] : null;
   const nextSection = currentIndex < sections.length - 1 ? sections[currentIndex + 1] : null;
