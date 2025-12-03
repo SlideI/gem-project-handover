@@ -17,6 +17,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [showContactDetails, setShowContactDetails] = useState(false);
   const [hasActivePlan, setHasActivePlan] = useState(false);
+  // Use timestamp to force PlanProvider refresh on every mount
+  const [refreshKey] = useState(() => Date.now());
 
   useEffect(() => {
     const checkActivePlan = async () => {
@@ -37,7 +39,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <PlanProvider>
+    <PlanProvider key={refreshKey}>
       <div className="min-h-screen bg-background">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
