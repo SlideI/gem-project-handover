@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,9 +11,25 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isToday, parseISO } from "date-fns";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const SummaryTable = () => {
-  const { sections, updateSection } = usePlan();
+  const { sections, updateSection, isReadOnly } = usePlan();
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    sectionId: string;
+    actionIndex: number;
+    isCompleting: boolean;
+  }>({ open: false, sectionId: "", actionIndex: 0, isCompleting: true });
 
   const allActions = useMemo(() => {
     const actions: Array<{
@@ -43,7 +59,24 @@ export const SummaryTable = () => {
     return actions;
   }, [sections]);
 
-  const handleToggleComplete = (sectionId: string, actionIndex: number) => {
+  const handleCheckboxClick = (sectionId: string, actionIndex: number, currentlyCompleted: boolean) => {
+    if (isReadOnly) return;
+    
+    // Only show confirmation when marking as complete (not when unchecking)
+    if (!currentlyCompleted) {
+      setConfirmDialog({
+        open: true,
+        sectionId,
+        actionIndex,
+        isCompleting: true,
+      });
+    } else {
+      // Allow immediate toggle when unchecking
+      toggleComplete(sectionId, actionIndex);
+    }
+  };
+
+  const toggleComplete = (sectionId: string, actionIndex: number) => {
     const section = sections[sectionId];
     const updatedActions = [...section.actions];
     updatedActions[actionIndex] = {
@@ -51,6 +84,11 @@ export const SummaryTable = () => {
       completed: !updatedActions[actionIndex].completed,
     };
     updateSection(sectionId, { actions: updatedActions });
+  };
+
+  const handleConfirmComplete = () => {
+    toggleComplete(confirmDialog.sectionId, confirmDialog.actionIndex);
+    setConfirmDialog({ ...confirmDialog, open: false });
   };
 
   const getStatusBadge = (deadline: string, completed: boolean) => {
@@ -77,48 +115,66 @@ export const SummaryTable = () => {
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-12">Done</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Action</TableHead>
-            <TableHead>Responsible</TableHead>
-            <TableHead>By When</TableHead>
-            <TableHead>Support</TableHead>
-            <TableHead>Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {allActions.length === 0 ? (
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                No actions added yet
-              </TableCell>
+              <TableHead className="w-12">Done</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Action</TableHead>
+              <TableHead>Responsible</TableHead>
+              <TableHead>By When</TableHead>
+              <TableHead>Support</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
-          ) : (
-            allActions.map((action, index) => (
-              <TableRow key={`${action.sectionId}-${index}`}>
-                <TableCell>
-                  <Checkbox
-                    checked={action.completed}
-                    onCheckedChange={() => handleToggleComplete(action.sectionId, action.actionIndex)}
-                  />
+          </TableHeader>
+          <TableBody>
+            {allActions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  No actions added yet
                 </TableCell>
-                <TableCell className="font-medium">{action.category}</TableCell>
-                <TableCell>{action.action}</TableCell>
-                <TableCell>{action.responsible || "-"}</TableCell>
-                <TableCell>
-                  {action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : "-"}
-                </TableCell>
-                <TableCell>{action.support || "-"}</TableCell>
-                <TableCell>{getStatusBadge(action.deadline, action.completed)}</TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            ) : (
+              allActions.map((action, index) => (
+                <TableRow key={`${action.sectionId}-${index}`}>
+                  <TableCell>
+                    <Checkbox
+                      checked={action.completed}
+                      disabled={isReadOnly}
+                      onCheckedChange={() => handleCheckboxClick(action.sectionId, action.actionIndex, action.completed)}
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium">{action.category}</TableCell>
+                  <TableCell>{action.action}</TableCell>
+                  <TableCell>{action.responsible || "-"}</TableCell>
+                  <TableCell>
+                    {action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : "-"}
+                  </TableCell>
+                  <TableCell>{action.support || "-"}</TableCell>
+                  <TableCell>{getStatusBadge(action.deadline, action.completed)}</TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <AlertDialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Mark Activity as Complete</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure this activity has now been completed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmComplete}>Yes</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
