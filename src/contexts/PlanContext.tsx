@@ -40,6 +40,8 @@ interface PlanContextType {
   isReadOnly: boolean;
   isDirty: boolean;
   resetDirty: () => void;
+  enabledSections: string[] | null;
+  updateEnabledSections: (sections: string[]) => Promise<void>;
 }
 
 const PlanContext = createContext<PlanContextType | undefined>(undefined);
@@ -136,6 +138,7 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [enabledSections, setEnabledSections] = useState<string[] | null>(null);
   const navigate = useNavigate();
 
   const resetDirty = () => setIsDirty(false);
@@ -211,6 +214,7 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
           });
           setProfilePicture(plan.profile_picture_url);
           setBackgroundPicture(plan.background_picture_url);
+          setEnabledSections(plan.enabled_sections || null);
 
           // Load plan sections from database
           const { data: planSections } = await supabase
@@ -298,6 +302,25 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
   const updatePlanImages = (profileUrl: string | null, backgroundUrl: string | null) => {
     setProfilePicture(profileUrl);
     setBackgroundPicture(backgroundUrl);
+  };
+
+  const updateEnabledSections = async (sections: string[]) => {
+    if (!planId) return;
+    
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('plans')
+        .update({ enabled_sections: sections })
+        .eq('id', planId);
+
+      if (error) throw error;
+      setEnabledSections(sections);
+    } catch (error) {
+      console.error("Error updating enabled sections:", error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const saveProgress = () => {
@@ -461,6 +484,8 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
       isReadOnly,
       isDirty,
       resetDirty,
+      enabledSections,
+      updateEnabledSections,
     }}>
       {children}
     </PlanContext.Provider>

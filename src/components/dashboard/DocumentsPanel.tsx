@@ -22,6 +22,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { SectionSelectionDialog, ALL_SECTIONS } from "@/components/plan/SectionSelectionDialog";
 
 interface Plan {
   id: string;
@@ -32,12 +33,15 @@ interface Plan {
   created_at: string;
   profile_picture_url: string | null;
   background_picture_url: string | null;
+  enabled_sections: string[] | null;
 }
 
 export const DocumentsPanel = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showNewPlanDialog, setShowNewPlanDialog] = useState(false);
+  const [showSectionSelectionDialog, setShowSectionSelectionDialog] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'new' | 'version' | 'from-versioned' | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,7 +74,7 @@ export const DocumentsPanel = () => {
   const activePlan = plans.find(p => p.status === 'active');
   const latestVersionedPlan = plans.find(p => p.status === 'versioned');
 
-  const handleCreateNewVersion = async () => {
+  const handleCreateNewVersion = async (selectedSections?: string[]) => {
     if (!activePlan?.id) return;
     
     setIsCreating(true);
@@ -97,6 +101,7 @@ export const DocumentsPanel = () => {
           status: 'active',
           version_number: (activePlan.version_number || 1) + 1,
           parent_plan_id: activePlan.id,
+          enabled_sections: selectedSections || null,
         })
         .select()
         .single();
@@ -183,15 +188,73 @@ export const DocumentsPanel = () => {
       // Active plan exists - show confirmation modal
       setShowNewPlanDialog(true);
     } else if (latestVersionedPlan) {
-      // No active plan but versioned exists - create new plan and copy from versioned
-      await handleCreateFromVersioned();
+      // No active plan but versioned exists - show section selection then create from versioned
+      setPendingAction('from-versioned');
+      setShowSectionSelectionDialog(true);
     } else {
-      // No plan exists - navigate directly to create plan
-      navigate("/plan");
+      // No plan exists - show section selection dialog
+      setPendingAction('new');
+      setShowSectionSelectionDialog(true);
     }
   };
 
-  const handleCreateFromVersioned = async () => {
+  const handleVersionDialogConfirm = () => {
+    setShowNewPlanDialog(false);
+    setPendingAction('version');
+    setShowSectionSelectionDialog(true);
+  };
+
+  const handleSectionSelectionConfirm = async (selectedSections: string[]) => {
+    if (pendingAction === 'new') {
+      await handleCreateNewPlan(selectedSections);
+    } else if (pendingAction === 'version') {
+      await handleCreateNewVersion(selectedSections);
+    } else if (pendingAction === 'from-versioned') {
+      await handleCreateFromVersioned(selectedSections);
+    }
+    setShowSectionSelectionDialog(false);
+    setPendingAction(null);
+  };
+
+  const handleCreateNewPlan = async (selectedSections: string[]) => {
+    setIsCreating(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("User not authenticated");
+
+      const { data: newPlan, error: createError } = await supabase
+        .from('plans')
+        .insert({
+          user_id: user.user.id,
+          title: "My Plan",
+          status: 'active',
+          version_number: 1,
+          enabled_sections: selectedSections,
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      toast({
+        title: "Plan created",
+        description: "Your new plan has been created successfully.",
+      });
+
+      navigate(`/plan?id=${newPlan.id}`);
+    } catch (error) {
+      console.error("Error creating plan:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create plan. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleCreateFromVersioned = async (selectedSections?: string[]) => {
     if (!latestVersionedPlan) return;
     
     setIsCreating(true);
@@ -210,6 +273,7 @@ export const DocumentsPanel = () => {
           status: 'active',
           version_number: (latestVersionedPlan.version_number || 1) + 1,
           parent_plan_id: latestVersionedPlan.id,
+          enabled_sections: selectedSections || null,
         })
         .select()
         .single();
@@ -324,15 +388,25 @@ export const DocumentsPanel = () => {
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isCreating}>No</AlertDialogCancel>
             <AlertDialogAction 
-              onClick={handleCreateNewVersion}
+              onClick={handleVersionDialogConfirm}
               disabled={isCreating}
               className="bg-success hover:bg-success/90"
             >
-              {isCreating ? "Creating..." : "Yes"}
+              Yes
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <SectionSelectionDialog
+        open={showSectionSelectionDialog}
+        onOpenChange={(open) => {
+          setShowSectionSelectionDialog(open);
+          if (!open) setPendingAction(null);
+        }}
+        onConfirm={handleSectionSelectionConfirm}
+        isLoading={isCreating}
+      />
 
       <div className="rounded-md border">
         <Table>
