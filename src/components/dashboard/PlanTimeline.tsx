@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isFuture, isToday, parseISO } from "date-fns";
@@ -119,6 +119,7 @@ export const PlanTimeline = () => {
             ))}
           </div>
         </div>
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </Card>
   );
