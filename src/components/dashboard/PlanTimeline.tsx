@@ -4,6 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isFuture, isToday, parseISO } from "date-fns";
+import { Link } from "react-router-dom";
 
 interface TimelineAction {
   title: string;
@@ -89,17 +90,16 @@ export const PlanTimeline = () => {
                   <div className="absolute top-2 left-1/2 w-full h-0.5 bg-border z-0" />
                 )}
 
-                {/* Action details */}
-                <div className="mt-4 border border-border rounded-lg p-3 bg-card shadow-sm min-w-[180px] max-w-[200px]">
+                <div className="mt-4 border border-border rounded-lg p-3 bg-card shadow-sm min-w-[180px] max-w-[200px] hover:shadow-md transition-shadow cursor-pointer">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <a
-                          href={`/plan#${action.sectionId}`}
+                        <Link
+                          to={`/plan#${action.sectionId}`}
                           className="text-sm font-medium hover:text-primary transition-colors block mb-2"
                         >
                           {truncateText(action.title)}
-                        </a>
+                        </Link>
                       </TooltipTrigger>
                       {action.title.length > 45 && (
                         <TooltipContent>
