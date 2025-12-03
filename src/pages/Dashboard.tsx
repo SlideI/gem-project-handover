@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { KPICards } from "@/components/dashboard/KPICards";
+import { LiquidProgressBar } from "@/components/dashboard/LiquidProgressBar";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
 import { PlanTimeline } from "@/components/dashboard/PlanTimeline";
 import { DocumentsPanel } from "@/components/dashboard/DocumentsPanel";
@@ -92,8 +92,8 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        {/* KPI Cards */}
-        <KPICards />
+        {/* Plan Progress */}
+        <LiquidProgressBar />
 
         {/* Plan Timeline */}
         <PlanTimeline />
