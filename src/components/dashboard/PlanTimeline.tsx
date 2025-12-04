@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -18,6 +18,8 @@ interface TimelineAction {
 
 export const PlanTimeline = () => {
   const { sections } = usePlan();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const todayRef = useRef<HTMLDivElement>(null);
 
   const timelineActions = useMemo(() => {
     const actions: TimelineAction[] = [];
@@ -48,6 +50,21 @@ export const PlanTimeline = () => {
 
   const todayIndex = timelineActions.findIndex((action) => action.isToday || action.isUpcoming);
 
+  // Scroll to center "Today" on mount
+  useEffect(() => {
+    if (todayRef.current && scrollRef.current) {
+      const container = scrollRef.current;
+      const todayElement = todayRef.current;
+      const containerWidth = container.offsetWidth;
+      const todayLeft = todayElement.offsetLeft;
+      const todayWidth = todayElement.offsetWidth;
+      
+      // Center the today element
+      const scrollPosition = todayLeft - (containerWidth / 2) + (todayWidth / 2);
+      container.scrollLeft = Math.max(0, scrollPosition);
+    }
+  }, [timelineActions]);
+
   if (timelineActions.length === 0) {
     return null;
   }
@@ -61,12 +78,30 @@ export const PlanTimeline = () => {
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Plan Timeline</h3>
       <ScrollArea className="w-full" type="always">
-        <div className="relative pb-6">
-          <div className="flex gap-6 min-w-max items-start pt-8 pb-2">
+        <div ref={scrollRef} className="relative pb-6 overflow-x-auto">
+          {/* Main timeline line */}
+          <div className="absolute top-[72px] left-0 right-0 h-0.5 bg-border" style={{ width: `${timelineActions.length * 220}px` }} />
+          
+          <div className="flex gap-4 min-w-max items-start pt-8 pb-2 px-4">
             {timelineActions.map((action, index) => (
-              <div key={index} className="relative flex flex-col items-center min-w-[200px]">
+              <div 
+                key={index} 
+                ref={index === todayIndex ? todayRef : null}
+                className="relative flex flex-col items-center"
+                style={{ width: '200px' }}
+              >
+                {/* Today label with blue connecting line */}
+                {index === todayIndex && (
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                    <div className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded whitespace-nowrap">
+                      Today
+                    </div>
+                    <div className="w-0.5 h-4 bg-primary" />
+                  </div>
+                )}
+
                 {/* Timeline point */}
-                <div className="relative z-10">
+                <div className="relative z-10 mt-8">
                   <div
                     className={`w-4 h-4 rounded-full border-2 ${
                       action.isToday
@@ -76,21 +111,10 @@ export const PlanTimeline = () => {
                         : "bg-background border-border"
                     } shadow-sm`}
                   />
-                  {index === todayIndex && (
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                      <div className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
-                        Today
-                      </div>
-                    </div>
-                  )}
                 </div>
 
-                {/* Connecting line */}
-                {index < timelineActions.length - 1 && (
-                  <div className="absolute top-2 left-1/2 w-full h-0.5 bg-border z-0" />
-                )}
-
-                <div className="mt-4 border border-border rounded-lg p-3 bg-card shadow-sm min-w-[180px] max-w-[200px] hover:shadow-md transition-shadow cursor-pointer">
+                {/* Event card */}
+                <div className="mt-4 border border-border rounded-lg p-3 bg-card shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
