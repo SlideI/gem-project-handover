@@ -78,11 +78,11 @@ export const PlanTimeline = () => {
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Plan Timeline</h3>
       <ScrollArea className="w-full" type="always">
-        <div ref={scrollRef} className="relative pb-6 overflow-x-auto">
+        <div ref={scrollRef} className="relative pb-6">
           {/* Main timeline line */}
-          <div className="absolute top-[72px] left-0 right-0 h-0.5 bg-border" style={{ width: `${timelineActions.length * 220}px` }} />
+          <div className="absolute top-[60px] left-0 h-0.5 bg-border" style={{ width: `${timelineActions.length * 220}px` }} />
           
-          <div className="flex gap-4 min-w-max items-start pt-8 pb-2 px-4">
+          <div className="flex gap-4 min-w-max items-start pt-12 pb-2 px-4">
             {timelineActions.map((action, index) => (
               <div 
                 key={index} 
@@ -92,16 +92,16 @@ export const PlanTimeline = () => {
               >
                 {/* Today label with blue connecting line */}
                 {index === todayIndex && (
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                  <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex flex-col items-center">
                     <div className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded whitespace-nowrap">
                       Today
                     </div>
-                    <div className="w-0.5 h-4 bg-primary" />
+                    <div className="w-0.5 h-6 bg-primary" />
                   </div>
                 )}
 
                 {/* Timeline point */}
-                <div className="relative z-10 mt-8">
+                <div className="relative z-10">
                   <div
                     className={`w-4 h-4 rounded-full border-2 ${
                       action.isToday
