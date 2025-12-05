@@ -56,7 +56,11 @@ export const SummaryTable = () => {
       });
     });
 
-    return actions;
+    // Sort so completed items appear at the bottom
+    return actions.sort((a, b) => {
+      if (a.completed === b.completed) return 0;
+      return a.completed ? 1 : -1;
+    });
   }, [sections]);
 
   const handleCheckboxClick = (sectionId: string, actionIndex: number, currentlyCompleted: boolean) => {
@@ -103,7 +107,7 @@ export const SummaryTable = () => {
     try {
       const deadlineDate = parseISO(deadline);
       if (isPast(deadlineDate) && !isToday(deadlineDate)) {
-        return <Badge variant="destructive">Overdue</Badge>;
+        return <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">Overdue</Badge>;
       }
       if (isToday(deadlineDate)) {
         return <Badge variant="outline" className="bg-primary/10 text-primary border-primary">Due Today</Badge>;

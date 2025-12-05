@@ -19,16 +19,16 @@ export interface SectionOption {
 
 export const ALL_SECTIONS: SectionOption[] = [
   { id: "about-me", label: "About Me", required: true },
-  { id: "identity", label: "Identity, Spirituality, and Cultural Needs" },
-  { id: "connections", label: "My Connections" },
-  { id: "health", label: "Health & Wellbeing Needs" },
+  { id: "identity", label: "Identity, Spirituality, and Cultural Needs", required: true },
+  { id: "connections", label: "My Connections", required: true },
+  { id: "health", label: "Health & Wellbeing Needs", required: true },
   { id: "disability", label: "Disability Needs" },
-  { id: "education", label: "Education, Training or Employment Needs" },
-  { id: "planning-with", label: "Planning With" },
+  { id: "education", label: "Education, Training or Employment Needs", required: true },
+  { id: "planning-with", label: "Planning With", required: true },
   { id: "transition", label: "Transition to Adulthood" },
   { id: "youth-justice", label: "Youth Justice" },
   { id: "residence", label: "Residence & Homes" },
-  { id: "care-request", label: "Care Request" },
+  { id: "care-request", label: "Care Request", required: true },
   { id: "summary", label: "My Plan Summary", required: true },
 ];
 
@@ -39,6 +39,7 @@ interface SectionSelectionDialogProps {
   isLoading?: boolean;
   title?: string;
   description?: string;
+  confirmButtonText?: string;
 }
 
 export const SectionSelectionDialog = ({
@@ -48,6 +49,7 @@ export const SectionSelectionDialog = ({
   isLoading = false,
   title = "Select Plan Sections",
   description = "Choose which sections to include in your plan. Required sections cannot be deselected. You can add omitted sections later if needed.",
+  confirmButtonText = "Create Plan",
 }: SectionSelectionDialogProps) => {
   const [selectedSections, setSelectedSections] = useState<string[]>(
     ALL_SECTIONS.map(s => s.id)
@@ -124,7 +126,7 @@ export const SectionSelectionDialog = ({
             Cancel
           </Button>
           <Button onClick={handleConfirm} disabled={isLoading}>
-            {isLoading ? "Creating..." : "Create Plan"}
+            {isLoading ? "Creating..." : confirmButtonText}
           </Button>
         </DialogFooter>
       </DialogContent>

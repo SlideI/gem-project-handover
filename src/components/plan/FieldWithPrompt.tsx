@@ -18,7 +18,7 @@ export const FieldWithPrompt = ({ label, prompt, children, htmlFor }: FieldWithP
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help" />
+                <HelpCircle className="h-4 w-4 text-primary cursor-help" />
               </TooltipTrigger>
               <TooltipContent className="max-w-sm">
                 <p className="text-sm">{prompt}</p>
