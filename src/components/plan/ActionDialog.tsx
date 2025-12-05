@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface Action {
   action: string;
@@ -107,19 +106,6 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
             />
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id={`${sectionId}-timeline`}
-              checked={formData.show_in_timeline}
-              onCheckedChange={(checked) => setFormData({ ...formData, show_in_timeline: checked as boolean })}
-            />
-            <Label 
-              htmlFor={`${sectionId}-timeline`}
-              className="text-sm font-normal cursor-pointer"
-            >
-              Show in Timeline
-            </Label>
-          </div>
         </div>
 
         <DialogFooter className="gap-2">

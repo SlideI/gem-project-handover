@@ -60,15 +60,6 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
     updateSection(sectionId, { actions: updatedActions });
   };
 
-  const handleTimelineCheckboxChange = (index: number, checked: boolean) => {
-    if (isReadOnly) return;
-    const updatedActions = [...actions];
-    updatedActions[index] = {
-      ...updatedActions[index],
-      show_in_timeline: checked,
-    };
-    updateSection(sectionId, { actions: updatedActions });
-  };
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "...";
@@ -110,7 +101,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
               <TableHead>Who is responsible</TableHead>
               <TableHead>By when</TableHead>
               <TableHead>Additional support/services</TableHead>
-              <TableHead className="w-[100px]">Timeline</TableHead>
+              
               <TableHead className="w-[120px]">Action Complete</TableHead>
             </TableRow>
           </TableHeader>
@@ -145,15 +136,6 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                   </TableCell>
                   <TableCell>
                     {action.support || <span className="text-muted-foreground italic">...</span>}
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-center">
-                      <Checkbox
-                        checked={action.show_in_timeline !== false}
-                        onCheckedChange={(checked) => handleTimelineCheckboxChange(originalIndex, checked as boolean)}
-                        disabled={isReadOnly}
-                      />
-                    </div>
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center">
