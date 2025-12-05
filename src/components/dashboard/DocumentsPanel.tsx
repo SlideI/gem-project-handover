@@ -371,18 +371,18 @@ export const DocumentsPanel = () => {
           size="sm"
           className="bg-success hover:bg-success/90 text-white"
         >
-          + New Plan
+          + New Version
         </Button>
       </div>
 
       <AlertDialog open={showNewPlanDialog} onOpenChange={setShowNewPlanDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Create New Plan</AlertDialogTitle>
+            <AlertDialogTitle>Create New Version</AlertDialogTitle>
             <AlertDialogDescription>
-              You have selected to create a new plan when there is an active plan already in progress. 
-              Creating a new plan will archive a snapshot of the existing plan, copying the data entered 
-              so far into the new plan. Are you sure you wish to proceed?
+              You have selected to create a new version when there is an active plan already in progress. 
+              Creating a new version will archive a snapshot of the existing plan, copying the data entered 
+              so far into the new version. Are you sure you wish to proceed?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -406,6 +406,7 @@ export const DocumentsPanel = () => {
         }}
         onConfirm={handleSectionSelectionConfirm}
         isLoading={isCreating}
+        confirmButtonText={pendingAction === 'new' ? 'Create Plan' : 'Create Version'}
       />
 
       <div className="rounded-md border">

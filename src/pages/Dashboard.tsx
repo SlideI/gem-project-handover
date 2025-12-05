@@ -17,25 +17,33 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [showContactDetails, setShowContactDetails] = useState(false);
   const [hasActivePlan, setHasActivePlan] = useState(false);
+  const [hasAnyPlan, setHasAnyPlan] = useState(false);
   // Use timestamp to force PlanProvider refresh on every mount
   const [refreshKey] = useState(() => Date.now());
 
   useEffect(() => {
-    const checkActivePlan = async () => {
+    const checkPlans = async () => {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) return;
 
-      const { data } = await supabase
+      const { data: activePlan } = await supabase
         .from('plans')
         .select('id')
         .eq('user_id', user.user.id)
         .eq('status', 'active')
         .maybeSingle();
 
-      setHasActivePlan(!!data);
+      const { data: allPlans } = await supabase
+        .from('plans')
+        .select('id')
+        .eq('user_id', user.user.id)
+        .limit(1);
+
+      setHasActivePlan(!!activePlan);
+      setHasAnyPlan(!!(allPlans && allPlans.length > 0));
     };
 
-    checkActivePlan();
+    checkPlans();
   }, []);
 
   return (
@@ -57,9 +65,13 @@ const Dashboard = () => {
                 </Button>
                 <div>
                   <h1 className="text-3xl font-bold text-foreground">
-                    Samuel Genson's Plan
+                    Samuel Genson's AAMP
                   </h1>
                   <div className="flex gap-4 mt-2 text-sm">
+                    <div className="flex flex-col">
+                      <span className="text-muted-foreground">Age</span>
+                      <span className="font-medium">8 years old</span>
+                    </div>
                     <div className="flex flex-col">
                       <span className="text-muted-foreground">Status</span>
                       <span className="font-medium text-success">Active</span>
@@ -71,12 +83,19 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-              {hasActivePlan && (
+              {hasActivePlan ? (
                 <Button 
                   onClick={() => navigate("/plan")}
                   className="bg-success hover:bg-success/90 text-white"
                 >
-                  Update Existing Plan
+                  Update Plan
+                </Button>
+              ) : !hasAnyPlan && (
+                <Button 
+                  onClick={() => navigate("/plan")}
+                  className="bg-success hover:bg-success/90 text-white"
+                >
+                  Create Plan
                 </Button>
               )}
             </div>
@@ -94,9 +113,6 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        {/* Plan Progress */}
-        <LiquidProgressBar />
-
         {/* Plan Timeline */}
         <PlanTimeline />
 
@@ -105,6 +121,9 @@ const Dashboard = () => {
           <h2 className="text-2xl font-semibold mb-4">Plan Summary</h2>
           <SummaryTable />
         </Card>
+
+        {/* Plan Progress - moved to bottom per client feedback */}
+        <LiquidProgressBar />
 
         {/* Tabs Section */}
         <Card className="p-6">
