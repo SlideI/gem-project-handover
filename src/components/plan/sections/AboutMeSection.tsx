@@ -556,8 +556,20 @@ export const AboutMeSection = () => {
         </FieldWithPrompt>
       </div>
 
-      {/* Action Plan Table */}
-      <ActionTable sectionId="about-me" />
+      {/* Action Plan Table - Day to day needs */}
+      <ActionTable 
+        sectionId="about-me" 
+        subHeading="My Day-to-day Needs & Safety Goals"
+      />
+
+      {/* Action Plan Table - Behavioural Support */}
+      <ActionTable 
+        sectionId="about-me"
+        subHeading="Behavioural Support"
+        actionsKey="behavioural_actions"
+        needsGoalsLabel="The support I need with my behavioural needs"
+        needsGoalsPrompt="Consider what support is needed to respond to the behavioural needs in a way that promotes safety, regulation, and wellbeing. Use what is known about their behaviour to plan consistent strategies across settings, including routines, relationships, and environments that help reduce distress and encourage positive behaviour."
+      />
     </div>
   );
 };

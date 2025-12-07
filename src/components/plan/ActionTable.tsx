@@ -5,19 +5,55 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionDialog } from "./ActionDialog";
 
-interface ActionTableProps {
-  sectionId: string;
+interface Action {
+  action: string;
+  responsible: string;
+  deadline: string;
+  support: string;
+  completed: boolean;
+  show_in_timeline?: boolean;
+  needs_goals?: string;
+  achievement_indicator?: string;
+  review_status?: string;
 }
 
-export const ActionTable = ({ sectionId }: ActionTableProps) => {
-  const { sections, updateSection, isReadOnly } = usePlan();
+interface ActionTableProps {
+  sectionId: string;
+  subHeading?: string;
+  actionsKey?: string;
+  needsGoalsLabel?: string;
+  needsGoalsPrompt?: string;
+}
+
+export const ActionTable = ({ 
+  sectionId, 
+  subHeading,
+  actionsKey,
+  needsGoalsLabel = "My day to day needs and safety goals",
+  needsGoalsPrompt = "Consider what a safe environment looks like for te tamaiti or rangatahi, recognising that oranga (wellbeing) is different for every whānau or family. Record the agreed goals that reflect this understanding. Consider whether te tamaiti or rangatahi is warm, dry, sleeping and eating well, and whether their specific dietary or health needs are being met. Record any identified needs to ensure these aspects of wellbeing are supported."
+}: ActionTableProps) => {
+  const { sections, updateSection, updateField, isReadOnly } = usePlan();
   const section = sections[sectionId];
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (!section) return null;
 
-  const actions = section.actions || [];
+  // Use custom actionsKey if provided, otherwise use default section actions
+  const getActions = (): Action[] => {
+    if (actionsKey) {
+      const fieldValue = section.fields?.[actionsKey];
+      if (!fieldValue) return [];
+      try {
+        return typeof fieldValue === 'string' ? JSON.parse(fieldValue) : fieldValue;
+      } catch {
+        return [];
+      }
+    }
+    return section.actions || [];
+  };
+
+  const actions = getActions();
 
   const handleRowClick = (index: number) => {
     if (isReadOnly) return;
@@ -27,7 +63,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
 
   const handleAddAction = () => {
     if (isReadOnly) return;
-    const newAction = {
+    const newAction: Action = {
       action: "",
       responsible: "",
       deadline: "",
@@ -39,17 +75,25 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
       review_status: "",
     };
     const updatedActions = [...actions, newAction];
-    updateSection(sectionId, { actions: updatedActions });
+    if (actionsKey) {
+      updateField(sectionId, actionsKey, JSON.stringify(updatedActions));
+    } else {
+      updateSection(sectionId, { actions: updatedActions });
+    }
     setSelectedIndex(updatedActions.length - 1);
     setIsDialogOpen(true);
   };
 
-  const handleSaveAction = (updatedAction: any) => {
+  const handleSaveAction = (updatedAction: Action) => {
     if (selectedIndex === -1) return;
 
     const updatedActions = [...actions];
     updatedActions[selectedIndex] = updatedAction;
-    updateSection(sectionId, { actions: updatedActions });
+    if (actionsKey) {
+      updateField(sectionId, actionsKey, JSON.stringify(updatedActions));
+    } else {
+      updateSection(sectionId, { actions: updatedActions });
+    }
     setSelectedIndex(-1);
   };
 
@@ -60,9 +104,12 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
       ...updatedActions[index],
       completed: checked,
     };
-    updateSection(sectionId, { actions: updatedActions });
+    if (actionsKey) {
+      updateField(sectionId, actionsKey, JSON.stringify(updatedActions));
+    } else {
+      updateSection(sectionId, { actions: updatedActions });
+    }
   };
-
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "...";
@@ -80,6 +127,9 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold">My Goal Plan - {section.category}</h2>
+      {subHeading && (
+        <h3 className="text-lg font-medium text-muted-foreground">{subHeading}</h3>
+      )}
       <p className="text-sm text-muted-foreground">
         {isReadOnly 
           ? "This is a versioned plan. You can view the content but cannot make changes."
@@ -93,6 +143,8 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
         action={currentAction}
         onSave={handleSaveAction}
         sectionId={sectionId}
+        needsGoalsLabel={needsGoalsLabel}
+        needsGoalsPrompt={needsGoalsPrompt}
       />
 
       <div className="rounded-lg border overflow-x-auto">
