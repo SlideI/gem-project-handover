@@ -92,7 +92,7 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto">
       {isReadOnly && (
         <Alert className="mb-6 border-warning bg-warning/10">
           <Lock className="h-4 w-4" />
