@@ -25,9 +25,19 @@ interface ActionDialogProps {
   action: Action | null;
   onSave: (action: Action) => void;
   sectionId: string;
+  needsGoalsLabel?: string;
+  needsGoalsPrompt?: string;
 }
 
-export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: ActionDialogProps) => {
+export const ActionDialog = ({ 
+  open, 
+  onOpenChange, 
+  action, 
+  onSave, 
+  sectionId,
+  needsGoalsLabel = "My day to day needs and safety goals",
+  needsGoalsPrompt = "Consider what a safe environment looks like for te tamaiti or rangatahi, recognising that oranga (wellbeing) is different for every whānau or family. Record the agreed goals that reflect this understanding. Consider whether te tamaiti or rangatahi is warm, dry, sleeping and eating well, and whether their specific dietary or health needs are being met. Record any identified needs to ensure these aspects of wellbeing are supported."
+}: ActionDialogProps) => {
   const [formData, setFormData] = useState<Action>({
     action: "",
     responsible: "",
@@ -78,14 +88,14 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Label htmlFor={`${sectionId}-needs-goals`}>My day to day needs and safety goals</Label>
+              <Label htmlFor={`${sectionId}-needs-goals`}>{needsGoalsLabel}</Label>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span className="material-icons-outlined text-base text-primary cursor-help">help_outline</span>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-sm">
-                    <p>Consider what a safe environment looks like for te tamaiti or rangatahi, recognising that oranga (wellbeing) is different for every whānau or family. Record the agreed goals that reflect this understanding. Consider whether te tamaiti or rangatahi is warm, dry, sleeping and eating well, and whether their specific dietary or health needs are being met. Record any identified needs to ensure these aspects of wellbeing are supported.</p>
+                    <p>{needsGoalsPrompt}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
