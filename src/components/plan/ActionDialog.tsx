@@ -77,7 +77,19 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor={`${sectionId}-needs-goals`}>My day to day needs and safety goals</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor={`${sectionId}-needs-goals`}>My day to day needs and safety goals</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="material-icons-outlined text-base text-primary cursor-help">help_outline</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p>Consider what a safe environment looks like for te tamaiti or rangatahi, recognising that oranga (wellbeing) is different for every whānau or family. Record the agreed goals that reflect this understanding. Consider whether te tamaiti or rangatahi is warm, dry, sleeping and eating well, and whether their specific dietary or health needs are being met. Record any identified needs to ensure these aspects of wellbeing are supported.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea
               id={`${sectionId}-needs-goals`}
               value={formData.needs_goals}
