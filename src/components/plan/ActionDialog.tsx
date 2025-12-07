@@ -77,7 +77,7 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor={`${sectionId}-needs-goals`}>The needs and goals to support me with this</Label>
+            <Label htmlFor={`${sectionId}-needs-goals`}>My day to day needs and safety goals</Label>
             <Textarea
               id={`${sectionId}-needs-goals`}
               value={formData.needs_goals}
