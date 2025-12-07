@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -8,37 +8,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isToday, parseISO } from "date-fns";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 export const SummaryTable = () => {
-  const { sections, updateSection, isReadOnly } = usePlan();
-  const [confirmDialog, setConfirmDialog] = useState<{
-    open: boolean;
-    sectionId: string;
-    actionIndex: number;
-    isCompleting: boolean;
-  }>({ open: false, sectionId: "", actionIndex: 0, isCompleting: true });
+  const { sections } = usePlan();
 
   const allActions = useMemo(() => {
     const actions: Array<{
       sectionId: string;
       category: string;
+      needs_goals: string;
       action: string;
       responsible: string;
       deadline: string;
-      support: string;
+      achievement_indicator: string;
+      review_status: string;
       completed: boolean;
       actionIndex: number;
     }> = [];
@@ -49,7 +34,13 @@ export const SummaryTable = () => {
           actions.push({
             sectionId,
             category: section.category,
-            ...action,
+            needs_goals: action.needs_goals || "",
+            action: action.action,
+            responsible: action.responsible || "",
+            deadline: action.deadline || "",
+            achievement_indicator: action.achievement_indicator || "",
+            review_status: action.review_status || "",
+            completed: action.completed || false,
             actionIndex: index,
           });
         }
@@ -62,38 +53,6 @@ export const SummaryTable = () => {
       return a.completed ? 1 : -1;
     });
   }, [sections]);
-
-  const handleCheckboxClick = (sectionId: string, actionIndex: number, currentlyCompleted: boolean) => {
-    if (isReadOnly) return;
-    
-    // Only show confirmation when marking as complete (not when unchecking)
-    if (!currentlyCompleted) {
-      setConfirmDialog({
-        open: true,
-        sectionId,
-        actionIndex,
-        isCompleting: true,
-      });
-    } else {
-      // Allow immediate toggle when unchecking
-      toggleComplete(sectionId, actionIndex);
-    }
-  };
-
-  const toggleComplete = (sectionId: string, actionIndex: number) => {
-    const section = sections[sectionId];
-    const updatedActions = [...section.actions];
-    updatedActions[actionIndex] = {
-      ...updatedActions[actionIndex],
-      completed: !updatedActions[actionIndex].completed,
-    };
-    updateSection(sectionId, { actions: updatedActions });
-  };
-
-  const handleConfirmComplete = () => {
-    toggleComplete(confirmDialog.sectionId, confirmDialog.actionIndex);
-    setConfirmDialog({ ...confirmDialog, open: false });
-  };
 
   const getStatusBadge = (deadline: string, completed: boolean) => {
     if (completed) {
@@ -119,66 +78,45 @@ export const SummaryTable = () => {
   };
 
   return (
-    <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+    <div className="rounded-md border overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Category</TableHead>
+            <TableHead>Needs & Goals</TableHead>
+            <TableHead>Action</TableHead>
+            <TableHead>Who's responsible</TableHead>
+            <TableHead className="w-[90px]">By when</TableHead>
+            <TableHead>How will I know</TableHead>
+            <TableHead className="w-[90px]">Review status</TableHead>
+            <TableHead>Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {allActions.length === 0 ? (
             <TableRow>
-              <TableHead className="w-12">Done</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Action</TableHead>
-              <TableHead>Responsible</TableHead>
-              <TableHead>By When</TableHead>
-              <TableHead>Support</TableHead>
-              <TableHead>Status</TableHead>
+              <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                No actions added yet
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {allActions.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                  No actions added yet
+          ) : (
+            allActions.map((action, index) => (
+              <TableRow key={`${action.sectionId}-${index}`}>
+                <TableCell className="font-medium">{action.category}</TableCell>
+                <TableCell>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell>{action.action}</TableCell>
+                <TableCell>{action.responsible || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell>
+                  {action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : <span className="text-muted-foreground italic">...</span>}
                 </TableCell>
+                <TableCell>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell>{getStatusBadge(action.deadline, action.completed)}</TableCell>
               </TableRow>
-            ) : (
-              allActions.map((action, index) => (
-                <TableRow key={`${action.sectionId}-${index}`}>
-                  <TableCell>
-                    <Checkbox
-                      checked={action.completed}
-                      disabled={isReadOnly}
-                      onCheckedChange={() => handleCheckboxClick(action.sectionId, action.actionIndex, action.completed)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium">{action.category}</TableCell>
-                  <TableCell>{action.action}</TableCell>
-                  <TableCell>{action.responsible || "-"}</TableCell>
-                  <TableCell>
-                    {action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : "-"}
-                  </TableCell>
-                  <TableCell>{action.support || "-"}</TableCell>
-                  <TableCell>{getStatusBadge(action.deadline, action.completed)}</TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      <AlertDialog open={confirmDialog.open} onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Mark Activity as Complete</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure this activity has now been completed?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmComplete}>Yes</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
