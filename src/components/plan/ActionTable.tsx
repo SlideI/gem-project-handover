@@ -99,14 +99,14 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[140px]">Category</TableHead>
-              <TableHead className="min-w-[160px]">Needs & Goals</TableHead>
-              <TableHead className="min-w-[160px]">Action</TableHead>
-              <TableHead className="min-w-[120px]">Who is responsible</TableHead>
-              <TableHead className="min-w-[100px]">By when</TableHead>
-              <TableHead className="min-w-[160px]">How will I know</TableHead>
-              <TableHead className="min-w-[100px]">Review status</TableHead>
-              <TableHead className="w-[100px]">Complete</TableHead>
+              <TableHead className="w-[100px]">Category</TableHead>
+              <TableHead>Needs & Goals</TableHead>
+              <TableHead>Action</TableHead>
+              <TableHead>Who is responsible</TableHead>
+              <TableHead className="w-[90px]">By when</TableHead>
+              <TableHead>How will I know</TableHead>
+              <TableHead className="w-[90px]">Review status</TableHead>
+              <TableHead className="w-[70px]">Complete</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
