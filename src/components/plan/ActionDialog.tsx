@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Action {
   action: string;
@@ -12,6 +14,9 @@ interface Action {
   support: string;
   completed: boolean;
   show_in_timeline?: boolean;
+  needs_goals?: string;
+  achievement_indicator?: string;
+  review_status?: string;
 }
 
 interface ActionDialogProps {
@@ -30,11 +35,19 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
     support: "",
     completed: false,
     show_in_timeline: true,
+    needs_goals: "",
+    achievement_indicator: "",
+    review_status: "",
   });
 
   useEffect(() => {
     if (action) {
-      setFormData(action);
+      setFormData({
+        ...action,
+        needs_goals: action.needs_goals || "",
+        achievement_indicator: action.achievement_indicator || "",
+        review_status: action.review_status || "",
+      });
     } else {
       setFormData({
         action: "",
@@ -43,6 +56,9 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
         support: "",
         completed: false,
         show_in_timeline: true,
+        needs_goals: "",
+        achievement_indicator: "",
+        review_status: "",
       });
     }
   }, [action, open]);
@@ -56,10 +72,23 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>The needs and goals to support me...</DialogTitle>
+          <DialogTitle>My Goal Plan</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor={`${sectionId}-needs-goals`}>The needs and goals to support me with this</Label>
+            <Textarea
+              id={`${sectionId}-needs-goals`}
+              value={formData.needs_goals}
+              onChange={(e) => setFormData({ ...formData, needs_goals: e.target.value })}
+              placeholder="Describe the needs and goals"
+              autoComplete="off"
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor={`${sectionId}-action`}>Action</Label>
             <Textarea
@@ -96,16 +125,46 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${sectionId}-support`}>Additional support/services</Label>
-            <Input
-              id={`${sectionId}-support`}
-              value={formData.support}
-              onChange={(e) => setFormData({ ...formData, support: e.target.value })}
-              placeholder="Enter additional support needed"
+            <Label htmlFor={`${sectionId}-achievement`}>How will I know I have achieved this</Label>
+            <Textarea
+              id={`${sectionId}-achievement`}
+              value={formData.achievement_indicator}
+              onChange={(e) => setFormData({ ...formData, achievement_indicator: e.target.value })}
+              placeholder="Describe how you will know when this is achieved"
               autoComplete="off"
+              rows={3}
+              className="resize-none"
             />
           </div>
 
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor={`${sectionId}-review-status`}>Review status</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="material-icons-outlined text-base text-foreground cursor-help">help_outline</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>Use "Changed" when the original goal or action is no longer relevant, and a new direction, interest, or need has emerged. This may reflect a shift in priorities, circumstances, or preferences.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <Select
+              value={formData.review_status}
+              onValueChange={(value) => setFormData({ ...formData, review_status: value })}
+            >
+              <SelectTrigger id={`${sectionId}-review-status`}>
+                <SelectValue placeholder="Select a status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Achieved">Achieved</SelectItem>
+                <SelectItem value="In progress">In progress</SelectItem>
+                <SelectItem value="Changed">Changed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <DialogFooter className="gap-2">

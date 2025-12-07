@@ -34,6 +34,9 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
       support: "",
       completed: false,
       show_in_timeline: true,
+      needs_goals: "",
+      achievement_indicator: "",
+      review_status: "",
     };
     const updatedActions = [...actions, newAction];
     updateSection(sectionId, { actions: updatedActions });
@@ -76,7 +79,7 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-semibold">My Plan - {section.category}</h2>
+      <h2 className="text-2xl font-semibold">My Goal Plan - {section.category}</h2>
       <p className="text-sm text-muted-foreground">
         {isReadOnly 
           ? "This is a versioned plan. You can view the content but cannot make changes."
@@ -92,17 +95,18 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
         sectionId={sectionId}
       />
 
-      <div className="rounded-lg border overflow-hidden">
+      <div className="rounded-lg border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[200px]">Category</TableHead>
-              <TableHead className="min-w-[250px]">Action</TableHead>
-              <TableHead>Who is responsible</TableHead>
-              <TableHead>By when</TableHead>
-              <TableHead>Additional support/services</TableHead>
-              
-              <TableHead className="w-[120px]">Action Complete</TableHead>
+              <TableHead className="w-[140px]">Category</TableHead>
+              <TableHead className="min-w-[160px]">Needs & Goals</TableHead>
+              <TableHead className="min-w-[160px]">Action</TableHead>
+              <TableHead className="min-w-[120px]">Who is responsible</TableHead>
+              <TableHead className="min-w-[100px]">By when</TableHead>
+              <TableHead className="min-w-[160px]">How will I know</TableHead>
+              <TableHead className="min-w-[100px]">Review status</TableHead>
+              <TableHead className="w-[100px]">Complete</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -121,6 +125,9 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                       {section.category}
                     </TableCell>
                   )}
+                  <TableCell>
+                    {action.needs_goals || <span className="text-muted-foreground italic">...</span>}
+                  </TableCell>
                   <TableCell className="font-medium">
                     {action.action || <span className="text-muted-foreground italic">...</span>}
                   </TableCell>
@@ -135,7 +142,10 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                     )}
                   </TableCell>
                   <TableCell>
-                    {action.support || <span className="text-muted-foreground italic">...</span>}
+                    {action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}
+                  </TableCell>
+                  <TableCell>
+                    {action.review_status || <span className="text-muted-foreground italic">...</span>}
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center">

@@ -16,36 +16,45 @@ export type Database = {
     Tables: {
       actions: {
         Row: {
+          achievement_indicator: string
           action: string
           completed: boolean
           created_at: string
           deadline: string | null
           id: string
+          needs_goals: string
           responsible: string
+          review_status: string
           section_id: string
           show_in_timeline: boolean
           support: string
           updated_at: string
         }
         Insert: {
+          achievement_indicator?: string
           action: string
           completed?: boolean
           created_at?: string
           deadline?: string | null
           id?: string
+          needs_goals?: string
           responsible?: string
+          review_status?: string
           section_id: string
           show_in_timeline?: boolean
           support?: string
           updated_at?: string
         }
         Update: {
+          achievement_indicator?: string
           action?: string
           completed?: boolean
           created_at?: string
           deadline?: string | null
           id?: string
+          needs_goals?: string
           responsible?: string
+          review_status?: string
           section_id?: string
           show_in_timeline?: boolean
           support?: string
