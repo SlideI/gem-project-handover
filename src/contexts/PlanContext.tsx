@@ -10,6 +10,9 @@ interface Action {
   support: string;
   completed: boolean;
   show_in_timeline?: boolean;
+  needs_goals?: string;
+  achievement_indicator?: string;
+  review_status?: string;
 }
 
 interface SectionData {
@@ -53,6 +56,9 @@ const defaultAction: Action = {
   support: "",
   completed: false,
   show_in_timeline: true,
+  needs_goals: "",
+  achievement_indicator: "",
+  review_status: "",
 };
 
 const initialSections: Record<string, SectionData> = {
@@ -252,6 +258,9 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
                     deadline: action.deadline || "",
                     support: action.support,
                     completed: action.completed,
+                    needs_goals: action.needs_goals || "",
+                    achievement_indicator: action.achievement_indicator || "",
+                    review_status: action.review_status || "",
                   });
                 });
               }
@@ -393,6 +402,9 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
               deadline: action.deadline || null,
               support: action.support || "",
               completed: action.completed || false,
+              needs_goals: action.needs_goals || "",
+              achievement_indicator: action.achievement_indicator || "",
+              review_status: action.review_status || "",
             }));
 
           if (actionsToInsert.length > 0) {
