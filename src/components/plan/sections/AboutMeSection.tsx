@@ -570,6 +570,15 @@ export const AboutMeSection = () => {
         needsGoalsLabel="The support I need with my behavioural needs"
         needsGoalsPrompt="Consider what support is needed to respond to the behavioural needs in a way that promotes safety, regulation, and wellbeing. Use what is known about their behaviour to plan consistent strategies across settings, including routines, relationships, and environments that help reduce distress and encourage positive behaviour."
       />
+
+      {/* Action Plan Table - Emotional Support */}
+      <ActionTable 
+        sectionId="about-me"
+        subHeading="Emotional Support"
+        actionsKey="emotional_actions"
+        needsGoalsLabel="The support I need with my emotional well-being"
+        needsGoalsPrompt="Consider what helps the child feel emotionally safe, valued, and connected. Use what is known about their emotional needs to plan consistent, responsive support that promotes trust, resilience, and a sense of belonging."
+      />
     </div>
   );
 };
