@@ -102,7 +102,19 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${sectionId}-action`}>Action</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor={`${sectionId}-action`}>Action</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="material-icons-outlined text-base text-primary cursor-help">help_outline</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p>Outline the actions and tasks required to achieve each identified goal or need. These actions should be clearly defined and follow the SMART criteria—Specific, Measurable, Achievable, Relevant, and Time-bound—to ensure they are practical and effective in supporting progress.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea
               id={`${sectionId}-action`}
               value={formData.action}
@@ -115,7 +127,19 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${sectionId}-responsible`}>Who is responsible</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor={`${sectionId}-responsible`}>Who is responsible</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="material-icons-outlined text-base text-primary cursor-help">help_outline</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p>Include or specify who will support each action to help achieve the goals. This may include whānau, family, hapū, iwi, other professionals, social worker, case leader, care team, specialist services, transitions provider, caregiver support, and others who contribute to the goals. Consider whether any financial responsibilities are linked to the action, and who may help meet those.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Input
               id={`${sectionId}-responsible`}
               value={formData.responsible}
@@ -126,7 +150,19 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${sectionId}-deadline`}>By when</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor={`${sectionId}-deadline`}>By when</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="material-icons-outlined text-base text-primary cursor-help">help_outline</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p>Consider the specific timeframe within which each action or outcome should be achieved. Assign clear dates where possible to support accountability and progress tracking. If an action is ongoing, align its timeframe with the length of the AAMP review period to ensure it remains relevant and monitored.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Input
               id={`${sectionId}-deadline`}
               type="date"
@@ -137,7 +173,19 @@ export const ActionDialog = ({ open, onOpenChange, action, onSave, sectionId }: 
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`${sectionId}-achievement`}>How will I know I have achieved this</Label>
+            <div className="flex items-center gap-2">
+              <Label htmlFor={`${sectionId}-achievement`}>How will I know I have achieved this</Label>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="material-icons-outlined text-base text-primary cursor-help">help_outline</span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-sm">
+                    <p>Think about how we'll recognise when a goal or action has been achieved—what specific changes or outcomes will show progress? If things aren't on track, what signs might help us notice early, and what extra support could help te tamaiti or rangatahi get back on track?</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <Textarea
               id={`${sectionId}-achievement`}
               value={formData.achievement_indicator}
