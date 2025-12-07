@@ -106,7 +106,6 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
               <TableHead className="w-[90px]">By when</TableHead>
               <TableHead>How will I know</TableHead>
               <TableHead className="w-[90px]">Review status</TableHead>
-              <TableHead className="w-[70px]">Complete</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -146,15 +145,6 @@ export const ActionTable = ({ sectionId }: ActionTableProps) => {
                   </TableCell>
                   <TableCell>
                     {action.review_status || <span className="text-muted-foreground italic">...</span>}
-                  </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-center">
-                      <Checkbox
-                        checked={action.completed}
-                        onCheckedChange={(checked) => handleCheckboxChange(originalIndex, checked as boolean)}
-                        disabled={isReadOnly}
-                      />
-                    </div>
                   </TableCell>
                 </TableRow>
               );
