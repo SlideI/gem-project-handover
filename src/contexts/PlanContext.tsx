@@ -273,9 +273,15 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
               planSections.forEach(section => {
                 if (updated[section.section_key]) {
                   const sectionActions = actionsBySection[section.id] || [];
+                  const dbFields = (section.fields as Record<string, string>) || {};
+
+                  // Merge DB fields over any pre-populated defaults (e.g. DOB)
                   updated[section.section_key] = {
                     ...updated[section.section_key],
-                    fields: (section.fields as Record<string, string>) || {},
+                    fields: {
+                      ...updated[section.section_key].fields,
+                      ...dbFields,
+                    },
                     actions: sectionActions.length > 0 ? sectionActions : updated[section.section_key].actions,
                   };
                 }
