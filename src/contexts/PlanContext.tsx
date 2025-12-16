@@ -273,9 +273,14 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
               planSections.forEach(section => {
                 if (updated[section.section_key]) {
                   const sectionActions = actionsBySection[section.id] || [];
-                  const dbFields = (section.fields as Record<string, string>) || {};
+                  const rawDbFields = (section.fields as Record<string, unknown>) || {};
 
                   // Merge DB fields over any pre-populated defaults (e.g. DOB)
+                  // but ignore null/empty values so they don't wipe out defaults.
+                  const dbFields = Object.fromEntries(
+                    Object.entries(rawDbFields).filter(([, v]) => v !== null && v !== undefined && String(v).trim() !== "")
+                  ) as Record<string, string>;
+
                   updated[section.section_key] = {
                     ...updated[section.section_key],
                     fields: {
