@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlan } from "@/contexts/PlanContext";
-import { format, isPast, isFuture, isToday, parseISO } from "date-fns";
+import { format, isPast, isFuture, isToday, parseISO, setYear, getMonth, getDate } from "date-fns";
 import { Link } from "react-router-dom";
 
 interface TimelineEvent {
@@ -18,8 +18,8 @@ interface TimelineEvent {
 
 // Define which fields should appear on the timeline
 const TIMELINE_FIELDS = [
-  // About Me section
-  { sectionKey: "about-me", fieldKey: "dob", label: "My date of birth", category: "About Me" },
+  // About Me section - DOB handled specially as birthday
+  { sectionKey: "about-me", fieldKey: "dob", label: "My Birthday", category: "About Me", isBirthday: true },
   
   // Planning With section
   { sectionKey: "planning-with", fieldKey: "plan-discussed-date", label: "Plan discussed with social worker", category: "Planning With" },
@@ -42,6 +42,22 @@ const TIMELINE_FIELDS = [
   { sectionKey: "residence", fieldKey: "arrived-on", label: "I arrived on", category: "Residence" },
   { sectionKey: "residence", fieldKey: "expected-leaving-date", label: "My early leaving date / expected leaving date", category: "Residence" },
 ];
+
+// Get the next occurrence of a birthday (this year or next year)
+const getNextBirthday = (birthDate: Date): Date => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  
+  // Create this year's birthday
+  let nextBirthday = new Date(currentYear, getMonth(birthDate), getDate(birthDate));
+  
+  // If this year's birthday has passed, use next year's
+  if (isPast(nextBirthday) && !isToday(nextBirthday)) {
+    nextBirthday = new Date(currentYear + 1, getMonth(birthDate), getDate(birthDate));
+  }
+  
+  return nextBirthday;
+};
 
 export const PlanTimeline = () => {
   const { sections } = usePlan();
@@ -69,6 +85,11 @@ export const PlanTimeline = () => {
         }
         
         if (isNaN(date.getTime())) return;
+        
+        // For birthdays, show the next occurrence (this year or next)
+        if ((field as any).isBirthday) {
+          date = getNextBirthday(date);
+        }
         
         events.push({
           title: field.label,
