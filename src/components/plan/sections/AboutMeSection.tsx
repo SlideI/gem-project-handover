@@ -325,8 +325,8 @@ export const AboutMeSection = () => {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <PrePopulatedField label="My age is" value="16" />
-          <PrePopulatedField label="My date of birth is" value="12 July 2009" />
+          <PrePopulatedField label="My age is" value="15" />
+          <PrePopulatedField label="My date of birth is" value="22 December 2009" />
         </div>
 
         <PrePopulatedField label="My parents' names are" value="Robert Jackson (Stepdad), John Cameron (Father), Sarah Anne Cudby (Mother)" />
