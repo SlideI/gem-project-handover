@@ -35,6 +35,7 @@ interface PlanContextType {
     profile_picture_url: string | null;
     background_picture_url: string | null;
   } | null;
+  planCreatedAt: string | null;
   profilePicture: string | null;
   backgroundPicture: string | null;
   updatePlanImages: (profileUrl: string | null, backgroundUrl: string | null) => void;
@@ -140,6 +141,7 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
   } | null>(null);
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [backgroundPicture, setBackgroundPicture] = useState<string | null>(null);
+  const [planCreatedAt, setPlanCreatedAt] = useState<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -222,6 +224,7 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
           });
           setProfilePicture(plan.profile_picture_url);
           setBackgroundPicture(plan.background_picture_url);
+          setPlanCreatedAt(plan.created_at);
           setEnabledSections(plan.enabled_sections || null);
 
           // Load plan sections from database
@@ -490,6 +493,7 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
       saveProgress,
       planId,
       planData,
+      planCreatedAt,
       profilePicture,
       backgroundPicture,
       updatePlanImages,
