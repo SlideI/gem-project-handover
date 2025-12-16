@@ -65,7 +65,9 @@ const initialSections: Record<string, SectionData> = {
   "about-me": {
     category: "About Me",
     actions: [],
-    fields: {},
+    fields: {
+      dob: "22 December 2009", // Pre-populated from external source
+    },
   },
   identity: {
     category: "Identity, Spirituality, and Cultural Needs",

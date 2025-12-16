@@ -3,8 +3,9 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlan } from "@/contexts/PlanContext";
-import { format, isPast, isFuture, isToday, parseISO, setYear, getMonth, getDate } from "date-fns";
+import { format, isPast, isFuture, isToday, parseISO, getMonth, getDate } from "date-fns";
 import { Link } from "react-router-dom";
+import { Cake } from "lucide-react";
 
 interface TimelineEvent {
   title: string;
@@ -14,6 +15,7 @@ interface TimelineEvent {
   isPastDue: boolean;
   isUpcoming: boolean;
   isToday: boolean;
+  isBirthday?: boolean;
 }
 
 // Define which fields should appear on the timeline
@@ -99,6 +101,7 @@ export const PlanTimeline = () => {
           isPastDue: isPast(date) && !isToday(date),
           isUpcoming: isFuture(date),
           isToday: isToday(date),
+          isBirthday: (field as any).isBirthday || false,
         });
       } catch (e) {
         console.error("Invalid date:", fieldValue);
@@ -174,7 +177,17 @@ export const PlanTimeline = () => {
                 </div>
 
                 {/* Event card */}
-                <div className="mt-4 border border-border rounded-lg p-3 bg-card shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer">
+                <div className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer ${
+                  event.isBirthday 
+                    ? "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-950/30 dark:to-purple-950/30 dark:border-pink-800" 
+                    : "bg-card border-border"
+                }`}>
+                  {event.isBirthday && (
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Cake className="w-4 h-4 text-pink-500" />
+                      <span className="text-xs font-medium text-pink-600 dark:text-pink-400">Birthday!</span>
+                    </div>
+                  )}
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
