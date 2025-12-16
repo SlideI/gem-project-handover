@@ -6,7 +6,7 @@ import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isFuture, isToday, parseISO } from "date-fns";
 import { Link } from "react-router-dom";
 
-interface TimelineAction {
+interface TimelineEvent {
   title: string;
   date: Date;
   category: string;
@@ -16,39 +16,78 @@ interface TimelineAction {
   isToday: boolean;
 }
 
+// Define which fields should appear on the timeline
+const TIMELINE_FIELDS = [
+  // About Me section
+  { sectionKey: "about-me", fieldKey: "dob", label: "My date of birth", category: "About Me" },
+  
+  // Planning With section
+  { sectionKey: "planning-with", fieldKey: "plan-discussed-date", label: "Plan discussed with social worker", category: "Planning With" },
+  { sectionKey: "planning-with", fieldKey: "review-date", label: "My plan will be reviewed on", category: "Planning With" },
+  { sectionKey: "planning-with", fieldKey: "rights-booklet-date", label: "My voice, my rights booklet was provided", category: "Planning With" },
+  { sectionKey: "planning-with", fieldKey: "next-visit", label: "My next social worker visit", category: "Planning With" },
+  
+  // Health section
+  { sectionKey: "health", fieldKey: "last-medical-visit", label: "My last medical visit", category: "Health" },
+  { sectionKey: "health", fieldKey: "last-dentist-visit", label: "My last dentist visit", category: "Health" },
+  
+  // Youth Justice section
+  { sectionKey: "youth-justice", fieldKey: "next-court-date", label: "My next court date or family group conference", category: "Youth Justice" },
+  
+  // Transition section
+  { sectionKey: "transition", fieldKey: "life-skills-date", label: "My life skills assessment", category: "Transition" },
+  { sectionKey: "transition", fieldKey: "transition-hui-date", label: "My transition planning hui", category: "Transition" },
+  
+  // Residence section
+  { sectionKey: "residence", fieldKey: "arrived-on", label: "I arrived on", category: "Residence" },
+  { sectionKey: "residence", fieldKey: "expected-leaving-date", label: "My early leaving date / expected leaving date", category: "Residence" },
+];
+
 export const PlanTimeline = () => {
   const { sections } = usePlan();
   const scrollRef = useRef<HTMLDivElement>(null);
   const todayRef = useRef<HTMLDivElement>(null);
 
-  const timelineActions = useMemo(() => {
-    const actions: TimelineAction[] = [];
+  const timelineEvents = useMemo(() => {
+    const events: TimelineEvent[] = [];
     
-    Object.entries(sections).forEach(([sectionId, section]) => {
-      section.actions.forEach((action) => {
-        if (action.deadline && action.action && action.show_in_timeline !== false) {
-          try {
-            const date = parseISO(action.deadline);
-            actions.push({
-              title: action.action,
-              date,
-              category: section.category,
-              sectionId,
-              isPastDue: isPast(date) && !isToday(date),
-              isUpcoming: isFuture(date),
-              isToday: isToday(date),
-            });
-          } catch (e) {
-            console.error("Invalid date:", action.deadline);
-          }
+    TIMELINE_FIELDS.forEach((field) => {
+      const section = sections[field.sectionKey];
+      if (!section) return;
+      
+      const fieldValue = section.fields?.[field.fieldKey];
+      if (!fieldValue) return;
+      
+      try {
+        // Try to parse as ISO date first, then as other formats
+        let date: Date;
+        if (fieldValue.includes("T") || fieldValue.match(/^\d{4}-\d{2}-\d{2}/)) {
+          date = parseISO(fieldValue);
+        } else {
+          // Try parsing other date formats (e.g., "12 July 2009")
+          date = new Date(fieldValue);
         }
-      });
+        
+        if (isNaN(date.getTime())) return;
+        
+        events.push({
+          title: field.label,
+          date,
+          category: field.category,
+          sectionId: field.sectionKey,
+          isPastDue: isPast(date) && !isToday(date),
+          isUpcoming: isFuture(date),
+          isToday: isToday(date),
+        });
+      } catch (e) {
+        console.error("Invalid date:", fieldValue);
+      }
     });
 
-    return actions.sort((a, b) => a.date.getTime() - b.date.getTime());
+    return events.sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [sections]);
 
-  const todayIndex = timelineActions.findIndex((action) => action.isToday || action.isUpcoming);
+  const todayIndex = timelineEvents.findIndex((event) => event.isToday || event.isUpcoming);
 
   // Scroll to center "Today" on mount
   useEffect(() => {
@@ -63,9 +102,9 @@ export const PlanTimeline = () => {
       const scrollPosition = todayLeft - (containerWidth / 2) + (todayWidth / 2);
       container.scrollLeft = Math.max(0, scrollPosition);
     }
-  }, [timelineActions]);
+  }, [timelineEvents]);
 
-  if (timelineActions.length === 0) {
+  if (timelineEvents.length === 0) {
     return null;
   }
 
@@ -80,10 +119,10 @@ export const PlanTimeline = () => {
       <ScrollArea className="w-full" type="always">
         <div ref={scrollRef} className="relative pb-6">
           {/* Main timeline line */}
-          <div className="absolute top-[60px] left-0 h-0.5 bg-border" style={{ width: `${timelineActions.length * 220}px` }} />
+          <div className="absolute top-[60px] left-0 h-0.5 bg-border" style={{ width: `${timelineEvents.length * 220}px` }} />
           
           <div className="flex gap-4 min-w-max items-start pt-12 pb-2 px-4">
-            {timelineActions.map((action, index) => (
+            {timelineEvents.map((event, index) => (
               <div 
                 key={index} 
                 ref={index === todayIndex ? todayRef : null}
@@ -104,10 +143,10 @@ export const PlanTimeline = () => {
                 <div className="relative z-10">
                   <div
                     className={`w-4 h-4 rounded-full border-2 ${
-                      action.isToday
+                      event.isToday
                         ? "bg-primary border-primary"
-                        : action.isPastDue
-                        ? "bg-destructive border-destructive"
+                        : event.isPastDue
+                        ? "bg-muted border-muted-foreground"
                         : "bg-background border-border"
                     } shadow-sm`}
                   />
@@ -119,24 +158,24 @@ export const PlanTimeline = () => {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link
-                          to={`/plan#${action.sectionId}`}
+                          to={`/plan#${event.sectionId}`}
                           className="text-sm font-medium hover:text-primary transition-colors block mb-2"
                         >
-                          {truncateText(action.title)}
+                          {truncateText(event.title)}
                         </Link>
                       </TooltipTrigger>
-                      {action.title.length > 45 && (
+                      {event.title.length > 45 && (
                         <TooltipContent>
-                          <p className="max-w-xs">{action.title}</p>
+                          <p className="max-w-xs">{event.title}</p>
                         </TooltipContent>
                       )}
                     </Tooltip>
                   </TooltipProvider>
                   <p className="text-xs text-muted-foreground mb-1">
-                    {format(action.date, "dd/MM/yyyy")}
+                    {format(event.date, "dd/MM/yyyy")}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {action.category}
+                    {event.category}
                   </p>
                 </div>
               </div>
