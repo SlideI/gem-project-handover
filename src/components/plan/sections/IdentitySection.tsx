@@ -71,8 +71,11 @@ export const IdentitySection = () => {
       </div>
 
       <div className="pt-6">
-        <h3 className="text-xl font-semibold mb-4">Action Plan</h3>
-        <ActionTable sectionId="identity" />
+        <ActionTable 
+          sectionId="identity" 
+          needsGoalsLabel="The needs and goals to support me with my Identity, spirituality, cultural needs and safety"
+          needsGoalsPrompt="Place value on narratives as a part of their cultural identity. These stories will help to identify what tamariki or rangatahi and whānau or family experience, value, identify and connect with. Consider the principle of mana and work collaboratively with tamariki or rangatahi and whānau or family to ensure they have what they need to keep safe and keep their culture safe such as their whakapapa and whanaungatanga connections. Also consider any barriers that may exist for connection to their whakapapa and how this can affect their cultural safety."
+        />
       </div>
     </div>
   );
