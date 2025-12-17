@@ -48,6 +48,7 @@ export const ResidenceSection = () => {
           label="My early leaving date / expected leaving date"
           value={data?.fields?.["expected-leaving-date"] ? new Date(data.fields["expected-leaving-date"]) : undefined}
           onChange={(date) => updateField("residence", "expected-leaving-date", date?.toISOString() || "")}
+          showsOnTimeline
         />
 
         <FieldWithPrompt label="I have been advised of:">

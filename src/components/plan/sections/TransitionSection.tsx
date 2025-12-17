@@ -59,6 +59,7 @@ export const TransitionSection = () => {
                 label="My life skills assessment: Date"
                 value={data?.fields?.["life-skills-date"] ? new Date(data.fields["life-skills-date"]) : undefined}
                 onChange={(date) => updateField("transition", "life-skills-date", date?.toISOString() || "")}
+                showsOnTimeline
               />
             </div>
 
@@ -67,6 +68,7 @@ export const TransitionSection = () => {
               value={data?.fields?.["transition-hui-date"] ? new Date(data.fields["transition-hui-date"]) : undefined}
               onChange={(date) => updateField("transition", "transition-hui-date", date?.toISOString() || "")}
               prompt="eg Life skills assessment, Transition plan. Do not upload copies of bank details"
+              showsOnTimeline
             />
 
             <div className="space-y-2">

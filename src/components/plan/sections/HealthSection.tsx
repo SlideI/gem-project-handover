@@ -43,6 +43,7 @@ export const HealthSection = () => {
           label="My last medical visit"
           value={data?.fields?.["last-medical-visit"] ? new Date(data.fields["last-medical-visit"]) : undefined}
           onChange={(date) => updateField("health", "last-medical-visit", date?.toISOString() || "")}
+          showsOnTimeline
         />
 
         <PrePopulatedField
@@ -75,6 +76,7 @@ export const HealthSection = () => {
           label="My last dentist visit"
           value={data?.fields?.["last-dentist-visit"] ? new Date(data.fields["last-dentist-visit"]) : undefined}
           onChange={(date) => updateField("health", "last-dentist-visit", date?.toISOString() || "")}
+          showsOnTimeline
         />
 
         <div className="space-y-2">
