@@ -158,16 +158,19 @@ export const PlanTimeline = () => {
 
   // Scroll to center "Today" on mount
   useEffect(() => {
-    if (todayRef.current && scrollRef.current) {
-      const container = scrollRef.current;
-      const todayElement = todayRef.current;
-      const containerWidth = container.offsetWidth;
-      const todayLeft = todayElement.offsetLeft;
-      const todayWidth = todayElement.offsetWidth;
-      
-      // Center the today element
-      const scrollPosition = todayLeft - (containerWidth / 2) + (todayWidth / 2);
-      container.scrollLeft = Math.max(0, scrollPosition);
+    if (todayRef.current) {
+      // Find the ScrollArea viewport (the actual scrollable element)
+      const scrollViewport = todayRef.current.closest('[data-radix-scroll-area-viewport]');
+      if (scrollViewport) {
+        const todayElement = todayRef.current;
+        const viewportWidth = scrollViewport.clientWidth;
+        const todayLeft = todayElement.offsetLeft;
+        const todayWidth = todayElement.offsetWidth;
+        
+        // Center the today element in the viewport
+        const scrollPosition = todayLeft - (viewportWidth / 2) + (todayWidth / 2);
+        scrollViewport.scrollLeft = Math.max(0, scrollPosition);
+      }
     }
   }, [timelineEvents]);
 
