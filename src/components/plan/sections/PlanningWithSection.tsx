@@ -42,6 +42,7 @@ export const PlanningWithSection = () => {
             label="Date discussed"
             value={data?.fields?.["plan-discussed-date"] ? new Date(data.fields["plan-discussed-date"]) : undefined}
             onChange={(date) => updateField("planning-with", "plan-discussed-date", date?.toISOString() || "")}
+            showsOnTimeline
           />
         </div>
 
@@ -49,6 +50,7 @@ export const PlanningWithSection = () => {
           label="My plan will be reviewed on:"
           value={data?.fields?.["review-date"] ? new Date(data.fields["review-date"]) : undefined}
           onChange={(date) => updateField("planning-with", "review-date", date?.toISOString() || "")}
+          showsOnTimeline
         />
 
         <FieldWithPrompt
@@ -104,6 +106,7 @@ export const PlanningWithSection = () => {
             label="Date provided"
             value={data?.fields?.["rights-booklet-date"] ? new Date(data.fields["rights-booklet-date"]) : undefined}
             onChange={(date) => updateField("planning-with", "rights-booklet-date", date?.toISOString() || "")}
+            showsOnTimeline
           />
         </div>
 
@@ -160,6 +163,7 @@ export const PlanningWithSection = () => {
             label="My next visit?"
             value={data?.fields?.["next-visit"] ? new Date(data.fields["next-visit"]) : undefined}
             onChange={(date) => updateField("planning-with", "next-visit", date?.toISOString() || "")}
+            showsOnTimeline
           />
         </div>
       </div>
