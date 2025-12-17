@@ -366,13 +366,6 @@ export const DocumentsPanel = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">All About Me Plans</h3>
-        <Button 
-          onClick={handleNewPlanClick}
-          size="sm"
-          className="bg-success hover:bg-success/90 text-white"
-        >
-          + New Version
-        </Button>
       </div>
 
       <AlertDialog open={showNewPlanDialog} onOpenChange={setShowNewPlanDialog}>
@@ -458,13 +451,29 @@ export const DocumentsPanel = () => {
                     {plan.status === 'versioned' ? formatDate(plan.updated_at) : "-"}
                   </TableCell>
                   <TableCell>
-                    <Button
-                      onClick={() => handleViewPlan(plan.id)}
-                      size="sm"
-                      variant={plan.status === 'versioned' ? 'outline' : 'default'}
-                    >
-                      {plan.status === 'versioned' ? 'View' : 'Continue'}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleViewPlan(plan.id)}
+                        size="sm"
+                        variant={plan.status === 'versioned' ? 'outline' : 'default'}
+                      >
+                        {plan.status === 'versioned' ? 'View' : 'Continue'}
+                      </Button>
+                      {plan.status === 'active' && (
+                        <Button
+                          size="sm"
+                          className="bg-success hover:bg-success/90 text-white"
+                          onClick={() => {
+                            toast({
+                              title: "Submit for Approval",
+                              description: "Approval workflow coming soon.",
+                            });
+                          }}
+                        >
+                          Submit for Approval
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
