@@ -251,7 +251,7 @@ export const PlanTimeline = () => {
                   </div>
 
                   {/* Event card */}
-                  <div className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer ${
+                  <div className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer text-center ${
                     event.isBirthday 
                       ? "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-950/30 dark:to-purple-950/30 dark:border-pink-800" 
                       : event.isPlanCreation
@@ -259,13 +259,13 @@ export const PlanTimeline = () => {
                       : "bg-card border-border"
                   }`}>
                     {event.isBirthday && (
-                      <div className="flex items-center gap-1.5 mb-2">
+                      <div className="flex items-center justify-center gap-1.5 mb-2">
                         <Cake className="w-4 h-4 text-pink-500" />
                         <span className="text-xs font-medium text-pink-600 dark:text-pink-400">Birthday!</span>
                       </div>
                     )}
                     {event.isPlanCreation && (
-                      <div className="flex items-center gap-1.5 mb-2">
+                      <div className="flex items-center justify-center gap-1.5 mb-2">
                         <FileText className="w-4 h-4 text-blue-500" />
                         <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Plan Started</span>
                       </div>
@@ -290,7 +290,7 @@ export const PlanTimeline = () => {
                     <p className="text-xs text-muted-foreground mb-1">
                       {format(event.date, "dd/MM/yyyy")}
                     </p>
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-xs text-muted-foreground">
                       {event.category}
                     </p>
                   </div>
