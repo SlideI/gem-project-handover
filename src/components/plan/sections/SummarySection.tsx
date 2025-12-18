@@ -76,7 +76,7 @@ export const SummarySection = () => {
                 {allActions.map((action, index) => {
                   const isAchieved = action.review_status?.toLowerCase() === 'achieved';
                   return (
-                  <TableRow key={index} className={isAchieved ? "bg-success/40 hover:bg-success/50" : ""}>
+                  <TableRow key={index} data-achieved={isAchieved ? "true" : "false"}>
                     <TableCell>
                       {action.completed ? (
                         <CheckCircle2 className="h-5 w-5 text-success" />

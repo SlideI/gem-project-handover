@@ -106,7 +106,7 @@ export const SummaryTable = () => {
             allActions.map((action, index) => {
               const isAchieved = action.review_status?.toLowerCase() === 'achieved';
               return (
-              <TableRow key={`${action.sectionId}-${index}`} className={isAchieved ? "bg-success/40 hover:bg-success/50" : ""}>
+              <TableRow key={`${action.sectionId}-${index}`} data-achieved={isAchieved ? "true" : "false"}>
                 <TableCell className="font-medium">{action.category}</TableCell>
                 <TableCell>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{action.action}</TableCell>
