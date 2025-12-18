@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { SectionSelectionDialog, ALL_SECTIONS } from "@/components/plan/SectionSelectionDialog";
+import { TemplateGenerationDialog } from "./TemplateGenerationDialog";
 
 interface Plan {
   id: string;
@@ -45,6 +46,8 @@ export const DocumentsPanel = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showTemplateDialog, setShowTemplateDialog] = useState(false);
+  const [templatePlan, setTemplatePlan] = useState<Plan | null>(null);
 
   // Fetch all plans for the user
   useEffect(() => {
@@ -357,6 +360,11 @@ export const DocumentsPanel = () => {
     navigate(`/plan?id=${planId}`);
   };
 
+  const handleGenerateTemplate = (plan: Plan) => {
+    setTemplatePlan(plan);
+    setShowTemplateDialog(true);
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "-";
     return format(new Date(dateString), "dd/MM/yyyy");
@@ -401,6 +409,15 @@ export const DocumentsPanel = () => {
         isLoading={isCreating}
         confirmButtonText={pendingAction === 'new' ? 'Create Plan' : 'Create Version'}
       />
+
+      {templatePlan && (
+        <TemplateGenerationDialog
+          open={showTemplateDialog}
+          onOpenChange={setShowTemplateDialog}
+          planId={templatePlan.id}
+          planTitle={templatePlan.title || "All About Me Plan"}
+        />
+      )}
 
       <div className="rounded-md border">
         <Table>
@@ -458,6 +475,13 @@ export const DocumentsPanel = () => {
                         variant={plan.status === 'versioned' ? 'outline' : 'default'}
                       >
                         {plan.status === 'versioned' ? 'View' : 'Continue'}
+                      </Button>
+                      <Button
+                        onClick={() => handleGenerateTemplate(plan)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Generate Template
                       </Button>
                       {plan.status === 'active' && (
                         <Button
