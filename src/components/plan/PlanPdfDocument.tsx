@@ -130,7 +130,7 @@ export const PlanPdfDocument = ({ sections, selectedSections, planTitle }: PlanP
         <View style={styles.actionTableHeader}>
           <Text style={styles.actionCol1}>Action</Text>
           <Text style={styles.actionCol2}>Responsible</Text>
-          <Text style={styles.actionCol3}>Deadline</Text>
+          <Text style={styles.actionCol3}>By When</Text>
           <Text style={styles.actionCol4}>Support</Text>
         </View>
         {Array.from({ length: rowsToRender }, (_, i) => {
