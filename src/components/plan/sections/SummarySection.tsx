@@ -23,6 +23,10 @@ export const SummarySection = () => {
     )
     .filter(action => action.action && action.action.trim() !== "");
 
+  const achievedCount = allActions.filter(a => a.review_status?.toLowerCase() === 'achieved').length;
+  const inProgressCount = allActions.filter(a => a.review_status?.toLowerCase() === 'in progress').length;
+  const notStartedCount = allActions.filter(a => !a.review_status || a.review_status.toLowerCase() === 'not started' || a.review_status.trim() === '').length;
+
   return (
     <div className="space-y-6">
       <div>
@@ -34,21 +38,17 @@ export const SummarySection = () => {
 
       <Card className="p-4">
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-4 bg-primary/10 rounded-lg">
-            <div className="text-3xl font-bold text-primary">{allActions.length}</div>
-            <div className="text-sm text-muted-foreground">Total Actions</div>
-          </div>
           <div className="text-center p-4 bg-success/10 rounded-lg">
-            <div className="text-3xl font-bold text-success">
-              {allActions.filter(a => a.completed).length}
-            </div>
-            <div className="text-sm text-muted-foreground">Completed</div>
+            <div className="text-3xl font-bold text-success">{achievedCount}</div>
+            <div className="text-sm text-muted-foreground">Achieved</div>
+          </div>
+          <div className="text-center p-4 bg-primary/10 rounded-lg">
+            <div className="text-3xl font-bold text-primary">{inProgressCount}</div>
+            <div className="text-sm text-muted-foreground">In Progress</div>
           </div>
           <div className="text-center p-4 bg-warning/10 rounded-lg">
-            <div className="text-3xl font-bold text-warning">
-              {allActions.filter(a => !a.completed).length}
-            </div>
-            <div className="text-sm text-muted-foreground">In Progress</div>
+            <div className="text-3xl font-bold text-warning">{notStartedCount}</div>
+            <div className="text-sm text-muted-foreground">Not Started</div>
           </div>
         </div>
 
@@ -62,6 +62,7 @@ export const SummarySection = () => {
                   <TableHead>Action</TableHead>
                   <TableHead>Responsible</TableHead>
                   <TableHead>Deadline</TableHead>
+                  <TableHead>Review Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -78,6 +79,7 @@ export const SummarySection = () => {
                     <TableCell>{action.action}</TableCell>
                     <TableCell>{action.responsible}</TableCell>
                     <TableCell>{action.deadline}</TableCell>
+                    <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
