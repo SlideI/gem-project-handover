@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { usePlan } from "@/contexts/PlanContext";
 import {
@@ -8,31 +9,81 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle2, Circle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { format, isPast, isToday, parseISO } from "date-fns";
 
 export const SummarySection = () => {
   const { sections } = usePlan();
 
-  const allActions = Object.entries(sections)
-    .filter(([key]) => key !== "about-me")
-    .flatMap(([key, section]) =>
-      section.actions.map(action => ({
-        ...action,
-        category: section.category,
-      }))
-    )
-    .filter(action => action.action && action.action.trim() !== "")
-    .sort((a, b) => {
+  const allActions = useMemo(() => {
+    const actions: Array<{
+      sectionId: string;
+      category: string;
+      needs_goals: string;
+      action: string;
+      responsible: string;
+      deadline: string;
+      achievement_indicator: string;
+      review_status: string;
+      completed: boolean;
+      actionIndex: number;
+    }> = [];
+
+    Object.entries(sections).forEach(([sectionId, section]) => {
+      section.actions.forEach((action, index) => {
+        if (action.action) {
+          actions.push({
+            sectionId,
+            category: section.category,
+            needs_goals: action.needs_goals || "",
+            action: action.action,
+            responsible: action.responsible || "",
+            deadline: action.deadline || "",
+            achievement_indicator: action.achievement_indicator || "",
+            review_status: action.review_status || "",
+            completed: action.completed || false,
+            actionIndex: index,
+          });
+        }
+      });
+    });
+
+    // Sort so achieved items appear at the bottom
+    return actions.sort((a, b) => {
       const aAchieved = a.review_status?.toLowerCase() === 'achieved';
       const bAchieved = b.review_status?.toLowerCase() === 'achieved';
       if (aAchieved && !bAchieved) return 1;
       if (!aAchieved && bAchieved) return -1;
       return 0;
     });
+  }, [sections]);
 
   const achievedCount = allActions.filter(a => a.review_status?.toLowerCase() === 'achieved').length;
   const inProgressCount = allActions.filter(a => a.review_status?.toLowerCase() === 'in progress').length;
   const notStartedCount = allActions.filter(a => !a.review_status || a.review_status.toLowerCase() === 'not started' || a.review_status.trim() === '').length;
+
+  const getStatusBadge = (deadline: string, completed: boolean) => {
+    if (completed) {
+      return <Badge variant="outline" className="bg-success/10 text-success border-success">Complete</Badge>;
+    }
+    
+    if (!deadline) {
+      return <Badge variant="outline">Not Scheduled</Badge>;
+    }
+
+    try {
+      const deadlineDate = parseISO(deadline);
+      if (isPast(deadlineDate) && !isToday(deadlineDate)) {
+        return <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">Overdue</Badge>;
+      }
+      if (isToday(deadlineDate)) {
+        return <Badge variant="outline" className="bg-primary/10 text-primary border-primary">Due Today</Badge>;
+      }
+      return <Badge variant="outline" className="bg-muted">Upcoming</Badge>;
+    } catch {
+      return <Badge variant="outline">Invalid Date</Badge>;
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -59,47 +110,49 @@ export const SummarySection = () => {
           </div>
         </div>
 
-        {allActions.length > 0 ? (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
+        <div className="rounded-md border overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Category</TableHead>
+                <TableHead>Needs & Goals</TableHead>
+                <TableHead>Action</TableHead>
+                <TableHead>Who's responsible</TableHead>
+                <TableHead className="w-[90px]">By when</TableHead>
+                <TableHead>How will I know</TableHead>
+                <TableHead className="w-[90px]">Review status</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {allActions.length === 0 ? (
                 <TableRow>
-                  <TableHead className="w-12"></TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Action</TableHead>
-                  <TableHead>Responsible</TableHead>
-                  <TableHead>By When</TableHead>
-                  <TableHead>Review Status</TableHead>
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                    No actions added yet
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {allActions.map((action, index) => {
+              ) : (
+                allActions.map((action, index) => {
                   const isAchieved = action.review_status?.toLowerCase() === 'achieved';
                   return (
-                  <TableRow key={index} data-achieved={isAchieved ? "true" : "false"}>
-                    <TableCell>
-                      {action.completed ? (
-                        <CheckCircle2 className="h-5 w-5 text-success" />
-                      ) : (
-                        <Circle className="h-5 w-5 text-muted-foreground" />
-                      )}
-                    </TableCell>
+                  <TableRow key={`${action.sectionId}-${index}`} data-achieved={isAchieved ? "true" : "false"}>
                     <TableCell className="font-medium">{action.category}</TableCell>
+                    <TableCell>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
                     <TableCell>{action.action}</TableCell>
-                    <TableCell>{action.responsible}</TableCell>
-                    <TableCell>{action.deadline}</TableCell>
+                    <TableCell>{action.responsible || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                    <TableCell>
+                      {action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : <span className="text-muted-foreground italic">...</span>}
+                    </TableCell>
+                    <TableCell>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</TableCell>
                     <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                    <TableCell>{isAchieved ? null : getStatusBadge(action.deadline, action.completed)}</TableCell>
                   </TableRow>
                   );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            No actions have been added to your plan yet
-          </div>
-        )}
+                })
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </Card>
     </div>
   );
