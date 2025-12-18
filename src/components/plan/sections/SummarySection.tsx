@@ -21,7 +21,14 @@ export const SummarySection = () => {
         category: section.category,
       }))
     )
-    .filter(action => action.action && action.action.trim() !== "");
+    .filter(action => action.action && action.action.trim() !== "")
+    .sort((a, b) => {
+      const aAchieved = a.review_status?.toLowerCase() === 'achieved';
+      const bAchieved = b.review_status?.toLowerCase() === 'achieved';
+      if (aAchieved && !bAchieved) return 1;
+      if (!aAchieved && bAchieved) return -1;
+      return 0;
+    });
 
   const achievedCount = allActions.filter(a => a.review_status?.toLowerCase() === 'achieved').length;
   const inProgressCount = allActions.filter(a => a.review_status?.toLowerCase() === 'in progress').length;
@@ -66,8 +73,10 @@ export const SummarySection = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {allActions.map((action, index) => (
-                  <TableRow key={index}>
+                {allActions.map((action, index) => {
+                  const isAchieved = action.review_status?.toLowerCase() === 'achieved';
+                  return (
+                  <TableRow key={index} className={isAchieved ? "bg-success/20 hover:bg-success/30" : ""}>
                     <TableCell>
                       {action.completed ? (
                         <CheckCircle2 className="h-5 w-5 text-success" />
@@ -81,7 +90,8 @@ export const SummarySection = () => {
                     <TableCell>{action.deadline}</TableCell>
                     <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
