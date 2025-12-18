@@ -47,10 +47,13 @@ export const SummaryTable = () => {
       });
     });
 
-    // Sort so completed items appear at the bottom
+    // Sort so achieved items appear at the bottom
     return actions.sort((a, b) => {
-      if (a.completed === b.completed) return 0;
-      return a.completed ? 1 : -1;
+      const aAchieved = a.review_status?.toLowerCase() === 'achieved';
+      const bAchieved = b.review_status?.toLowerCase() === 'achieved';
+      if (aAchieved && !bAchieved) return 1;
+      if (!aAchieved && bAchieved) return -1;
+      return 0;
     });
   }, [sections]);
 
@@ -100,8 +103,10 @@ export const SummaryTable = () => {
               </TableCell>
             </TableRow>
           ) : (
-            allActions.map((action, index) => (
-              <TableRow key={`${action.sectionId}-${index}`}>
+            allActions.map((action, index) => {
+              const isAchieved = action.review_status?.toLowerCase() === 'achieved';
+              return (
+              <TableRow key={`${action.sectionId}-${index}`} className={isAchieved ? "bg-success/20 hover:bg-success/30" : ""}>
                 <TableCell className="font-medium">{action.category}</TableCell>
                 <TableCell>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{action.action}</TableCell>
@@ -113,7 +118,8 @@ export const SummaryTable = () => {
                 <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{getStatusBadge(action.deadline, action.completed)}</TableCell>
               </TableRow>
-            ))
+              );
+            })
           )}
         </TableBody>
       </Table>
