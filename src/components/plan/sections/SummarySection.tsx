@@ -61,7 +61,7 @@ export const SummarySection = () => {
                   <TableHead>Category</TableHead>
                   <TableHead>Action</TableHead>
                   <TableHead>Responsible</TableHead>
-                  <TableHead>Deadline</TableHead>
+                  <TableHead>By When</TableHead>
                   <TableHead>Review Status</TableHead>
                 </TableRow>
               </TableHeader>
