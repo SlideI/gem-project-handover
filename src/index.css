@@ -64,6 +64,9 @@ All colors MUST be HSL.
     --kpi-overdue: 0 84% 60%;
     --kpi-complete: 142 71% 45%;
 
+    /* Font family */
+    --font-family: system-ui, -apple-system, sans-serif;
+
     /* Custom gradients */
     --gradient-header: linear-gradient(135deg, hsl(207 90% 35%), hsl(207 90% 45%));
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(207 85% 98%));
@@ -273,6 +276,7 @@ All colors MUST be HSL.
     --sidebar-accent: 280 75% 85%;
     --progress-fill: 330 100% 45%;
     --kpi-upcoming: 330 100% 45%;
+    --font-family: 'Bangers', cursive;
   }
 
   /* Random Mix-up Theme */
@@ -297,6 +301,7 @@ All colors MUST be HSL.
     --sidebar-accent: 160 80% 83%;
     --progress-fill: 45 100% 50%;
     --kpi-upcoming: 45 100% 50%;
+    --font-family: 'Pacifico', cursive;
   }
 }
 
@@ -311,6 +316,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-family);
   }
 }
 
