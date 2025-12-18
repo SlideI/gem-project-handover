@@ -116,7 +116,7 @@ export const SummaryTable = () => {
                 </TableCell>
                 <TableCell>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
-                <TableCell>{getStatusBadge(action.deadline, action.completed)}</TableCell>
+                <TableCell>{isAchieved ? null : getStatusBadge(action.deadline, action.completed)}</TableCell>
               </TableRow>
               );
             })
