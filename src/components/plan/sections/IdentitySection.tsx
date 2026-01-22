@@ -49,7 +49,7 @@ export const IdentitySection = () => {
           />
         </FieldWithPrompt>
 
-        <FieldWithPrompt label="What's culturally important to me">
+        <FieldWithPrompt label="Important things to know about my culture and to support my cultural safety (ie ethnic origin, age, disability, gender, sexual orientation, gender identity, migrant or refugee experience)">
           <Textarea
             value={data?.fields?.["cultural-important"] || ""}
             onChange={(e) => updateField("identity", "cultural-important", e.target.value)}
