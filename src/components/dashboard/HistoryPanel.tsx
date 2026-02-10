@@ -90,7 +90,6 @@ export const HistoryPanel = () => {
               <TableHead>Changed By</TableHead>
               <TableHead>Version</TableHead>
               <TableHead>Date & Time</TableHead>
-              <TableHead>Notes</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -100,9 +99,6 @@ export const HistoryPanel = () => {
                 <TableCell>{item.changedBy}</TableCell>
                 <TableCell>v{item.version}</TableCell>
                 <TableCell className="text-muted-foreground">{item.timestamp}</TableCell>
-                <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate" title={item.description}>
-                  {item.description}
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
