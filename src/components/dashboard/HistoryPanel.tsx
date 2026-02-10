@@ -87,7 +87,6 @@ export const HistoryPanel = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Section</TableHead>
-              <TableHead>Change Type</TableHead>
               <TableHead>Changed By</TableHead>
               <TableHead>Version</TableHead>
               <TableHead>Date & Time</TableHead>
@@ -98,7 +97,6 @@ export const HistoryPanel = () => {
             {historyData.map((item) => (
               <TableRow key={item.id}>
                 <TableCell className="font-medium">{item.section}</TableCell>
-                <TableCell>{getChangeTypeBadge(item.changeType)}</TableCell>
                 <TableCell>{item.changedBy}</TableCell>
                 <TableCell>v{item.version}</TableCell>
                 <TableCell className="text-muted-foreground">{item.timestamp}</TableCell>
