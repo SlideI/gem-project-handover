@@ -3,9 +3,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { pdf } from "@react-pdf/renderer";
 import { PlanPdfDocument } from "./PlanPdfDocument";
 import { usePlan } from "@/contexts/PlanContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface Section {
@@ -34,7 +36,7 @@ interface PdfGenerationDialogProps {
 }
 
 export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogProps) => {
-  const { sections: planSections, planData, enabledSections } = usePlan();
+  const { sections: planSections, planData, planId, enabledSections, updateField } = usePlan();
   
   // Filter sections based on enabled sections (null means all enabled)
   const availableSections = enabledSections
@@ -44,6 +46,7 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
   const [selectedSections, setSelectedSections] = useState<string[]>(
     availableSections.map(s => s.id)
   );
+  const [addEmptyRows, setAddEmptyRows] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Update selected sections when available sections change
@@ -80,15 +83,50 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
           sections={planSections}
           selectedSections={selectedSections}
           planTitle={planData?.title || "My Plan"}
+          addEmptyRows={addEmptyRows}
         />
       ).toBlob();
 
+      const fileName = `${planData?.title || "plan"}_${new Date().toISOString().split('T')[0]}.pdf`;
+
+      // Download the PDF
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${planData?.title || "plan"}_${new Date().toISOString().split('T')[0]}.pdf`;
+      link.download = fileName;
       link.click();
       URL.revokeObjectURL(url);
+
+      // Upload to storage so it appears in the Files tab
+      try {
+        const { data: user } = await supabase.auth.getUser();
+        if (user.user && planId) {
+          const storagePath = `${user.user.id}/${Date.now()}-${fileName}`;
+          const { error: uploadError } = await supabase.storage
+            .from("table-attachments")
+            .upload(storagePath, blob, { contentType: "application/pdf" });
+
+          if (!uploadError) {
+            const { data: publicUrlData } = supabase.storage
+              .from("table-attachments")
+              .getPublicUrl(storagePath);
+
+            // Save reference in the about-me section's pdf-attachments field
+            const existingField = planSections["about-me"]?.fields?.["pdf-attachments"] || "[]";
+            let existing: Array<{ name: string; url: string; uploadedAt: string }> = [];
+            try { existing = JSON.parse(existingField); } catch { existing = []; }
+            existing.push({
+              name: fileName,
+              url: publicUrlData.publicUrl,
+              uploadedAt: new Date().toISOString(),
+            });
+            await updateField("about-me", "pdf-attachments", JSON.stringify(existing));
+          }
+        }
+      } catch (storageError) {
+        console.error("Error saving PDF to files:", storageError);
+        // Don't fail the whole operation if storage upload fails
+      }
 
       toast.success("PDF generated successfully");
       onOpenChange(false);
@@ -135,6 +173,25 @@ export const PdfGenerationDialog = ({ open, onOpenChange }: PdfGenerationDialogP
               </div>
             ))}
           </div>
+        </div>
+
+        <Separator />
+
+        <div className="flex items-center space-x-2 bg-muted/50 p-3 rounded-md border border-dashed">
+          <Checkbox
+            id="add-empty-rows"
+            checked={addEmptyRows}
+            onCheckedChange={(checked) => setAddEmptyRows(checked === true)}
+          />
+          <Label
+            htmlFor="add-empty-rows"
+            className="text-sm font-medium cursor-pointer flex-1 leading-tight"
+          >
+            Add Empty Table Rows
+            <span className="block text-xs font-normal text-muted-foreground mt-0.5">
+              Includes 3 additional blank rows per table for handwritten responses
+            </span>
+          </Label>
         </div>
 
         <DialogFooter className="gap-2">

@@ -18,6 +18,7 @@ interface PlanPdfDocumentProps {
   sections: Record<string, SectionData>;
   selectedSections: string[];
   planTitle: string;
+  addEmptyRows?: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -114,7 +115,7 @@ const sectionLabels: Record<string, string> = {
   "summary": "My Plan Summary",
 };
 
-export const PlanPdfDocument = ({ sections, selectedSections, planTitle }: PlanPdfDocumentProps) => {
+export const PlanPdfDocument = ({ sections, selectedSections, planTitle, addEmptyRows = false }: PlanPdfDocumentProps) => {
   const renderFieldValue = (value: string | undefined) => {
     if (value && value.trim()) {
       return <Text style={styles.fieldValue}>{value}</Text>;
@@ -123,7 +124,8 @@ export const PlanPdfDocument = ({ sections, selectedSections, planTitle }: PlanP
   };
 
   const renderActionTable = (actions: Action[]) => {
-    const rowsToRender = Math.max(actions.length, 3); // Minimum 3 empty rows for filling in
+    const extraRows = addEmptyRows ? 3 : 0;
+    const rowsToRender = Math.max(actions.length, 3) + extraRows;
 
     return (
       <View style={styles.actionTable}>
