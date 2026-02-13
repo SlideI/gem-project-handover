@@ -33,7 +33,7 @@ interface PlanSidebarProps {
 }
 
 export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProps) => {
-  const { enabledSections, updateEnabledSections, isReadOnly } = usePlan();
+  const { enabledSections, updateEnabledSections, isReadOnly, sections: sectionsData } = usePlan();
   const [previousSection, setPreviousSection] = useState<string>(currentSection);
   const [animating, setAnimating] = useState(false);
   const [dotPosition, setDotPosition] = useState<{ startTop: number; endTop: number; left: number } | null>(null);
@@ -47,8 +47,8 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
     ? allSections.filter(s => enabledSections.includes(s.id))
     : allSections;
 
-  // Check if there are sections that can be added
-  const hasOmittedSections = enabledSections !== null && enabledSections.length < allSections.length;
+  // Check if there are optional sections to manage (either omitted or removable)
+  const hasOptionalSections = enabledSections !== null;
 
   useEffect(() => {
     if (currentSection !== previousSection && containerRef.current) {
@@ -153,8 +153,8 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
           ))}
         </nav>
 
-        {/* Add Sections Button */}
-        {!isReadOnly && hasOmittedSections && (
+        {/* Manage Sections Button */}
+        {!isReadOnly && hasOptionalSections && (
           <div className="mt-6 px-2">
             <Button
               variant="outline"
@@ -163,7 +163,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
               onClick={() => setShowAddSectionDialog(true)}
             >
               <Plus className="h-4 w-4" />
-              Add Section
+              Manage Sections
             </Button>
           </div>
         )}
@@ -175,6 +175,7 @@ export const PlanSidebar = ({ currentSection, onSectionChange }: PlanSidebarProp
         currentEnabledSections={enabledSections || allSections.map(s => s.id)}
         onConfirm={handleAddSections}
         isLoading={isAddingSections}
+        sectionsData={sectionsData}
       />
     </aside>
   );
