@@ -12,12 +12,15 @@ import { ContactsPanel } from "@/components/dashboard/ContactsPanel";
 import { HistoryPanel } from "@/components/dashboard/HistoryPanel";
 import { PlanProvider } from "@/contexts/PlanContext";
 import { supabase } from "@/integrations/supabase/client";
+import { SectionSelectionDialog } from "@/components/plan/SectionSelectionDialog";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [showContactDetails, setShowContactDetails] = useState(false);
   const [hasActivePlan, setHasActivePlan] = useState(false);
   const [hasAnyPlan, setHasAnyPlan] = useState(false);
+  const [showSectionDialog, setShowSectionDialog] = useState(false);
+  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   // Use timestamp to force PlanProvider refresh on every mount
   const [refreshKey] = useState(() => Date.now());
 
@@ -45,6 +48,33 @@ const Dashboard = () => {
 
     checkPlans();
   }, []);
+
+  const handleCreatePlanWithSections = async (selectedSections: string[]) => {
+    setIsCreatingPlan(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const { data: newPlan, error } = await supabase
+        .from('plans')
+        .insert({
+          user_id: user.user.id,
+          title: 'My Plan',
+          enabled_sections: selectedSections,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setShowSectionDialog(false);
+      navigate(`/plan?id=${newPlan.id}`);
+    } catch (error) {
+      console.error("Error creating plan:", error);
+    } finally {
+      setIsCreatingPlan(false);
+    }
+  };
 
   return (
     <PlanProvider key={refreshKey}>
@@ -92,7 +122,7 @@ const Dashboard = () => {
                 </Button>
               ) : !hasAnyPlan && (
                 <Button 
-                  onClick={() => navigate("/plan")}
+                  onClick={() => setShowSectionDialog(true)}
                   className="bg-success hover:bg-success/90 text-white"
                 >
                   Create Plan
@@ -149,6 +179,13 @@ const Dashboard = () => {
         </Card>
         </div>
       </div>
+
+      <SectionSelectionDialog
+        open={showSectionDialog}
+        onOpenChange={setShowSectionDialog}
+        onConfirm={handleCreatePlanWithSections}
+        isLoading={isCreatingPlan}
+      />
     </PlanProvider>
   );
 };
