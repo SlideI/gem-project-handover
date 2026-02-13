@@ -297,23 +297,7 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
           // Mark initial load complete after data is loaded
           setInitialLoadComplete(true);
         } else {
-          const { data: newPlan, error: createError } = await supabase
-            .from("plans")
-            .insert({ user_id: session.user.id, title: "My Plan" })
-            .select()
-            .single();
-
-          if (createError) throw createError;
-
-          setPlanId(newPlan.id);
-          setPlanData({
-            id: newPlan.id,
-            title: newPlan.title,
-            status: newPlan.status || 'active',
-            version_number: newPlan.version_number || 1,
-            profile_picture_url: newPlan.profile_picture_url,
-            background_picture_url: newPlan.background_picture_url,
-          });
+          // No plan found - don't auto-create, let the user create one via the dashboard
           setInitialLoadComplete(true);
         }
       } catch (error) {
