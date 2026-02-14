@@ -1,4 +1,5 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { isSensitiveField, isSectionActionsHidden } from "@/lib/sensitiveFields";
 
 interface Action {
   action: string;
@@ -154,20 +155,27 @@ export const PlanPdfDocument = ({ sections, selectedSections, planTitle, addEmpt
   };
 
   const renderSection = (sectionId: string, sectionData: SectionData) => {
+    // Filter out sensitive fields from the PDF output
+    const visibleFields = Object.entries(sectionData.fields).filter(
+      ([fieldId]) => !isSensitiveField(sectionId, fieldId)
+    );
+
+    const hideActions = isSectionActionsHidden(sectionId);
+
     return (
       <View key={sectionId} wrap={false}>
         <Text style={styles.sectionTitle}>{sectionLabels[sectionId] || sectionData.category}</Text>
         
-        {/* Render fields */}
-        {Object.entries(sectionData.fields).map(([fieldId, value]) => (
+        {/* Render non-sensitive fields */}
+        {visibleFields.map(([fieldId, value]) => (
           <View key={fieldId}>
             <Text style={styles.fieldLabel}>{fieldId.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())}:</Text>
             {renderFieldValue(value)}
           </View>
         ))}
 
-        {/* Add some fillable spaces if no fields */}
-        {Object.keys(sectionData.fields).length === 0 && (
+        {/* Add some fillable spaces if no visible fields */}
+        {visibleFields.length === 0 && (
           <View>
             <Text style={styles.fieldLabel}>Notes:</Text>
             <View style={styles.fillableSpace} />
@@ -176,8 +184,8 @@ export const PlanPdfDocument = ({ sections, selectedSections, planTitle, addEmpt
           </View>
         )}
 
-        {/* Render action table if there are actions */}
-        {sectionData.actions && sectionData.actions.length > 0 && (
+        {/* Render action table if there are actions and they are not hidden */}
+        {!hideActions && sectionData.actions && sectionData.actions.length > 0 && (
           <View>
             <Text style={styles.subsectionTitle}>Action Plan</Text>
             {renderActionTable(sectionData.actions)}
