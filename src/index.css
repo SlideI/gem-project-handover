@@ -405,13 +405,26 @@ All colors MUST be HSL.
     --ring: 0 80% 40%;
   }
 
-  [data-theme="maori-kaupapa"] body,
-  [data-theme="maori-kaupapa"] {
+  [data-theme="maori-kaupapa"] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
     background-image: url('/maori-kaupapa-bg.png');
     background-repeat: repeat;
-    background-size: 200px;
-    background-blend-mode: overlay;
-    background-color: hsl(0 45% 85%);
+    background-size: 250px;
+    opacity: 0.35;
+  }
+
+  [data-theme="maori-kaupapa"] body > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  [data-theme="maori-kaupapa"] .bg-card,
+  [data-theme="maori-kaupapa"] .bg-background {
+    background-color: hsl(0 45% 85% / 0.85);
   }
 }
 
