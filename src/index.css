@@ -303,6 +303,112 @@ All colors MUST be HSL.
     --kpi-upcoming: 45 100% 50%;
     --font-family: 'Pacifico', cursive;
   }
+
+  /* Sunset Glow Theme */
+  [data-theme="sunset-glow"] {
+    --background: 30 80% 85%;
+    --foreground: 20 90% 15%;
+    --card: 32 85% 90%;
+    --card-foreground: 20 90% 15%;
+    --primary: 30 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 35 95% 70%;
+    --secondary: 40 90% 80%;
+    --secondary-foreground: 25 85% 20%;
+    --accent: 20 95% 82%;
+    --accent-foreground: 30 100% 40%;
+    --muted: 30 55% 82%;
+    --muted-foreground: 25 70% 28%;
+    --border: 30 60% 72%;
+    --input: 32 75% 88%;
+    --sidebar-background: 32 85% 90%;
+    --sidebar-primary: 30 100% 50%;
+    --sidebar-accent: 35 80% 83%;
+    --progress-fill: 30 100% 50%;
+    --kpi-upcoming: 30 100% 50%;
+  }
+
+  /* Berry Fusion Theme */
+  [data-theme="berry-fusion"] {
+    --background: 310 55% 88%;
+    --foreground: 300 80% 15%;
+    --card: 315 60% 93%;
+    --card-foreground: 300 80% 15%;
+    --primary: 320 85% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 310 70% 72%;
+    --secondary: 290 65% 82%;
+    --secondary-foreground: 310 75% 22%;
+    --accent: 330 75% 85%;
+    --accent-foreground: 320 85% 38%;
+    --muted: 310 45% 84%;
+    --muted-foreground: 310 60% 28%;
+    --border: 310 50% 75%;
+    --input: 315 55% 90%;
+    --sidebar-background: 315 60% 93%;
+    --sidebar-primary: 320 85% 45%;
+    --sidebar-accent: 310 55% 86%;
+    --progress-fill: 320 85% 45%;
+    --kpi-upcoming: 320 85% 45%;
+  }
+
+  /* Midnight Aurora Theme */
+  [data-theme="midnight-aurora"] {
+    --background: 235 45% 22%;
+    --foreground: 220 30% 90%;
+    --card: 235 40% 28%;
+    --card-foreground: 220 30% 92%;
+    --primary: 260 70% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 250 50% 40%;
+    --secondary: 220 35% 32%;
+    --secondary-foreground: 220 30% 88%;
+    --accent: 280 55% 38%;
+    --accent-foreground: 260 60% 80%;
+    --muted: 235 30% 30%;
+    --muted-foreground: 230 25% 60%;
+    --border: 235 30% 35%;
+    --input: 235 35% 30%;
+    --sidebar-background: 235 40% 25%;
+    --sidebar-primary: 260 70% 60%;
+    --sidebar-accent: 240 35% 32%;
+    --progress-fill: 260 70% 60%;
+    --kpi-upcoming: 260 70% 60%;
+    --ring: 260 70% 60%;
+  }
+
+  /* Māori Kaupapa Theme */
+  [data-theme="maori-kaupapa"] {
+    --background: 0 65% 25%;
+    --foreground: 0 0% 95%;
+    --card: 0 55% 30%;
+    --card-foreground: 0 0% 95%;
+    --primary: 0 80% 40%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 0 60% 50%;
+    --secondary: 0 45% 35%;
+    --secondary-foreground: 0 0% 92%;
+    --accent: 15 60% 35%;
+    --accent-foreground: 0 0% 95%;
+    --muted: 0 40% 28%;
+    --muted-foreground: 0 20% 65%;
+    --border: 0 35% 38%;
+    --input: 0 45% 32%;
+    --sidebar-background: 0 55% 28%;
+    --sidebar-primary: 0 80% 40%;
+    --sidebar-accent: 0 45% 33%;
+    --progress-fill: 0 80% 40%;
+    --kpi-upcoming: 0 80% 40%;
+    --ring: 0 80% 40%;
+  }
+
+  [data-theme="maori-kaupapa"] body,
+  [data-theme="maori-kaupapa"] {
+    background-image: url('/maori-kaupapa-bg.png');
+    background-repeat: repeat;
+    background-size: 300px;
+    background-blend-mode: soft-light;
+  }
 }
 
 @layer base {
