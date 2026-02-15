@@ -379,24 +379,27 @@ All colors MUST be HSL.
 
   /* Māori Kaupapa Theme */
   [data-theme="maori-kaupapa"] {
-    --background: 0 65% 25%;
-    --foreground: 0 0% 95%;
-    --card: 0 55% 30%;
-    --card-foreground: 0 0% 95%;
+    --background: 0 45% 85%;
+    --foreground: 0 0% 5%;
+    --card: 0 40% 88%;
+    --card-foreground: 0 0% 5%;
     --primary: 0 80% 40%;
     --primary-foreground: 0 0% 100%;
     --primary-light: 0 60% 50%;
-    --secondary: 0 45% 35%;
-    --secondary-foreground: 0 0% 92%;
-    --accent: 15 60% 35%;
-    --accent-foreground: 0 0% 95%;
-    --muted: 0 40% 28%;
-    --muted-foreground: 0 20% 65%;
-    --border: 0 35% 38%;
-    --input: 0 45% 32%;
-    --sidebar-background: 0 55% 28%;
+    --secondary: 0 35% 80%;
+    --secondary-foreground: 0 0% 5%;
+    --accent: 15 50% 82%;
+    --accent-foreground: 0 0% 5%;
+    --muted: 0 30% 82%;
+    --muted-foreground: 0 0% 25%;
+    --border: 0 35% 70%;
+    --input: 0 35% 90%;
+    --sidebar-background: 0 40% 85%;
+    --sidebar-foreground: 0 0% 5%;
     --sidebar-primary: 0 80% 40%;
-    --sidebar-accent: 0 45% 33%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 35% 80%;
+    --sidebar-accent-foreground: 0 0% 5%;
     --progress-fill: 0 80% 40%;
     --kpi-upcoming: 0 80% 40%;
     --ring: 0 80% 40%;
@@ -406,8 +409,8 @@ All colors MUST be HSL.
   [data-theme="maori-kaupapa"] {
     background-image: url('/maori-kaupapa-bg.png');
     background-repeat: repeat;
-    background-size: 300px;
-    background-blend-mode: soft-light;
+    background-size: 200px;
+    background-blend-mode: multiply;
   }
 }
 
