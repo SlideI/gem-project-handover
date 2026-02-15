@@ -16,6 +16,10 @@ export const themes: Theme[] = [
   { id: "ocean-teal", name: "Ocean Teal", description: "Deep teal and aqua shades" },
   { id: "crazy-colours", name: "Crazy Colours", description: "Vibrant rainbow mix" },
   { id: "random-mixup", name: "Random Mix-up", description: "Unexpected color combinations" },
+  { id: "sunset-glow", name: "Sunset Glow", description: "Warm oranges and ambers" },
+  { id: "berry-fusion", name: "Berry Fusion", description: "Rich purples and magentas" },
+  { id: "midnight-aurora", name: "Midnight Aurora", description: "Deep indigos with subtle accents" },
+  { id: "maori-kaupapa", name: "Māori Kaupapa", description: "Rich reds with traditional patterns" },
 ];
 
 interface ThemeSelectorProps {
