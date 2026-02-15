@@ -24,6 +24,10 @@ const themes = [
   { id: "ocean-teal", name: "Ocean Teal" },
   { id: "crazy-colours", name: "Crazy Colours" },
   { id: "random-mixup", name: "Random Mix-up" },
+  { id: "sunset-glow", name: "Sunset Glow" },
+  { id: "berry-fusion", name: "Berry Fusion" },
+  { id: "midnight-aurora", name: "Midnight Aurora" },
+  { id: "maori-kaupapa", name: "Māori Kaupapa" },
 ];
 
 export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: FloatingActionButtonsProps) => {
