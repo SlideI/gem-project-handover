@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone } from "lucide-react";
+import { Phone, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LiquidProgressBar } from "@/components/dashboard/LiquidProgressBar";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
@@ -13,6 +13,16 @@ import { HistoryPanel } from "@/components/dashboard/HistoryPanel";
 import { PlanProvider } from "@/contexts/PlanContext";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionSelectionDialog } from "@/components/plan/SectionSelectionDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,8 +31,10 @@ const Dashboard = () => {
   const [hasAnyPlan, setHasAnyPlan] = useState(false);
   const [showSectionDialog, setShowSectionDialog] = useState(false);
   const [isCreatingPlan, setIsCreatingPlan] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   // Use timestamp to force PlanProvider refresh on every mount
-  const [refreshKey] = useState(() => Date.now());
+  const [refreshKey, setRefreshKey] = useState(() => Date.now());
 
   useEffect(() => {
     const checkPlans = async () => {
@@ -76,6 +88,50 @@ const Dashboard = () => {
     }
   };
 
+  const handleResetPlan = async () => {
+    setIsResetting(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      // Find the active plan
+      const { data: activePlan } = await supabase
+        .from('plans')
+        .select('id')
+        .eq('user_id', user.user.id)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      if (activePlan) {
+        // Delete actions linked to this plan's sections
+        const { data: sections } = await supabase
+          .from('plan_sections')
+          .select('id')
+          .eq('plan_id', activePlan.id);
+
+        if (sections && sections.length > 0) {
+          const sectionIds = sections.map(s => s.id);
+          await supabase.from('actions').delete().in('section_id', sectionIds);
+        }
+
+        // Delete plan sections
+        await supabase.from('plan_sections').delete().eq('plan_id', activePlan.id);
+
+        // Delete the plan itself
+        await supabase.from('plans').delete().eq('id', activePlan.id);
+      }
+
+      setHasActivePlan(false);
+      setHasAnyPlan(false);
+      setShowResetDialog(false);
+      setRefreshKey(Date.now());
+    } catch (error) {
+      console.error("Error resetting plan:", error);
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
     <PlanProvider key={refreshKey}>
       <div className="min-h-screen bg-background">
@@ -114,12 +170,22 @@ const Dashboard = () => {
                 </div>
               </div>
               {hasActivePlan ? (
-                <Button 
-                  onClick={() => navigate("/plan")}
-                  className="bg-success hover:bg-success/90 text-white"
-                >
-                  Update Plan
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setShowResetDialog(true)}
+                    className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-1" />
+                    Reset
+                  </Button>
+                  <Button 
+                    onClick={() => navigate("/plan")}
+                    className="bg-success hover:bg-success/90 text-white"
+                  >
+                    Update Plan
+                  </Button>
+                </div>
               ) : !hasAnyPlan && (
                 <Button 
                   onClick={() => setShowSectionDialog(true)}
@@ -186,6 +252,27 @@ const Dashboard = () => {
         onConfirm={handleCreatePlanWithSections}
         isLoading={isCreatingPlan}
       />
+
+      <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Reset Plan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to reset this plan? This will permanently delete all plan data including sections and actions. You will need to start over from scratch by creating a new plan.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isResetting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleResetPlan}
+              disabled={isResetting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isResetting ? "Resetting..." : "Yes, Reset Plan"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PlanProvider>
   );
 };
