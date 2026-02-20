@@ -229,7 +229,7 @@ const Dashboard = () => {
         </Card>
 
         {/* Plan Timeline */}
-        <PlanTimeline />
+        <PlanTimeline nextVisitDate={visitFrequency && visitFrequency !== "never" ? getNextVisitDate() : undefined} />
 
         {/* Summary Section */}
         <Card className="p-6">
