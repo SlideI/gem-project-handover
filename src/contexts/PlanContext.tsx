@@ -120,6 +120,11 @@ const initialSections: Record<string, SectionData> = {
     actions: [{ ...defaultAction }],
     fields: {},
   },
+  "visit-frequency": {
+    category: "Frequency of Visits",
+    actions: [],
+    fields: {},
+  },
 };
 
 interface PlanProviderProps {

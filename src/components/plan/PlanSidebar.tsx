@@ -24,6 +24,7 @@ const allSections: Section[] = [
   { id: "youth-justice", label: "Youth Justice" },
   { id: "residence", label: "Residence & Homes" },
   { id: "care-request", label: "Care Request" },
+  { id: "visit-frequency", label: "Frequency of Visits" },
   { id: "summary", label: "My Plan Summary" },
 ];
 

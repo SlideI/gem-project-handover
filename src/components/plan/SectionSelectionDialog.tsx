@@ -29,6 +29,7 @@ export const ALL_SECTIONS: SectionOption[] = [
   { id: "youth-justice", label: "Youth Justice" },
   { id: "residence", label: "Residence & Homes" },
   { id: "care-request", label: "Care Request", required: true },
+  { id: "visit-frequency", label: "Frequency of Visits", required: true },
   { id: "summary", label: "My Plan Summary", required: true },
 ];
 
