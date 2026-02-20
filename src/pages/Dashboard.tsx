@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, RotateCcw } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { LiquidProgressBar } from "@/components/dashboard/LiquidProgressBar";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
@@ -216,6 +218,27 @@ const Dashboard = () => {
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-4">Plan Summary</h2>
           <SummaryTable />
+        </Card>
+
+        {/* Frequency of Visits */}
+        <Card className="p-6">
+          <h2 className="text-2xl font-semibold mb-1">Frequency of visits to Samuel</h2>
+          <p className="text-muted-foreground text-sm mb-4">Record how often you intend to visit this rāngatahi.</p>
+          <div className="max-w-md">
+            <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Select visit frequency" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover z-50">
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="fortnightly">Fortnightly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="6-monthly">6 monthly</SelectItem>
+                <SelectItem value="never">Never</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </Card>
 
         {/* Plan Progress - moved to bottom per client feedback */}
