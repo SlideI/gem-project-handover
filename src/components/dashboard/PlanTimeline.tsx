@@ -5,7 +5,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isFuture, isToday, parse, getMonth, getDate } from "date-fns";
 import { Link } from "react-router-dom";
-import { Cake, FileText } from "lucide-react";
+import { Cake, FileText, CalendarCheck } from "lucide-react";
+
+interface PlanTimelineProps {
+  nextVisitDate?: string;
+}
 
 interface TimelineEvent {
   title: string;
@@ -17,6 +21,7 @@ interface TimelineEvent {
   isToday: boolean;
   isBirthday?: boolean;
   isPlanCreation?: boolean;
+  isNextVisit?: boolean;
 }
 
 // Define which fields should appear on the timeline
@@ -89,7 +94,7 @@ const getNextBirthday = (birthDate: Date): Date => {
   return nextBirthday;
 };
 
-export const PlanTimeline = () => {
+export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
   const { sections, planCreatedAt } = usePlan();
   const scrollRef = useRef<HTMLDivElement>(null);
   const todayRef = useRef<HTMLDivElement>(null);
@@ -139,8 +144,25 @@ export const PlanTimeline = () => {
       });
     });
 
+    // Add next visit date if provided
+    if (nextVisitDate) {
+      const visitDate = parseDate(nextVisitDate);
+      if (visitDate) {
+        events.push({
+          title: "Next visit is scheduled",
+          date: visitDate,
+          category: "Visits",
+          sectionId: "visit-frequency",
+          isPastDue: isPast(visitDate) && !isToday(visitDate),
+          isUpcoming: isFuture(visitDate),
+          isToday: isToday(visitDate),
+          isNextVisit: true,
+        });
+      }
+    }
+
     return events.sort((a, b) => a.date.getTime() - b.date.getTime());
-  }, [sections, planCreatedAt]);
+  }, [sections, planCreatedAt, nextVisitDate]);
 
   // Find where "today" falls in the timeline
   const today = new Date();
@@ -253,12 +275,13 @@ export const PlanTimeline = () => {
                     />
                   </div>
 
-                  {/* Event card */}
                   <div className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer text-center ${
                     event.isBirthday 
                       ? "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-950/30 dark:to-purple-950/30 dark:border-pink-800" 
                       : event.isPlanCreation
                       ? "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-800"
+                      : event.isNextVisit
+                      ? "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 dark:from-emerald-950/30 dark:to-teal-950/30 dark:border-emerald-800"
                       : "bg-card border-border"
                   }`}>
                     {event.isBirthday && (
@@ -271,6 +294,12 @@ export const PlanTimeline = () => {
                       <div className="flex items-center justify-center gap-1.5 mb-2">
                         <FileText className="w-4 h-4 text-blue-500" />
                         <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Plan Started</span>
+                      </div>
+                    )}
+                    {event.isNextVisit && (
+                      <div className="flex items-center justify-center gap-1.5 mb-2">
+                        <CalendarCheck className="w-4 h-4 text-emerald-500" />
+                        <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Scheduled Visit</span>
                       </div>
                     )}
                     <TooltipProvider>
