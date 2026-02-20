@@ -5,6 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, RotateCcw } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { addWeeks, addMonths, format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { LiquidProgressBar } from "@/components/dashboard/LiquidProgressBar";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
@@ -35,8 +37,23 @@ const Dashboard = () => {
   const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [visitFrequency, setVisitFrequency] = useState<string>("");
   // Use timestamp to force PlanProvider refresh on every mount
   const [refreshKey, setRefreshKey] = useState(() => Date.now());
+
+  const legalStatusStartDate = new Date(2026, 1, 20); // Feb 20, 2026
+
+  const getNextVisitDate = (): string => {
+    if (!visitFrequency) return "—";
+    switch (visitFrequency) {
+      case "weekly": return format(addWeeks(legalStatusStartDate, 1), "PPP");
+      case "fortnightly": return format(addWeeks(legalStatusStartDate, 2), "PPP");
+      case "monthly": return format(addMonths(legalStatusStartDate, 1), "PPP");
+      case "6-monthly": return format(addMonths(legalStatusStartDate, 6), "PPP");
+      case "never": return "No visit scheduled";
+      default: return "—";
+    }
+  };
 
   useEffect(() => {
     const checkPlans = async () => {
@@ -224,20 +241,30 @@ const Dashboard = () => {
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-1">Frequency of visits to Samuel</h2>
           <p className="text-muted-foreground text-sm mb-4">Record how often you intend to visit this rāngatahi.</p>
-          <div className="max-w-md">
-            <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select visit frequency" />
-              </SelectTrigger>
-              <SelectContent className="bg-popover z-50">
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="fortnightly">Fortnightly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="6-monthly">6 monthly</SelectItem>
-                <SelectItem value="never">Never</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
+              <Select value={visitFrequency} onValueChange={setVisitFrequency}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select visit frequency" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover z-50">
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="fortnightly">Fortnightly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="6-monthly">6 monthly</SelectItem>
+                  <SelectItem value="never">Never</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="mb-2 block text-sm font-medium">Associated legal status start date</Label>
+              <Input value={format(legalStatusStartDate, "PPP")} disabled className="bg-muted cursor-not-allowed" />
+            </div>
+            <div>
+              <Label className="mb-2 block text-sm font-medium">Next visit is scheduled for</Label>
+              <Input value={getNextVisitDate()} disabled className="bg-muted cursor-not-allowed" />
+            </div>
           </div>
         </Card>
 
