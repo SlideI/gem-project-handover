@@ -16,6 +16,7 @@ import { TransitionSection } from "./sections/TransitionSection";
 import { YouthJusticeSection } from "./sections/YouthJusticeSection";
 import { ResidenceSection } from "./sections/ResidenceSection";
 import { CareRequestSection } from "./sections/CareRequestSection";
+import { VisitFrequencySection } from "./sections/VisitFrequencySection";
 import { SummarySection } from "./sections/SummarySection";
 import { SectionNavigation } from "./SectionNavigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -84,6 +85,8 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
         return <ResidenceSection />;
       case "care-request":
         return <CareRequestSection />;
+      case "visit-frequency":
+        return <VisitFrequencySection />;
       case "summary":
         return <SummarySection />;
       default:
