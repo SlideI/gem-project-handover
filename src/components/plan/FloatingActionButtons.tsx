@@ -68,7 +68,7 @@ export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: Floating
           title="Generate PDF"
         >
           <FileText className="h-6 w-6" />
-          <span className="text-[10px] font-medium leading-tight">PDF</span>
+          <span className="text-[10px] font-medium leading-tight">Generate PDF</span>
         </button>
         <button
           onClick={() => navigate("/")}
@@ -76,7 +76,7 @@ export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: Floating
           title="Home"
         >
           <Home className="h-6 w-6" />
-          <span className="text-[10px] font-medium leading-tight">Home</span>
+          <span className="text-[10px] font-medium leading-tight">Dashboard</span>
         </button>
       </div>
     </>
