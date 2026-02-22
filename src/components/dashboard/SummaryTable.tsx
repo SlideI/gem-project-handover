@@ -10,8 +10,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isToday, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 
-export const SummaryTable = () => {
+interface SummaryTableProps {
+  condensed?: boolean;
+}
+
+export const SummaryTable = ({ condensed = false }: SummaryTableProps) => {
   const { sections } = usePlan();
 
   const allActions = useMemo(() => {
@@ -107,14 +112,14 @@ export const SummaryTable = () => {
               const isAchieved = action.review_status?.toLowerCase() === 'achieved';
               return (
               <TableRow key={`${action.sectionId}-${index}`} data-achieved={isAchieved ? "true" : "false"}>
-                <TableCell className="font-medium">{action.category}</TableCell>
-                <TableCell>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
-                <TableCell>{action.action}</TableCell>
-                <TableCell>{action.responsible || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell className={cn("font-medium", condensed && "line-clamp-2")}>{action.category}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-2")}>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-2")}>{action.action}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-2")}>{action.responsible || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>
                   {action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : <span className="text-muted-foreground italic">...</span>}
                 </TableCell>
-                <TableCell>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-2")}>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{isAchieved ? null : getStatusBadge(action.deadline, action.completed)}</TableCell>
               </TableRow>

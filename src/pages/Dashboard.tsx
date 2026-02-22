@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, RotateCcw } from "lucide-react";
+import { Phone, RotateCcw, Minimize2, Maximize2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,7 @@ const Dashboard = () => {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [visitFrequency, setVisitFrequency] = useState<string>("");
+  const [condensedView, setCondensedView] = useState(false);
   // Use timestamp to force PlanProvider refresh on every mount
   const [refreshKey, setRefreshKey] = useState(() => Date.now());
 
@@ -233,8 +234,19 @@ const Dashboard = () => {
 
         {/* Summary Section */}
         <Card className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">Plan Summary</h2>
-          <SummaryTable />
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold">Plan Summary</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCondensedView(!condensedView)}
+              className="gap-1.5"
+            >
+              {condensedView ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+              {condensedView ? "Expand View" : "Condense View"}
+            </Button>
+          </div>
+          <SummaryTable condensed={condensedView} />
         </Card>
 
         {/* Frequency of Visits */}
