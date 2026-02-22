@@ -39,17 +39,16 @@ export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: Floating
   return (
     <>
       <PdfGenerationDialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen} />
-      <div className="fixed top-4 right-4 z-50 bg-primary px-3 py-2 rounded-lg shadow-2xl border border-black flex items-center gap-2">
+      <div className="fixed top-4 right-4 z-50 bg-primary px-3 py-3 rounded-xl shadow-2xl border border-black flex flex-col items-center gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-primary-foreground hover:bg-primary-foreground/20"
+            <button
+              className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
               title={`Current theme: ${currentTheme.name}`}
             >
-              <Palette className="h-4 w-4" />
-            </Button>
+              <Palette className="h-6 w-6" />
+              <span className="text-[10px] font-medium leading-tight">Theme</span>
+            </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="z-[100] bg-background" align="end">
             {themes.map((theme) => (
@@ -63,24 +62,22 @@ export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: Floating
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
           onClick={() => setPdfDialogOpen(true)}
-          className="text-primary-foreground hover:bg-primary-foreground/20"
+          className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
           title="Generate PDF"
         >
-          <FileText className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
+          <FileText className="h-6 w-6" />
+          <span className="text-[10px] font-medium leading-tight">PDF</span>
+        </button>
+        <button
           onClick={() => navigate("/")}
-          className="text-primary-foreground hover:bg-primary-foreground/20"
+          className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
           title="Home"
         >
-          <Home className="h-4 w-4" />
-        </Button>
+          <Home className="h-6 w-6" />
+          <span className="text-[10px] font-medium leading-tight">Home</span>
+        </button>
       </div>
     </>
   );
