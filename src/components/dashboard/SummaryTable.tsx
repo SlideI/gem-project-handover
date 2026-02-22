@@ -112,14 +112,14 @@ export const SummaryTable = ({ condensed = false }: SummaryTableProps) => {
               const isAchieved = action.review_status?.toLowerCase() === 'achieved';
               return (
               <TableRow key={`${action.sectionId}-${index}`} data-achieved={isAchieved ? "true" : "false"}>
-                <TableCell className={cn("font-medium", condensed && "line-clamp-2")}>{action.category}</TableCell>
-                <TableCell className={cn(condensed && "line-clamp-2")}>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
-                <TableCell className={cn(condensed && "line-clamp-2")}>{action.action}</TableCell>
-                <TableCell className={cn(condensed && "line-clamp-2")}>{action.responsible || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell className={cn("font-medium", condensed && "line-clamp-1")}>{action.category}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-1")}>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-1")}>{action.action}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-1")}>{action.responsible || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>
                   {action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : <span className="text-muted-foreground italic">...</span>}
                 </TableCell>
-                <TableCell className={cn(condensed && "line-clamp-2")}>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</TableCell>
+                <TableCell className={cn(condensed && "line-clamp-1")}>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{action.review_status || <span className="text-muted-foreground italic">...</span>}</TableCell>
                 <TableCell>{isAchieved ? null : getStatusBadge(action.deadline, action.completed)}</TableCell>
               </TableRow>
