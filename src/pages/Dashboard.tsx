@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, RotateCcw, Minimize2, Maximize2 } from "lucide-react";
+import { Phone, RotateCcw, Minimize2, Maximize2, LogOut } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -189,33 +189,46 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-              {hasActivePlan ? (
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    navigate("/auth");
+                  }}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <LogOut className="h-4 w-4 mr-1" />
+                  Sign Out
+                </Button>
+                {hasActivePlan ? (
+                  <>
+                    <Button 
+                      variant="outline"
+                      onClick={() => setShowResetDialog(true)}
+                      className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                    >
+                      <RotateCcw className="h-4 w-4 mr-1" />
+                      Reset
+                    </Button>
+                    <Button 
+                      onClick={() => navigate("/plan")}
+                      className="bg-success hover:bg-success/90 text-white"
+                    >
+                      Update Plan
+                    </Button>
+                  </>
+                ) : !hasAnyPlan && (
                   <Button 
-                    variant="outline"
-                    onClick={() => setShowResetDialog(true)}
-                    className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                  >
-                    <RotateCcw className="h-4 w-4 mr-1" />
-                    Reset
-                  </Button>
-                  <Button 
-                    onClick={() => navigate("/plan")}
+                    onClick={() => setShowSectionDialog(true)}
                     className="bg-success hover:bg-success/90 text-white"
                   >
-                    Update Plan
+                    Create Plan
                   </Button>
-                </div>
-              ) : !hasAnyPlan && (
-                <Button 
-                  onClick={() => setShowSectionDialog(true)}
-                  className="bg-success hover:bg-success/90 text-white"
-                >
-                  Create Plan
-                </Button>
-              )}
+                )}
+              </div>
             </div>
-            
             {showContactDetails && (
               <div className="mt-4 p-4 bg-accent rounded-lg">
                 <h3 className="font-semibold mb-2">Primary Contact Details</h3>
