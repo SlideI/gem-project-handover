@@ -81,7 +81,7 @@ const Dashboard = () => {
     if (lastVisitDate) {
       return { label: "Completed", variant: "secondary" };
     }
-    return { label: "—", variant: "secondary" };
+    return { label: "Not due yet", variant: "default" };
   };
 
   useEffect(() => {
@@ -334,6 +334,7 @@ const Dashboard = () => {
                       status.label === "Overdue" ? "bg-destructive text-destructive-foreground" :
                       status.label === "Due Soon" ? "bg-warning text-warning-foreground" :
                       status.label === "Completed" ? "bg-success text-white" :
+                      status.label === "Not due yet" ? "bg-blue-500 text-white" :
                       ""
                     }>
                       {status.label}
