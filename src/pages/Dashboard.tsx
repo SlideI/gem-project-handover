@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, RotateCcw, Minimize2, Maximize2, LogOut } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { addWeeks, addMonths, format } from "date-fns";
+import { addWeeks, addMonths, format, differenceInDays, isPast, isToday } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { LiquidProgressBar } from "@/components/dashboard/LiquidProgressBar";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [visitFrequency, setVisitFrequency] = useState<string>("");
+  const [lastVisitDate, setLastVisitDate] = useState<Date | undefined>(undefined);
   const [condensedView, setCondensedView] = useState(false);
   // Use timestamp to force PlanProvider refresh on every mount
   const [refreshKey, setRefreshKey] = useState(() => Date.now());
@@ -54,6 +56,32 @@ const Dashboard = () => {
       case "never": return "No visit scheduled";
       default: return "—";
     }
+  };
+
+  const getVisitStatus = (): { label: string; variant: "default" | "destructive" | "secondary" | "outline" } => {
+    if (!visitFrequency || visitFrequency === "never") return { label: "—", variant: "secondary" };
+    
+    const nextDate = visitFrequency === "weekly" ? addWeeks(legalStatusStartDate, 1)
+      : visitFrequency === "fortnightly" ? addWeeks(legalStatusStartDate, 2)
+      : visitFrequency === "monthly" ? addMonths(legalStatusStartDate, 1)
+      : visitFrequency === "6-monthly" ? addMonths(legalStatusStartDate, 6)
+      : null;
+    
+    if (!nextDate) return { label: "—", variant: "secondary" };
+
+    const today = new Date();
+    const daysUntil = differenceInDays(nextDate, today);
+
+    if (isPast(nextDate) && !isToday(nextDate)) {
+      return { label: "Overdue", variant: "destructive" };
+    }
+    if (daysUntil <= 3 && daysUntil >= 0) {
+      return { label: "Due Soon", variant: "default" };
+    }
+    if (lastVisitDate) {
+      return { label: "Completed", variant: "secondary" };
+    }
+    return { label: "—", variant: "secondary" };
   };
 
   useEffect(() => {
@@ -289,6 +317,28 @@ const Dashboard = () => {
             <div>
               <Label className="mb-2 block text-sm font-medium">Next visit is scheduled for</Label>
               <Input value={getNextVisitDate()} disabled className="bg-muted cursor-not-allowed" />
+            </div>
+            <div>
+              <Label className="mb-2 block text-sm font-medium">Last visit occurred on</Label>
+              <Input value={lastVisitDate ? format(lastVisitDate, "PPP") : "—"} disabled className="bg-muted cursor-not-allowed" />
+            </div>
+            <div>
+              <Label className="mb-2 block text-sm font-medium">Visit status</Label>
+              {(() => {
+                const status = getVisitStatus();
+                return (
+                  <div className="mt-1">
+                    <Badge variant={status.variant} className={
+                      status.label === "Overdue" ? "bg-destructive text-destructive-foreground" :
+                      status.label === "Due Soon" ? "bg-warning text-warning-foreground" :
+                      status.label === "Completed" ? "bg-success text-white" :
+                      ""
+                    }>
+                      {status.label}
+                    </Badge>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </Card>
