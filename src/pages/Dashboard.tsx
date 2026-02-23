@@ -294,7 +294,7 @@ const Dashboard = () => {
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-1">Frequency of visits to Samuel</h2>
           <p className="text-muted-foreground text-sm mb-4">Record how often you intend to visit this rāngatahi.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
               <Select value={visitFrequency} onValueChange={setVisitFrequency}>
@@ -314,6 +314,8 @@ const Dashboard = () => {
               <Label className="mb-2 block text-sm font-medium">Associated legal status start date</Label>
               <Input value={format(legalStatusStartDate, "PPP")} disabled className="bg-muted cursor-not-allowed" />
             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div>
               <Label className="mb-2 block text-sm font-medium">Next visit is scheduled for</Label>
               <Input value={getNextVisitDate()} disabled className="bg-muted cursor-not-allowed" />
