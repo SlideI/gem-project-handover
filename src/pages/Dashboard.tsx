@@ -7,6 +7,7 @@ import { Phone, RotateCcw, Minimize2, Maximize2, LogOut } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { addWeeks, addMonths, format, differenceInDays, isPast, isToday } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { LiquidProgressBar } from "@/components/dashboard/LiquidProgressBar";
@@ -41,6 +42,7 @@ const Dashboard = () => {
   const [visitFrequency, setVisitFrequency] = useState<string>("");
   const [lastVisitDate, setLastVisitDate] = useState<Date | undefined>(undefined);
   const [condensedView, setCondensedView] = useState(false);
+  const [visitReason, setVisitReason] = useState("");
   // Use timestamp to force PlanProvider refresh on every mount
   const [refreshKey, setRefreshKey] = useState(() => Date.now());
 
@@ -273,23 +275,6 @@ const Dashboard = () => {
         {/* Plan Timeline */}
         <PlanTimeline nextVisitDate={visitFrequency && visitFrequency !== "never" ? getNextVisitDate() : undefined} />
 
-        {/* Summary Section */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Plan Summary</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCondensedView(!condensedView)}
-              className="gap-1.5"
-            >
-              {condensedView ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
-              {condensedView ? "Expand View" : "Condense View"}
-            </Button>
-          </div>
-          <SummaryTable condensed={condensedView} />
-        </Card>
-
         {/* Frequency of Visits */}
         <Card className="p-6">
           <h2 className="text-2xl font-semibold mb-1">Frequency of visits to Samuel</h2>
@@ -314,6 +299,15 @@ const Dashboard = () => {
               <Label className="mb-2 block text-sm font-medium">Associated legal status start date</Label>
               <Input value={format(legalStatusStartDate, "PPP")} disabled className="bg-muted cursor-not-allowed" />
             </div>
+          </div>
+          <div className="mt-4">
+            <Label className="mb-2 block text-sm font-medium">Why this often?</Label>
+            <Textarea
+              value={visitReason}
+              onChange={(e) => setVisitReason(e.target.value)}
+              placeholder="Explain the reason for this visit frequency..."
+              className="min-h-[80px]"
+            />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div>
@@ -344,6 +338,23 @@ const Dashboard = () => {
               })()}
             </div>
           </div>
+        </Card>
+
+        {/* Summary Section */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold">Plan Summary</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCondensedView(!condensedView)}
+              className="gap-1.5"
+            >
+              {condensedView ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+              {condensedView ? "Expand View" : "Condense View"}
+            </Button>
+          </div>
+          <SummaryTable condensed={condensedView} />
         </Card>
 
         {/* Plan Progress - moved to bottom per client feedback */}
