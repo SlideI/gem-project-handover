@@ -40,7 +40,7 @@ const Dashboard = () => {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [visitFrequency, setVisitFrequency] = useState<string>("");
-  const [lastVisitDate, setLastVisitDate] = useState<Date | undefined>(undefined);
+  const [lastVisitDate, setLastVisitDate] = useState<Date | undefined>(new Date(2026, 1, 25));
   const [condensedView, setCondensedView] = useState(false);
   const [visitReason, setVisitReason] = useState("");
   // Use timestamp to force PlanProvider refresh on every mount
