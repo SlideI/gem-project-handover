@@ -48,13 +48,19 @@ const Dashboard = () => {
 
   const legalStatusStartDate = new Date(2026, 1, 20); // Feb 20, 2026
 
+  const getBaselineDate = (): Date => {
+    // Use last visit date as baseline if available, otherwise fall back to legal status start date
+    return lastVisitDate || legalStatusStartDate;
+  };
+
   const getNextVisitDate = (): string => {
     if (!visitFrequency) return "—";
+    const baseline = getBaselineDate();
     switch (visitFrequency) {
-      case "weekly": return format(addWeeks(legalStatusStartDate, 1), "PPP");
-      case "fortnightly": return format(addWeeks(legalStatusStartDate, 2), "PPP");
-      case "monthly": return format(addMonths(legalStatusStartDate, 1), "PPP");
-      case "6-monthly": return format(addMonths(legalStatusStartDate, 6), "PPP");
+      case "weekly": return format(addWeeks(baseline, 1), "PPP");
+      case "fortnightly": return format(addWeeks(baseline, 2), "PPP");
+      case "monthly": return format(addMonths(baseline, 1), "PPP");
+      case "6-monthly": return format(addMonths(baseline, 6), "PPP");
       case "never": return "No visit scheduled";
       default: return "—";
     }
@@ -63,10 +69,11 @@ const Dashboard = () => {
   const getVisitStatus = (): { label: string; variant: "default" | "destructive" | "secondary" | "outline" } => {
     if (!visitFrequency || visitFrequency === "never") return { label: "—", variant: "secondary" };
     
-    const nextDate = visitFrequency === "weekly" ? addWeeks(legalStatusStartDate, 1)
-      : visitFrequency === "fortnightly" ? addWeeks(legalStatusStartDate, 2)
-      : visitFrequency === "monthly" ? addMonths(legalStatusStartDate, 1)
-      : visitFrequency === "6-monthly" ? addMonths(legalStatusStartDate, 6)
+    const baseline = getBaselineDate();
+    const nextDate = visitFrequency === "weekly" ? addWeeks(baseline, 1)
+      : visitFrequency === "fortnightly" ? addWeeks(baseline, 2)
+      : visitFrequency === "monthly" ? addMonths(baseline, 1)
+      : visitFrequency === "6-monthly" ? addMonths(baseline, 6)
       : null;
     
     if (!nextDate) return { label: "—", variant: "secondary" };
