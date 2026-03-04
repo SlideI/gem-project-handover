@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, RotateCcw, Minimize2, Maximize2, LogOut } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { addWeeks, addMonths, format, differenceInDays, isPast, isToday } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { LiquidProgressBar } from "@/components/dashboard/LiquidProgressBar";
 import { SummaryTable } from "@/components/dashboard/SummaryTable";
@@ -16,6 +10,7 @@ import { PlanTimeline } from "@/components/dashboard/PlanTimeline";
 import { DocumentsPanel } from "@/components/dashboard/DocumentsPanel";
 import { ContactsPanel } from "@/components/dashboard/ContactsPanel";
 import { HistoryPanel } from "@/components/dashboard/HistoryPanel";
+import { VisitFrequencyCard, useVisitNextDate } from "@/components/dashboard/VisitFrequencyCard";
 import { PlanProvider } from "@/contexts/PlanContext";
 import { supabase } from "@/integrations/supabase/client";
 import { SectionSelectionDialog } from "@/components/plan/SectionSelectionDialog";
@@ -30,7 +25,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const Dashboard = () => {
+const DashboardContent = () => {
   const navigate = useNavigate();
   const [showContactDetails, setShowContactDetails] = useState(false);
   const [hasActivePlan, setHasActivePlan] = useState(false);
@@ -39,59 +34,8 @@ const Dashboard = () => {
   const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
-  const [visitFrequency, setVisitFrequency] = useState<string>("");
-  const [lastVisitDate, setLastVisitDate] = useState<Date | undefined>(new Date(2026, 1, 25));
   const [condensedView, setCondensedView] = useState(false);
-  const [visitReason, setVisitReason] = useState("");
-  // Use timestamp to force PlanProvider refresh on every mount
-  const [refreshKey, setRefreshKey] = useState(() => Date.now());
-
-  const legalStatusStartDate = new Date(2026, 1, 20); // Feb 20, 2026
-
-  const getBaselineDate = (): Date => {
-    // Use last visit date as baseline if available, otherwise fall back to legal status start date
-    return lastVisitDate || legalStatusStartDate;
-  };
-
-  const getNextVisitDate = (): string => {
-    if (!visitFrequency) return "—";
-    const baseline = getBaselineDate();
-    switch (visitFrequency) {
-      case "weekly": return format(addWeeks(baseline, 1), "PPP");
-      case "fortnightly": return format(addWeeks(baseline, 2), "PPP");
-      case "monthly": return format(addMonths(baseline, 1), "PPP");
-      case "6-monthly": return format(addMonths(baseline, 6), "PPP");
-      case "never": return "No visit scheduled";
-      default: return "—";
-    }
-  };
-
-  const getVisitStatus = (): { label: string; variant: "default" | "destructive" | "secondary" | "outline" } => {
-    if (!visitFrequency || visitFrequency === "never") return { label: "—", variant: "secondary" };
-    
-    const baseline = getBaselineDate();
-    const nextDate = visitFrequency === "weekly" ? addWeeks(baseline, 1)
-      : visitFrequency === "fortnightly" ? addWeeks(baseline, 2)
-      : visitFrequency === "monthly" ? addMonths(baseline, 1)
-      : visitFrequency === "6-monthly" ? addMonths(baseline, 6)
-      : null;
-    
-    if (!nextDate) return { label: "—", variant: "secondary" };
-
-    const today = new Date();
-    const daysUntil = differenceInDays(nextDate, today);
-
-    if (isPast(nextDate) && !isToday(nextDate)) {
-      return { label: "Overdue", variant: "destructive" };
-    }
-    if (daysUntil <= 3 && daysUntil >= 0) {
-      return { label: "Due Soon", variant: "default" };
-    }
-    if (lastVisitDate) {
-      return { label: "Completed", variant: "secondary" };
-    }
-    return { label: "Not due yet", variant: "default" };
-  };
+  const nextVisitDate = useVisitNextDate();
 
   useEffect(() => {
     const checkPlans = async () => {
@@ -151,7 +95,6 @@ const Dashboard = () => {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) return;
 
-      // Find the active plan
       const { data: activePlan } = await supabase
         .from('plans')
         .select('id')
@@ -160,7 +103,6 @@ const Dashboard = () => {
         .maybeSingle();
 
       if (activePlan) {
-        // Delete actions linked to this plan's sections
         const { data: sections } = await supabase
           .from('plan_sections')
           .select('id')
@@ -171,17 +113,13 @@ const Dashboard = () => {
           await supabase.from('actions').delete().in('section_id', sectionIds);
         }
 
-        // Delete plan sections
         await supabase.from('plan_sections').delete().eq('plan_id', activePlan.id);
-
-        // Delete the plan itself
         await supabase.from('plans').delete().eq('id', activePlan.id);
       }
 
       setHasActivePlan(false);
       setHasAnyPlan(false);
       setShowResetDialog(false);
-      setRefreshKey(Date.now());
     } catch (error) {
       console.error("Error resetting plan:", error);
     } finally {
@@ -190,9 +128,8 @@ const Dashboard = () => {
   };
 
   return (
-    <PlanProvider key={refreshKey}>
-      <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Header */}
         <Card className="p-6">
           <div className="space-y-4">
@@ -280,72 +217,10 @@ const Dashboard = () => {
         </Card>
 
         {/* Plan Timeline */}
-        <PlanTimeline nextVisitDate={visitFrequency && visitFrequency !== "never" ? getNextVisitDate() : undefined} />
+        <PlanTimeline nextVisitDate={nextVisitDate} />
 
-        {/* Frequency of Visits */}
-        <Card className="p-6">
-          <h2 className="text-2xl font-semibold mb-1">Frequency of visits to Samuel</h2>
-          <p className="text-muted-foreground text-sm mb-4">Record how often you intend to visit this rāngatahi.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
-              <Select value={visitFrequency} onValueChange={setVisitFrequency}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select visit frequency" />
-                </SelectTrigger>
-                <SelectContent className="bg-popover z-50">
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="fortnightly">Fortnightly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="6-monthly">6 monthly</SelectItem>
-                  <SelectItem value="never">Never</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="mb-2 block text-sm font-medium">Associated legal status start date</Label>
-              <Input value={format(legalStatusStartDate, "PPP")} disabled className="bg-muted cursor-not-allowed" />
-            </div>
-          </div>
-          <div className="mt-4">
-            <Label className="mb-2 block text-sm font-medium">Why this often?</Label>
-            <Textarea
-              value={visitReason}
-              onChange={(e) => setVisitReason(e.target.value)}
-              placeholder="Explain the reason for this visit frequency..."
-              className="min-h-[80px]"
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-            <div>
-              <Label className="mb-2 block text-sm font-medium">Next visit is scheduled for</Label>
-              <Input value={getNextVisitDate()} disabled className="bg-muted cursor-not-allowed" />
-            </div>
-            <div>
-              <Label className="mb-2 block text-sm font-medium">Last visit occurred on</Label>
-              <Input value={lastVisitDate ? format(lastVisitDate, "PPP") : "—"} disabled className="bg-muted cursor-not-allowed" />
-            </div>
-            <div>
-              <Label className="mb-2 block text-sm font-medium">Visit status</Label>
-              {(() => {
-                const status = getVisitStatus();
-                return (
-                  <div className="mt-1">
-                    <Badge variant={status.variant} className={
-                      status.label === "Overdue" ? "bg-destructive text-destructive-foreground" :
-                      status.label === "Due Soon" ? "bg-warning text-warning-foreground" :
-                      status.label === "Completed" ? "bg-success text-white" :
-                      status.label === "Not due yet" ? "bg-blue-500 text-white" :
-                      ""
-                    }>
-                      {status.label}
-                    </Badge>
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-        </Card>
+        {/* Frequency of Visits - Read-only, reflects Residence section data */}
+        <VisitFrequencyCard />
 
         {/* Summary Section */}
         <Card className="p-6">
@@ -364,7 +239,7 @@ const Dashboard = () => {
           <SummaryTable condensed={condensedView} />
         </Card>
 
-        {/* Plan Progress - moved to bottom per client feedback */}
+        {/* Plan Progress */}
         <LiquidProgressBar />
 
         {/* Tabs Section */}
@@ -389,7 +264,6 @@ const Dashboard = () => {
             </TabsContent>
           </Tabs>
         </Card>
-        </div>
       </div>
 
       <SectionSelectionDialog
@@ -419,6 +293,16 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  );
+};
+
+const Dashboard = () => {
+  const [refreshKey] = useState(() => Date.now());
+
+  return (
+    <PlanProvider key={refreshKey}>
+      <DashboardContent />
     </PlanProvider>
   );
 };
