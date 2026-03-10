@@ -478,7 +478,7 @@ All colors MUST be HSL.
 
   [data-theme="pasifika"] .bg-card,
   [data-theme="pasifika"] .bg-background {
-    background-color: hsl(160 45% 82% / 0.85);
+    background-color: hsl(160 45% 82% / 0.75);
   }
 }
 
