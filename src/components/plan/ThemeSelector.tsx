@@ -20,6 +20,7 @@ export const themes: Theme[] = [
   { id: "berry-fusion", name: "Berry Fusion", description: "Rich purples and magentas" },
   { id: "midnight-aurora", name: "Midnight Aurora", description: "Deep indigos with subtle accents" },
   { id: "maori-kaupapa", name: "Māori Kaupapa", description: "Rich reds with traditional patterns" },
+  { id: "pasifika", name: "Pasifika", description: "Ocean greens and teals with island motifs" },
 ];
 
 interface ThemeSelectorProps {
