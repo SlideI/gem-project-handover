@@ -28,6 +28,7 @@ const themes = [
   { id: "berry-fusion", name: "Berry Fusion" },
   { id: "midnight-aurora", name: "Midnight Aurora" },
   { id: "maori-kaupapa", name: "Māori Kaupapa" },
+  { id: "pasifika", name: "Pasifika" },
 ];
 
 export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: FloatingActionButtonsProps) => {
