@@ -426,6 +426,60 @@ All colors MUST be HSL.
   [data-theme="maori-kaupapa"] .bg-background {
     background-color: hsl(0 45% 85% / 0.85);
   }
+
+  /* Pasifika Theme */
+  [data-theme="pasifika"] {
+    --background: 160 45% 82%;
+    --foreground: 220 60% 15%;
+    --card: 160 50% 87%;
+    --card-foreground: 220 60% 15%;
+    --primary: 160 75% 35%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 160 60% 55%;
+    --secondary: 180 55% 78%;
+    --secondary-foreground: 200 70% 18%;
+    --accent: 195 80% 75%;
+    --accent-foreground: 220 70% 25%;
+    --muted: 160 35% 78%;
+    --muted-foreground: 200 50% 25%;
+    --border: 170 40% 65%;
+    --input: 160 45% 88%;
+    --ring: 160 75% 35%;
+    --sidebar-background: 160 50% 84%;
+    --sidebar-foreground: 220 60% 15%;
+    --sidebar-primary: 160 75% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 180 50% 78%;
+    --sidebar-accent-foreground: 200 70% 18%;
+    --progress-fill: 160 75% 35%;
+    --kpi-upcoming: 160 75% 35%;
+    --success: 90 70% 40%;
+    --warning: 45 90% 50%;
+    --destructive: 330 75% 50%;
+    --destructive-foreground: 0 0% 100%;
+  }
+
+  [data-theme="pasifika"] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('/pasifika-bg.jpg');
+    background-repeat: repeat;
+    background-size: 200px;
+    opacity: 0.15;
+  }
+
+  [data-theme="pasifika"] body > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  [data-theme="pasifika"] .bg-card,
+  [data-theme="pasifika"] .bg-background {
+    background-color: hsl(160 45% 82% / 0.85);
+  }
 }
 
 @layer base {
