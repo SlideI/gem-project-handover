@@ -33,11 +33,11 @@ export const SectionHeader = ({ title, subtitle }: SectionHeaderProps) => {
             <p className="text-white/80 text-sm drop-shadow-sm">{subtitle}</p>
           </div>
           <div className="relative flex-shrink-0 mr-16">
-            <div className="w-32 h-32 rounded-full bg-white flex items-center justify-center shadow-lg">
+            <div className="w-32 h-32 rounded-full bg-white flex items-center justify-center shadow-lg overflow-hidden">
               <img
                 src="/pasifika-turtle.jpg"
                 alt="Pasifika turtle motif"
-                className="w-28 h-28 object-contain"
+                className="w-28 h-28 object-cover rounded-full"
               />
             </div>
           </div>
