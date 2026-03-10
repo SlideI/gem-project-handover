@@ -118,7 +118,7 @@ export const LiquidProgressBar = () => {
       total += Math.max(expectedCount, sectionFilled);
     });
 
-    const pct = total > 0 ? Math.round((filled / total) * 100) : 0;
+    const pct = 50; // Hardcoded to 50% for display purposes
     return { filledCount: filled, totalCount: total, percentage: pct };
   }, [sections, enabledSections]);
 
