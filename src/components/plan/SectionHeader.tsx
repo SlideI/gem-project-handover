@@ -21,7 +21,7 @@ export const SectionHeader = ({ title, subtitle }: SectionHeaderProps) => {
     return (
       <div className="relative overflow-hidden rounded-xl mb-2 -mx-8 -mt-8">
         <div
-          className="flex items-center justify-between px-10 py-6"
+          className="flex items-center justify-between px-10 py-4"
           style={{
             background: "linear-gradient(135deg, hsl(190 85% 50%), hsl(160 70% 45%), hsl(80 65% 50%))",
           }}
@@ -32,12 +32,12 @@ export const SectionHeader = ({ title, subtitle }: SectionHeaderProps) => {
             </h2>
             <p className="text-white/80 text-sm drop-shadow-sm">{subtitle}</p>
           </div>
-          <div className="relative flex-shrink-0">
-            <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center shadow-lg">
+          <div className="relative flex-shrink-0 mr-16">
+            <div className="w-32 h-32 rounded-full bg-white flex items-center justify-center shadow-lg">
               <img
                 src="/pasifika-turtle.jpg"
                 alt="Pasifika turtle motif"
-                className="w-20 h-20 object-contain"
+                className="w-28 h-28 object-contain"
               />
             </div>
           </div>
