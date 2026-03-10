@@ -2,6 +2,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
 import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
+import { SectionHeader } from "../SectionHeader";
 
 export const IdentitySection = () => {
   const { sections, updateField } = usePlan();
