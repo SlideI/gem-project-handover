@@ -1,4 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
+import { SectionHeader } from "../SectionHeader";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
 import { CheckboxField } from "@/components/plan/CheckboxField";
@@ -21,12 +22,7 @@ export const DisabilitySection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">Disability Needs</h2>
-        <p className="text-muted-foreground">
-          Support needs and goals related to any disabilities
-        </p>
-      </div>
+      <SectionHeader title="Disability Needs" subtitle="Support needs and goals related to any disabilities" />
 
       <div className="space-y-4">
         <div className="space-y-2">

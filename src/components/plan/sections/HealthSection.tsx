@@ -1,4 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
+import { SectionHeader } from "../SectionHeader";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
 import { PrePopulatedField } from "@/components/plan/PrePopulatedField";
@@ -24,14 +25,7 @@ export const HealthSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">
-          Health & Wellbeing Needs
-        </h2>
-        <p className="text-muted-foreground">
-          Information about your physical, emotional, and behavioral health
-        </p>
-      </div>
+      <SectionHeader title="Health & Wellbeing Needs" subtitle="Information about your physical, emotional, and behavioral health" />
 
       <div className="space-y-4">
         <PrePopulatedField

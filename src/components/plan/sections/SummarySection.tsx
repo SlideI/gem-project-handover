@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { SectionHeader } from "../SectionHeader";
 import { Card } from "@/components/ui/card";
 import { usePlan } from "@/contexts/PlanContext";
 import {
@@ -87,12 +88,7 @@ export const SummarySection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">My Plan Summary</h2>
-        <p className="text-muted-foreground">
-          A complete overview of all actions across your plan
-        </p>
-      </div>
+      <SectionHeader title="My Plan Summary" subtitle="A complete overview of all actions across your plan" />
 
       <Card className="p-4">
         <div className="grid grid-cols-3 gap-4 mb-6">

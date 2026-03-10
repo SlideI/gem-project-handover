@@ -1,4 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
+import { SectionHeader } from "../SectionHeader";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
 import { DatePickerField } from "@/components/plan/DatePickerField";
@@ -36,12 +37,7 @@ export const ResidenceSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">Residence & Homes</h2>
-        <p className="text-muted-foreground">
-          Information about where you live and your living situation
-        </p>
-      </div>
+      <SectionHeader title="Residence & Homes" subtitle="Information about where you live and your living situation" />
 
       <div className="space-y-4">
         <PrePopulatedField

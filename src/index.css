@@ -431,7 +431,7 @@ All colors MUST be HSL.
   [data-theme="pasifika"] {
     --background: 160 45% 82%;
     --foreground: 220 60% 15%;
-    --card: 160 50% 87%;
+    --card: 0 0% 100%;
     --card-foreground: 220 60% 15%;
     --primary: 160 75% 35%;
     --primary-foreground: 0 0% 100%;
@@ -476,7 +476,10 @@ All colors MUST be HSL.
     z-index: 1;
   }
 
-  [data-theme="pasifika"] .bg-card,
+  [data-theme="pasifika"] .bg-card {
+    background-color: hsl(0 0% 100%);
+  }
+
   [data-theme="pasifika"] .bg-background {
     background-color: hsl(160 45% 82% / 0.75);
   }

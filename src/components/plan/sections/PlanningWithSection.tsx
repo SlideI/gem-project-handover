@@ -1,4 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
+import { SectionHeader } from "../SectionHeader";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
 import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
@@ -23,12 +24,7 @@ export const PlanningWithSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">Planning With</h2>
-        <p className="text-muted-foreground">
-          Plan reviews, sharing, and social worker visits
-        </p>
-      </div>
+      <SectionHeader title="Planning With" subtitle="Plan reviews, sharing, and social worker visits" />
 
       <div className="space-y-4">
         <div className="space-y-2">
