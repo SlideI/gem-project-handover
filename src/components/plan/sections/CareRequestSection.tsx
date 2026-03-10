@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { SectionHeader } from "../SectionHeader";
 import { Textarea } from "@/components/ui/textarea";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";

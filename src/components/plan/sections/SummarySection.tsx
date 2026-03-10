@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { SectionHeader } from "../SectionHeader";
 import { Card } from "@/components/ui/card";
 import { usePlan } from "@/contexts/PlanContext";
 import {

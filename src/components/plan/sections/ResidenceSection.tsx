@@ -1,4 +1,5 @@
 import { Textarea } from "@/components/ui/textarea";
+import { SectionHeader } from "../SectionHeader";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
 import { DatePickerField } from "@/components/plan/DatePickerField";
