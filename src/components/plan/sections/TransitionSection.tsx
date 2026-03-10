@@ -15,14 +15,7 @@ export const TransitionSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">
-          Transition to Adulthood
-        </h2>
-        <p className="text-muted-foreground">
-          Planning for your future as you move towards independence
-        </p>
-      </div>
+      <SectionHeader title="Transition to Adulthood" subtitle="Planning for your future as you move towards independence" />
 
       <div className="space-y-4">
         <FieldWithPrompt

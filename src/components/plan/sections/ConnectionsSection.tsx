@@ -20,12 +20,7 @@ export const ConnectionsSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">My Connections</h2>
-        <p className="text-muted-foreground">
-          Tell us about the important people in your life
-        </p>
-      </div>
+      <SectionHeader title="My Connections" subtitle="Tell us about the important people in your life" />
 
       <div className="space-y-4">
         <FieldWithPrompt

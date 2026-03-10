@@ -28,12 +28,7 @@ export const CareRequestSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">Care Request</h2>
-        <p className="text-muted-foreground">
-          Care arrangement needs and preferences
-        </p>
-      </div>
+      <SectionHeader title="Care Request" subtitle="Care arrangement needs and preferences" />
 
       <div className="space-y-4">
         <FieldWithPrompt label="Is a care arrangement needed">

@@ -56,12 +56,7 @@ export const YouthJusticeSection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">Youth Justice</h2>
-        <p className="text-muted-foreground">
-          Information related to youth justice involvement and support
-        </p>
-      </div>
+      <SectionHeader title="Youth Justice" subtitle="Information related to youth justice involvement and support" />
 
       <div className="space-y-4">
         <PrePopulatedField

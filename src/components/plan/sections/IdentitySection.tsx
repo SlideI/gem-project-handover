@@ -10,14 +10,7 @@ export const IdentitySection = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold text-foreground mb-2">
-          Identity, Spirituality, and Cultural Needs
-        </h2>
-        <p className="text-muted-foreground">
-          Your cultural identity and spiritual beliefs
-        </p>
-      </div>
+      <SectionHeader title="Identity, Spirituality, and Cultural Needs" subtitle="Your cultural identity and spiritual beliefs" />
 
       <div className="space-y-4">
         <FieldWithPrompt label="Where I'm from">
