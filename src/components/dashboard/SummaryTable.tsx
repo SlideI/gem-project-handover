@@ -99,7 +99,7 @@ export const SummaryTable = ({ condensed = false }: SummaryTableProps) => {
             <TableHead className="w-[90px]">By when</TableHead>
             <TableHead>How will I know</TableHead>
             <TableHead className="w-[90px]">Review status</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Goal Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
