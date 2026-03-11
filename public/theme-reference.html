@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Theme Technical Reference v2</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #333; }
+h1 { border-bottom: 2px solid #0369a1; padding-bottom: 0.5rem; }
+h2 { color: #0369a1; margin-top: 2rem; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+th { background: #f0f7ff; }
+code { background: #f3f4f6; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+hr { margin: 2rem 0; border: none; border-top: 1px solid #ddd; }
+.desc { font-style: italic; color: #555; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<h1>Theme Technical Reference (v2)</h1>
+
+<h2>Global Tokens (All Themes)</h2>
+<table>
+<tr><th>Token</th><th>Value</th></tr>
+<tr><td>Border Radius</td><td><code>0.5rem</code></td></tr>
+<tr><td>Transition</td><td><code>all 0.3s cubic-bezier(0.4, 0, 0.2, 1)</code></td></tr>
+<tr><td>Shadow SM</td><td><code>0 1px 2px 0 hsl(0 0% 0% / 0.05)</code></td></tr>
+<tr><td>Shadow MD</td><td><code>0 4px 6px -1px hsl(0 0% 0% / 0.1)</code></td></tr>
+<tr><td>Shadow LG</td><td><code>0 10px 15px -3px hsl(0 0% 0% / 0.1)</code></td></tr>
+</table>
+
+<hr>
+
+<h2>1. Default (Light)</h2>
+<p class="desc">Clean whites and light greys with professional ocean blue accents; the only theme that uses white backgrounds.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>0 0% 98%</td></tr>
+<tr><td><code>--foreground</code></td><td>215 25% 27%</td></tr>
+<tr><td><code>--card</code></td><td>0 0% 100%</td></tr>
+<tr><td><code>--primary</code></td><td>207 90% 35%</td></tr>
+<tr><td><code>--primary-light</code></td><td>207 85% 85%</td></tr>
+<tr><td><code>--secondary</code></td><td>210 20% 95%</td></tr>
+<tr><td><code>--accent</code></td><td>207 90% 95%</td></tr>
+<tr><td><code>--muted</code></td><td>210 20% 96%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>215 16% 47%</td></tr>
+<tr><td><code>--success</code></td><td>142 71% 45%</td></tr>
+<tr><td><code>--warning</code></td><td>38 92% 50%</td></tr>
+<tr><td><code>--destructive</code></td><td>0 84% 60%</td></tr>
+<tr><td><code>--border</code></td><td>214 32% 91%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui, -apple-system, sans-serif</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>2. Default (Dark)</h2>
+<p class="desc">Deep slate-blue backgrounds with brighter sky-blue primary accents for a modern dark-mode feel.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>215 28% 17%</td></tr>
+<tr><td><code>--foreground</code></td><td>210 20% 98%</td></tr>
+<tr><td><code>--card</code></td><td>215 28% 20%</td></tr>
+<tr><td><code>--primary</code></td><td>207 90% 54%</td></tr>
+<tr><td><code>--primary-light</code></td><td>207 50% 25%</td></tr>
+<tr><td><code>--secondary</code></td><td>215 20% 25%</td></tr>
+<tr><td><code>--accent</code></td><td>207 50% 30%</td></tr>
+<tr><td><code>--muted</code></td><td>215 20% 25%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>215 20% 65%</td></tr>
+<tr><td><code>--destructive</code></td><td>0 62% 50%</td></tr>
+<tr><td><code>--border</code></td><td>215 20% 30%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui, -apple-system, sans-serif</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>3. Sunset Orange</h2>
+<p class="desc">Warm sandy golds and peach tones with a bold tangerine-orange primary.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>35 70% 88%</td></tr>
+<tr><td><code>--foreground</code></td><td>25 90% 15%</td></tr>
+<tr><td><code>--card</code></td><td>35 75% 94%</td></tr>
+<tr><td><code>--primary</code></td><td>25 100% 50%</td></tr>
+<tr><td><code>--primary-light</code></td><td>25 90% 75%</td></tr>
+<tr><td><code>--secondary</code></td><td>35 95% 82%</td></tr>
+<tr><td><code>--accent</code></td><td>15 100% 85%</td></tr>
+<tr><td><code>--muted</code></td><td>30 55% 85%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>30 70% 30%</td></tr>
+<tr><td><code>--border</code></td><td>30 60% 75%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>4. Lavender Dream</h2>
+<p class="desc">Gentle lilac and wisteria backgrounds with a rich amethyst-purple primary.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>270 55% 90%</td></tr>
+<tr><td><code>--foreground</code></td><td>270 80% 20%</td></tr>
+<tr><td><code>--card</code></td><td>270 60% 95%</td></tr>
+<tr><td><code>--primary</code></td><td>270 75% 55%</td></tr>
+<tr><td><code>--primary-light</code></td><td>270 65% 75%</td></tr>
+<tr><td><code>--secondary</code></td><td>280 65% 85%</td></tr>
+<tr><td><code>--accent</code></td><td>260 70% 88%</td></tr>
+<tr><td><code>--muted</code></td><td>270 45% 88%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>270 60% 30%</td></tr>
+<tr><td><code>--border</code></td><td>270 45% 80%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>5. Ocean Teal</h2>
+<p class="desc">Aquamarine and seafoam greens with a deep teal primary reminiscent of tropical waters.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>180 60% 88%</td></tr>
+<tr><td><code>--foreground</code></td><td>180 90% 15%</td></tr>
+<tr><td><code>--card</code></td><td>180 65% 94%</td></tr>
+<tr><td><code>--primary</code></td><td>180 85% 35%</td></tr>
+<tr><td><code>--primary-light</code></td><td>180 75% 70%</td></tr>
+<tr><td><code>--secondary</code></td><td>175 75% 85%</td></tr>
+<tr><td><code>--accent</code></td><td>185 85% 85%</td></tr>
+<tr><td><code>--muted</code></td><td>180 45% 85%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>180 70% 25%</td></tr>
+<tr><td><code>--border</code></td><td>180 50% 75%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>6. Crazy Colours</h2>
+<p class="desc">Electric violet backgrounds with hot-pink primaries, lime-green secondaries, and bright yellow accents — deliberately chaotic and playful.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>280 75% 85%</td></tr>
+<tr><td><code>--foreground</code></td><td>330 100% 15%</td></tr>
+<tr><td><code>--card</code></td><td>290 80% 92%</td></tr>
+<tr><td><code>--primary</code></td><td>330 100% 45%</td></tr>
+<tr><td><code>--primary-light</code></td><td>330 90% 75%</td></tr>
+<tr><td><code>--secondary</code></td><td>120 95% 75%</td></tr>
+<tr><td><code>--accent</code></td><td>60 100% 75%</td></tr>
+<tr><td><code>--muted</code></td><td>280 65% 82%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>280 80% 25%</td></tr>
+<tr><td><code>--border</code></td><td>280 60% 70%</td></tr>
+<tr><td><strong>Font</strong></td><td><strong>'Bangers', cursive</strong></td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>7. Random Mix-up</h2>
+<p class="desc">Sky-blue and mint backgrounds paired with golden-yellow primaries and magenta-pink secondaries — eclectic and unexpected.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>200 60% 87%</td></tr>
+<tr><td><code>--foreground</code></td><td>45 90% 18%</td></tr>
+<tr><td><code>--card</code></td><td>180 70% 93%</td></tr>
+<tr><td><code>--primary</code></td><td>45 100% 50%</td></tr>
+<tr><td><code>--primary-light</code></td><td>45 90% 75%</td></tr>
+<tr><td><code>--secondary</code></td><td>310 80% 82%</td></tr>
+<tr><td><code>--accent</code></td><td>160 90% 80%</td></tr>
+<tr><td><code>--muted</code></td><td>200 50% 85%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>200 70% 25%</td></tr>
+<tr><td><code>--border</code></td><td>200 55% 75%</td></tr>
+<tr><td><strong>Font</strong></td><td><strong>'Pacifico', cursive</strong></td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>8. Sunset Glow</h2>
+<p class="desc">Rich amber and honey-gold tones throughout, like golden-hour light.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>30 80% 85%</td></tr>
+<tr><td><code>--foreground</code></td><td>20 90% 15%</td></tr>
+<tr><td><code>--card</code></td><td>32 85% 90%</td></tr>
+<tr><td><code>--primary</code></td><td>30 100% 50%</td></tr>
+<tr><td><code>--primary-light</code></td><td>35 95% 70%</td></tr>
+<tr><td><code>--secondary</code></td><td>40 90% 80%</td></tr>
+<tr><td><code>--accent</code></td><td>20 95% 82%</td></tr>
+<tr><td><code>--muted</code></td><td>30 55% 82%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>25 70% 28%</td></tr>
+<tr><td><code>--border</code></td><td>30 60% 72%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>9. Berry Fusion</h2>
+<p class="desc">Soft rose and mauve backgrounds with a deep magenta-berry primary.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>310 55% 88%</td></tr>
+<tr><td><code>--foreground</code></td><td>300 80% 15%</td></tr>
+<tr><td><code>--card</code></td><td>315 60% 93%</td></tr>
+<tr><td><code>--primary</code></td><td>320 85% 45%</td></tr>
+<tr><td><code>--primary-light</code></td><td>310 70% 72%</td></tr>
+<tr><td><code>--secondary</code></td><td>290 65% 82%</td></tr>
+<tr><td><code>--accent</code></td><td>330 75% 85%</td></tr>
+<tr><td><code>--muted</code></td><td>310 45% 84%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>310 60% 28%</td></tr>
+<tr><td><code>--border</code></td><td>310 50% 75%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+</table>
+
+<hr>
+
+<h2>10. Midnight Aurora</h2>
+<p class="desc">Dark indigo backgrounds with glowing violet primaries and subtle purple accents, like the northern lights at night.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>235 45% 22%</td></tr>
+<tr><td><code>--foreground</code></td><td>220 30% 90%</td></tr>
+<tr><td><code>--card</code></td><td>235 40% 28%</td></tr>
+<tr><td><code>--primary</code></td><td>260 70% 60%</td></tr>
+<tr><td><code>--primary-light</code></td><td>250 50% 40%</td></tr>
+<tr><td><code>--secondary</code></td><td>220 35% 32%</td></tr>
+<tr><td><code>--accent</code></td><td>280 55% 38%</td></tr>
+<tr><td><code>--muted</code></td><td>235 30% 30%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>230 25% 60%</td></tr>
+<tr><td><code>--border</code></td><td>235 30% 35%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>None</td></tr>
+<tr><td><strong>Note</strong></td><td>Dark theme — only non-default dark palette</td></tr>
+</table>
+
+<hr>
+
+<h2>11. Māori Kaupapa</h2>
+<p class="desc">Earthy terracotta reds and warm clay tones with a bold crimson primary, overlaid with a traditional kōwhaiwhai pattern.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>0 45% 85%</td></tr>
+<tr><td><code>--foreground</code></td><td>0 0% 5%</td></tr>
+<tr><td><code>--card</code></td><td>0 40% 88%</td></tr>
+<tr><td><code>--primary</code></td><td>0 80% 40%</td></tr>
+<tr><td><code>--primary-light</code></td><td>0 60% 50%</td></tr>
+<tr><td><code>--secondary</code></td><td>0 35% 80%</td></tr>
+<tr><td><code>--accent</code></td><td>15 50% 82%</td></tr>
+<tr><td><code>--muted</code></td><td>0 30% 82%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>0 0% 25%</td></tr>
+<tr><td><code>--border</code></td><td>0 35% 70%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>/maori-kaupapa-bg.png — size: 250px, opacity: 0.9, repeat</td></tr>
+<tr><td><strong>Card Transparency</strong></td><td>bg-card and bg-background use hsl(0 45% 85% / 0.85)</td></tr>
+<tr><td><strong>Description</strong></td><td>A traditional kōwhaiwhai pattern used as a wallpaper covering the entire page. Tiled in small squares and almost fully visible. Cards have a warm reddish-clay tint that's slightly transparent, so the pattern subtly peeks through.</td></tr>
+</table>
+
+<hr>
+
+<h2>12. Pasifika</h2>
+<p class="desc">Lush ocean-green and teal backgrounds with semi-transparent white cards, a jade-green primary, and a tropical turtle motif inspired by Pacific Island artistry.</p>
+<table>
+<tr><th>Token</th><th>HSL Value</th></tr>
+<tr><td><code>--background</code></td><td>160 45% 82%</td></tr>
+<tr><td><code>--foreground</code></td><td>220 60% 15%</td></tr>
+<tr><td><code>--card</code></td><td>0 0% 100% (white, rendered at 60% opacity)</td></tr>
+<tr><td><code>--primary</code></td><td>160 75% 35%</td></tr>
+<tr><td><code>--primary-light</code></td><td>160 60% 55%</td></tr>
+<tr><td><code>--secondary</code></td><td>180 55% 78%</td></tr>
+<tr><td><code>--accent</code></td><td>195 80% 75%</td></tr>
+<tr><td><code>--muted</code></td><td>160 35% 78%</td></tr>
+<tr><td><code>--muted-foreground</code></td><td>200 50% 25%</td></tr>
+<tr><td><code>--border</code></td><td>170 40% 65%</td></tr>
+<tr><td><code>--success</code></td><td>90 70% 40%</td></tr>
+<tr><td><code>--warning</code></td><td>45 90% 50%</td></tr>
+<tr><td><code>--destructive</code></td><td>330 75% 50%</td></tr>
+<tr><td><strong>Font</strong></td><td>system-ui (inherited)</td></tr>
+<tr><td><strong>Background Asset</strong></td><td>/pasifika-bg.jpg — size: 350px, opacity: 0.35, repeat</td></tr>
+<tr><td><strong>Card Transparency</strong></td><td>bg-card = hsl(0 0% 100% / 0.6); bg-background = hsl(160 45% 82% / 0.75)</td></tr>
+<tr><td><strong>Header Gradient</strong></td><td>linear-gradient(135deg, hsl(190 85% 50%), hsl(160 70% 45%), hsl(80 65% 50%))</td></tr>
+<tr><td><strong>Header Motif</strong></td><td>/pasifika-turtle.jpg in w-32 h-32 circle, rounded-full overflow-hidden</td></tr>
+<tr><td><strong>Description</strong></td><td>A turtle artwork used as a subtle wallpaper at about a third visibility, like a gentle watermark. Cards are semi-transparent white (60% opacity), allowing the pattern to show through. Section headings have a vibrant gradient banner (blue → teal → green) with a circular turtle medallion.</td></tr>
+</table>
+
+<hr>
+
+<h2>Implementation Notes</h2>
+<ul>
+<li>Themes applied via <code>data-theme</code> attribute on root element</li>
+<li>CSS variables defined in <code>src/index.css</code> under <code>@layer base</code></li>
+<li>Theme selector component: <code>src/components/plan/ThemeSelector.tsx</code></li>
+<li>All color values use HSL format without <code>hsl()</code> wrapper in CSS variables</li>
+<li>Tailwind maps variables via <code>tailwind.config.ts</code> using <code>hsl(var(--token))</code> pattern</li>
+<li>Māori Kaupapa and Pasifika themes use <code>body::before</code> pseudo-element for background patterns</li>
+<li>Google Fonts (<code>Bangers</code>, <code>Pacifico</code>) must be loaded externally for Crazy Colours and Random Mix-up themes</li>
+</ul>
+
+</body>
+</html>
