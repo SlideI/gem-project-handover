@@ -90,51 +90,25 @@ export const TemplateGenerationDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-6">
-          {/* Template Type Selection */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">Template Type</Label>
-            <RadioGroup 
-              value={selectedTemplate || ""} 
-              onValueChange={setSelectedTemplate}
-              className="space-y-2"
-            >
-              {templateTypes.map((template) => (
-                <div key={template.id} className="flex items-center space-x-2">
-                  <RadioGroupItem value={template.id} id={`template-${template.id}`} />
-                  <Label
-                    htmlFor={`template-${template.id}`}
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    {template.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
-          {/* Section Selection (greyed out, auto-selected) */}
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-muted-foreground">Sections (auto-selected)</Label>
-            <div className="space-y-2">
-              {allSections.map((section) => (
-                <div key={section.id} className="flex items-center space-x-2 opacity-50">
-                  <Checkbox
-                    id={`section-${section.id}`}
-                    checked={selectedSections.includes(section.id)}
-                    disabled
-                    className="cursor-not-allowed"
-                  />
-                  <Label
-                    htmlFor={`section-${section.id}`}
-                    className="text-sm font-normal text-muted-foreground cursor-not-allowed leading-tight"
-                  >
-                    {section.label}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">Template Type</Label>
+          <RadioGroup 
+            value={selectedTemplate || ""} 
+            onValueChange={setSelectedTemplate}
+            className="space-y-2"
+          >
+            {templateTypes.map((template) => (
+              <div key={template.id} className="flex items-center space-x-2">
+                <RadioGroupItem value={template.id} id={`template-${template.id}`} />
+                <Label
+                  htmlFor={`template-${template.id}`}
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  {template.label}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
         </div>
 
         <DialogFooter className="gap-2">
