@@ -45,7 +45,7 @@ export const TemplateGenerationDialog = ({
         <DialogHeader>
           <DialogTitle>Generate Template</DialogTitle>
           <DialogDescription>
-            Select a template type for "{planTitle}". Sections will be pre-selected based on Te Aronga.
+            Please select a template from the below options. Each contains a pre-selected set of question and answers from Te Aronga.
           </DialogDescription>
         </DialogHeader>
 
