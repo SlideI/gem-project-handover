@@ -26,10 +26,10 @@ const allSections: Section[] = [
 ];
 
 const templateTypes = [
-  { id: "courts", label: "Courts" },
-  { id: "remand-home", label: "Remand Home" },
-  { id: "care", label: "Care" },
-  { id: "all", label: "All" },
+  { id: "multi-agency", label: "Multi-agency Team Meeting" },
+  { id: "roit", label: "ROIT" },
+  { id: "care-request", label: "Care Request" },
+  { id: "youth-justice-admission", label: "Youth Justice Admission Form" },
 ];
 
 // Function to get random 6 sections based on template type
