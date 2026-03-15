@@ -12,15 +12,6 @@ const templateTypes = [
   { id: "youth-justice-admission", label: "Youth Justice Admission Form" },
 ];
 
-// Function to get random 6 sections based on template type
-const getRandomSectionsForTemplate = (templateId: string): string[] => {
-  const sectionIds = allSections.map(s => s.id);
-  
-  // Shuffle array and pick 6 random sections
-  const shuffled = [...sectionIds].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 6);
-};
-
 interface TemplateGenerationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -35,23 +26,11 @@ export const TemplateGenerationDialog = ({
   planTitle 
 }: TemplateGenerationDialogProps) => {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [selectedSections, setSelectedSections] = useState<string[]>([]);
-
-  // When template changes, auto-select random 6 sections
-  useEffect(() => {
-    if (selectedTemplate) {
-      const randomSections = getRandomSectionsForTemplate(selectedTemplate);
-      setSelectedSections(randomSections);
-    } else {
-      setSelectedSections([]);
-    }
-  }, [selectedTemplate]);
 
   // Reset when dialog closes
   useEffect(() => {
     if (!open) {
       setSelectedTemplate(null);
-      setSelectedSections([]);
     }
   }, [open]);
 
