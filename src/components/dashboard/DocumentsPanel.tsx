@@ -614,9 +614,9 @@ export const DocumentsPanel = () => {
                       <Button
                         onClick={() => handleViewPlan(plan.id)}
                         size="sm"
-                        variant={plan.status === 'versioned' ? 'outline' : 'default'}
+                        variant={plan.status === 'active' ? 'default' : 'outline'}
                       >
-                        {plan.status === 'versioned' ? 'View' : 'Continue'}
+                        {plan.status === 'active' ? 'Continue' : 'View'}
                       </Button>
                       <Button
                         onClick={() => handleGenerateTemplate(plan)}
