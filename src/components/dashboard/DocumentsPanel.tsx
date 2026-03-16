@@ -539,6 +539,29 @@ export const DocumentsPanel = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      <AlertDialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Submit for Approval</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are about to submit version {activePlan?.version_number} for approval. 
+              This will lock the current version as read-only and create a new working version 
+              with all data copied over (excluding completed actions). Are you sure you wish to proceed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleSubmitForApproval}
+              disabled={isSubmitting}
+              className="bg-success hover:bg-success/90"
+            >
+              {isSubmitting ? "Submitting..." : "Yes, Submit"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <SectionSelectionDialog
         open={showSectionSelectionDialog}
         onOpenChange={(open) => {
