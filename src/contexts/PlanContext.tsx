@@ -192,8 +192,8 @@ export const PlanProvider = ({ children, requestedPlanId }: PlanProviderProps) =
           if (planError) throw planError;
           plan = requestedPlan;
           
-          // Set read-only mode for versioned plans
-          if (plan?.status === 'versioned') {
+          // Set read-only mode for versioned or awaiting approval plans
+          if (plan?.status === 'versioned' || plan?.status === 'awaiting_approval') {
             setIsReadOnly(true);
           }
         } else {
