@@ -629,12 +629,9 @@ export const DocumentsPanel = () => {
                         <Button
                           size="sm"
                           className="bg-success hover:bg-success/90 text-white"
-                          onClick={() => {
-                            toast({
-                              title: "Submit for Approval",
-                              description: "Approval workflow coming soon.",
-                            });
-                          }}
+                          disabled={hasAwaitingApproval}
+                          onClick={() => setShowApprovalDialog(true)}
+                          title={hasAwaitingApproval ? "Cannot submit while another version is awaiting approval" : ""}
                         >
                           Submit for Approval
                         </Button>
