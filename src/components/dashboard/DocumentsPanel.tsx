@@ -42,8 +42,10 @@ export const DocumentsPanel = () => {
   const { toast } = useToast();
   const [showNewPlanDialog, setShowNewPlanDialog] = useState(false);
   const [showSectionSelectionDialog, setShowSectionSelectionDialog] = useState(false);
+  const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [pendingAction, setPendingAction] = useState<'new' | 'version' | 'from-versioned' | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
@@ -76,6 +78,144 @@ export const DocumentsPanel = () => {
 
   const activePlan = plans.find(p => p.status === 'active');
   const latestVersionedPlan = plans.find(p => p.status === 'versioned');
+  const awaitingApprovalPlan = plans.find(p => p.status === 'awaiting_approval');
+  const hasAwaitingApproval = !!awaitingApprovalPlan;
+
+  const handleSubmitForApproval = async () => {
+    if (!activePlan?.id) return;
+    
+    setIsSubmitting(true);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("User not authenticated");
+
+      // 1. Set current active plan to 'awaiting_approval'
+      const { error: updateError } = await supabase
+        .from('plans')
+        .update({ status: 'awaiting_approval' })
+        .eq('id', activePlan.id);
+
+      if (updateError) throw updateError;
+
+      // 2. Create new active version N+1
+      const { data: newPlan, error: createError } = await supabase
+        .from('plans')
+        .insert({
+          user_id: user.user.id,
+          title: activePlan.title,
+          profile_picture_url: activePlan.profile_picture_url,
+          background_picture_url: activePlan.background_picture_url,
+          status: 'active',
+          version_number: (activePlan.version_number || 1) + 1,
+          parent_plan_id: activePlan.id,
+          enabled_sections: activePlan.enabled_sections,
+        })
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      // 3. Copy all plan_sections
+      const { data: sections, error: sectionsError } = await supabase
+        .from('plan_sections')
+        .select('*')
+        .eq('plan_id', activePlan.id);
+
+      if (sectionsError) throw sectionsError;
+
+      if (sections && sections.length > 0) {
+        const newSections = sections.map(section => ({
+          plan_id: newPlan.id,
+          section_key: section.section_key,
+          category: section.category,
+          fields: section.fields,
+        }));
+
+        const { data: insertedSections, error: insertError } = await supabase
+          .from('plan_sections')
+          .insert(newSections)
+          .select();
+
+        if (insertError) throw insertError;
+
+        // 4. Copy actions EXCEPT completed or "No longer Required" ones
+        const oldSectionIds = sections.map(s => s.id);
+        const { data: actions, error: actionsError } = await supabase
+          .from('actions')
+          .select('*')
+          .in('section_id', oldSectionIds);
+
+        if (actionsError) throw actionsError;
+
+        if (actions && actions.length > 0 && insertedSections) {
+          // Create mapping of old section IDs to new section IDs via section_key
+          const oldIdToKey = sections.reduce((acc, s) => {
+            acc[s.id] = s.section_key;
+            return acc;
+          }, {} as Record<string, string>);
+
+          const keyToNewId = insertedSections.reduce((acc, s) => {
+            acc[s.section_key] = s.id;
+            return acc;
+          }, {} as Record<string, string>);
+
+          // Filter out completed actions and "No longer Required" ones
+          const activeActions = actions.filter(action => 
+            !action.completed && 
+            action.review_status?.toLowerCase() !== 'no longer required'
+          );
+
+          const newActions = activeActions.map(action => ({
+            section_id: keyToNewId[oldIdToKey[action.section_id]],
+            action: action.action,
+            support: action.support,
+            responsible: action.responsible,
+            deadline: action.deadline,
+            completed: false,
+            needs_goals: action.needs_goals,
+            achievement_indicator: action.achievement_indicator,
+            review_status: action.review_status,
+            show_in_timeline: action.show_in_timeline,
+          }));
+
+          // Only insert actions that have a valid section mapping
+          const validActions = newActions.filter(a => a.section_id);
+          if (validActions.length > 0) {
+            const { error: actionsInsertError } = await supabase
+              .from('actions')
+              .insert(validActions);
+
+            if (actionsInsertError) throw actionsInsertError;
+          }
+        }
+      }
+
+      // Refresh plans list
+      const { data: refreshedPlans } = await supabase
+        .from('plans')
+        .select('*')
+        .eq('user_id', user.user.id)
+        .order('version_number', { ascending: false });
+
+      setPlans(refreshedPlans || []);
+
+      toast({
+        title: "Submitted for Approval",
+        description: `Version ${activePlan.version_number} has been submitted. You can continue working on version ${(activePlan.version_number || 1) + 1}.`,
+      });
+
+      setShowApprovalDialog(false);
+    } catch (error) {
+      console.error("Error submitting for approval:", error);
+      toast({
+        title: "Error",
+        description: "Failed to submit for approval. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleCreateNewVersion = async (selectedSections?: string[]) => {
     if (!activePlan?.id) return;
@@ -399,6 +539,29 @@ export const DocumentsPanel = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      <AlertDialog open={showApprovalDialog} onOpenChange={setShowApprovalDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Submit for Approval</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are about to submit version {activePlan?.version_number} for approval. 
+              This will lock the current version as read-only and create a new working version 
+              with all data copied over (excluding completed actions). Are you sure you wish to proceed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSubmitting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleSubmitForApproval}
+              disabled={isSubmitting}
+              className="bg-success hover:bg-success/90"
+            >
+              {isSubmitting ? "Submitting..." : "Yes, Submit"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <SectionSelectionDialog
         open={showSectionSelectionDialog}
         onOpenChange={(open) => {
@@ -458,9 +621,11 @@ export const DocumentsPanel = () => {
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       plan.status === 'versioned' 
                         ? 'bg-muted text-muted-foreground' 
+                        : plan.status === 'awaiting_approval'
+                        ? 'bg-warning/10 text-warning'
                         : 'bg-success/10 text-success'
                     }`}>
-                      {plan.status === 'versioned' ? 'Versioned' : 'Active'}
+                      {plan.status === 'versioned' ? 'Approved' : plan.status === 'awaiting_approval' ? 'Awaiting Approval' : 'Active'}
                     </span>
                   </TableCell>
                   <TableCell>{formatDate(plan.updated_at)}</TableCell>
@@ -472,9 +637,9 @@ export const DocumentsPanel = () => {
                       <Button
                         onClick={() => handleViewPlan(plan.id)}
                         size="sm"
-                        variant={plan.status === 'versioned' ? 'outline' : 'default'}
+                        variant={plan.status === 'active' ? 'default' : 'outline'}
                       >
-                        {plan.status === 'versioned' ? 'View' : 'Continue'}
+                        {plan.status === 'active' ? 'Continue' : 'View'}
                       </Button>
                       <Button
                         onClick={() => handleGenerateTemplate(plan)}
@@ -487,12 +652,9 @@ export const DocumentsPanel = () => {
                         <Button
                           size="sm"
                           className="bg-success hover:bg-success/90 text-white"
-                          onClick={() => {
-                            toast({
-                              title: "Submit for Approval",
-                              description: "Approval workflow coming soon.",
-                            });
-                          }}
+                          disabled={hasAwaitingApproval}
+                          onClick={() => setShowApprovalDialog(true)}
+                          title={hasAwaitingApproval ? "Cannot submit while another version is awaiting approval" : ""}
                         >
                           Submit for Approval
                         </Button>

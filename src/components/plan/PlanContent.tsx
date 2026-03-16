@@ -97,8 +97,11 @@ export const PlanContent = ({ currentSection, onSectionChange }: PlanContentProp
         <Alert className="mb-6 border-warning bg-warning/10">
           <Lock className="h-4 w-4" />
           <AlertDescription className="ml-2">
-            <strong>Read-only mode:</strong> This is a versioned plan (v{planData?.version_number}). 
-            You can view the content but cannot make changes.
+            {planData?.status === 'awaiting_approval' ? (
+              <><strong>Awaiting Approval:</strong> This version (v{planData?.version_number}) has been submitted for approval and cannot be edited.</>
+            ) : (
+              <><strong>Read-only mode:</strong> This is an approved plan (v{planData?.version_number}). You can view the content but cannot make changes.</>
+            )}
           </AlertDescription>
         </Alert>
       )}
