@@ -159,13 +159,27 @@ export const YouthJusticeSection = () => {
             </div>
           </FieldWithPrompt>
 
-          <SelectField
-            label="Select one of the following"
-            value={data?.fields?.sentencing || ""}
-            onChange={(value) => updateField("youth-justice", "sentencing", value)}
-            options={sentencingOptions}
-            placeholder="Select option"
-          />
+          <div className="space-y-4">
+            {sentencingQuestions.map((q) => (
+              <div key={q.id} className="space-y-2">
+                <Label className="text-sm font-medium">{q.label}</Label>
+                <RadioGroup
+                  value={data?.fields?.[q.id] || ""}
+                  onValueChange={(value) => updateField("youth-justice", q.id, value)}
+                  className="flex items-center gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id={`${q.id}-yes`} />
+                    <Label htmlFor={`${q.id}-yes`} className="font-normal cursor-pointer">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id={`${q.id}-no`} />
+                    <Label htmlFor={`${q.id}-no`} className="font-normal cursor-pointer">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            ))}
+          </div>
 
           <FieldWithPrompt
             label="Do I have any of the following worries or concerns"
