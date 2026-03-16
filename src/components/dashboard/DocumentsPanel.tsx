@@ -42,8 +42,10 @@ export const DocumentsPanel = () => {
   const { toast } = useToast();
   const [showNewPlanDialog, setShowNewPlanDialog] = useState(false);
   const [showSectionSelectionDialog, setShowSectionSelectionDialog] = useState(false);
+  const [showApprovalDialog, setShowApprovalDialog] = useState(false);
   const [pendingAction, setPendingAction] = useState<'new' | 'version' | 'from-versioned' | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showTemplateDialog, setShowTemplateDialog] = useState(false);
