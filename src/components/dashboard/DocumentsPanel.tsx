@@ -598,9 +598,11 @@ export const DocumentsPanel = () => {
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                       plan.status === 'versioned' 
                         ? 'bg-muted text-muted-foreground' 
+                        : plan.status === 'awaiting_approval'
+                        ? 'bg-warning/10 text-warning'
                         : 'bg-success/10 text-success'
                     }`}>
-                      {plan.status === 'versioned' ? 'Versioned' : 'Active'}
+                      {plan.status === 'versioned' ? 'Approved' : plan.status === 'awaiting_approval' ? 'Awaiting Approval' : 'Active'}
                     </span>
                   </TableCell>
                   <TableCell>{formatDate(plan.updated_at)}</TableCell>
