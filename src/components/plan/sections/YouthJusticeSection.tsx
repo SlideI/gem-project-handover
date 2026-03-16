@@ -9,7 +9,7 @@ import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
 import { SelectField } from "@/components/plan/SelectField";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 
 export const YouthJusticeSection = () => {
   const { sections, updateField } = usePlan();
