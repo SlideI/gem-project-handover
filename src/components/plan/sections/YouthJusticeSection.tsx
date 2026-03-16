@@ -30,11 +30,11 @@ export const YouthJusticeSection = () => {
     { value: "no-agreement", label: "No Agreement (why?)" }
   ];
 
-  const sentencingOptions = [
-    { value: "238d", label: "Am I going to be sentenced to a s238(1)(d)?" },
-    { value: "311-order", label: "Am I going to be sentenced to a 311 Order?" },
-    { value: "173-175", label: "Has there been a request for YJ Residence under sections 173, 174 or 175?" },
-    { value: "34a", label: "Am going to be sentenced 34A?" }
+  const sentencingQuestions = [
+    { id: "sentencing-238d", label: "Am I going to be sentenced to a s238(1)(d), or will I be placed on this order prior to being placed in remand home or YJ residence?" },
+    { id: "sentencing-311", label: "Am I going to be sentenced to a 311 Order?" },
+    { id: "sentencing-173-175", label: "Has there been a request for YJ Residence under sections 173, 174 or 175 of the criminal procedure act 2011?" },
+    { id: "sentencing-34a", label: "Am I going to be sentenced 34A?" }
   ];
 
   const bailAlternatives = [
