@@ -9,7 +9,7 @@ import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
 import { SelectField } from "@/components/plan/SelectField";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 
 export const YouthJusticeSection = () => {
   const { sections, updateField } = usePlan();
@@ -159,27 +159,23 @@ export const YouthJusticeSection = () => {
             </div>
           </FieldWithPrompt>
 
-          <div className="space-y-4">
-            {sentencingQuestions.map((q) => (
-              <div key={q.id} className="space-y-2">
-                <Label className="text-sm font-medium">{q.label}</Label>
-                <RadioGroup
-                  value={data?.fields?.[q.id] || ""}
-                  onValueChange={(value) => updateField("youth-justice", q.id, value)}
-                  className="flex items-center gap-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id={`${q.id}-yes`} />
-                    <Label htmlFor={`${q.id}-yes`} className="font-normal cursor-pointer">Yes</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id={`${q.id}-no`} />
-                    <Label htmlFor={`${q.id}-no`} className="font-normal cursor-pointer">No</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            ))}
-          </div>
+          <FieldWithPrompt
+            label="Sentencing and placement orders that apply to me"
+            prompt="Select all that apply to the current situation of te tamaiti or rangatahi."
+          >
+            <div className="space-y-2">
+              {sentencingQuestions.map((q) => (
+                <div key={q.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={q.id}
+                    checked={data?.fields?.[q.id] === "yes"}
+                    onCheckedChange={(checked) => updateField("youth-justice", q.id, checked ? "yes" : "no")}
+                  />
+                  <Label htmlFor={q.id} className="font-normal cursor-pointer">{q.label}</Label>
+                </div>
+              ))}
+            </div>
+          </FieldWithPrompt>
 
           <FieldWithPrompt
             label="Do I have any of the following worries or concerns"
