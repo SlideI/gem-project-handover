@@ -9,6 +9,7 @@ import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
 import { SelectField } from "@/components/plan/SelectField";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export const YouthJusticeSection = () => {
   const { sections, updateField } = usePlan();
@@ -29,11 +30,11 @@ export const YouthJusticeSection = () => {
     { value: "no-agreement", label: "No Agreement (why?)" }
   ];
 
-  const sentencingOptions = [
-    { value: "238d", label: "Am I going to be sentenced to a s238(1)(d)?" },
-    { value: "311-order", label: "Am I going to be sentenced to a 311 Order?" },
-    { value: "173-175", label: "Has there been a request for YJ Residence under sections 173, 174 or 175?" },
-    { value: "34a", label: "Am going to be sentenced 34A?" }
+  const sentencingQuestions = [
+    { id: "sentencing-238d", label: "Am I going to be sentenced to a s238(1)(d), or will I be placed on this order prior to being placed in remand home or YJ residence?" },
+    { id: "sentencing-311", label: "Am I going to be sentenced to a 311 Order?" },
+    { id: "sentencing-173-175", label: "Has there been a request for YJ Residence under sections 173, 174 or 175 of the criminal procedure act 2011?" },
+    { id: "sentencing-34a", label: "Am I going to be sentenced 34A?" }
   ];
 
   const bailAlternatives = [
@@ -158,13 +159,27 @@ export const YouthJusticeSection = () => {
             </div>
           </FieldWithPrompt>
 
-          <SelectField
-            label="Select one of the following"
-            value={data?.fields?.sentencing || ""}
-            onChange={(value) => updateField("youth-justice", "sentencing", value)}
-            options={sentencingOptions}
-            placeholder="Select option"
-          />
+          <div className="space-y-4">
+            {sentencingQuestions.map((q) => (
+              <div key={q.id} className="space-y-2">
+                <Label className="text-sm font-medium">{q.label}</Label>
+                <RadioGroup
+                  value={data?.fields?.[q.id] || ""}
+                  onValueChange={(value) => updateField("youth-justice", q.id, value)}
+                  className="flex items-center gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id={`${q.id}-yes`} />
+                    <Label htmlFor={`${q.id}-yes`} className="font-normal cursor-pointer">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id={`${q.id}-no`} />
+                    <Label htmlFor={`${q.id}-no`} className="font-normal cursor-pointer">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            ))}
+          </div>
 
           <FieldWithPrompt
             label="Do I have any of the following worries or concerns"
