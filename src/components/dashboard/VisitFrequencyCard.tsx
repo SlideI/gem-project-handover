@@ -118,16 +118,17 @@ export const useVisitNextDate = () => {
   const { sections } = usePlan();
   const residenceData = sections["residence"];
   const visitFrequency = residenceData?.fields?.["visit-frequency"] || "";
-  const legalStatusStartDate = new Date(2026, 1, 20);
   const lastVisitDate = new Date(2026, 1, 25);
-  const baseline = lastVisitDate || legalStatusStartDate;
+  const baseline = lastVisitDate;
 
-  if (!visitFrequency || visitFrequency === "never") return undefined;
+  if (!visitFrequency) return undefined;
 
   switch (visitFrequency) {
     case "weekly": return format(addWeeks(baseline, 1), "PPP");
     case "fortnightly": return format(addWeeks(baseline, 2), "PPP");
-    case "monthly": return format(addMonths(baseline, 1), "PPP");
+    case "4-weekly": return format(addWeeks(baseline, 4), "PPP");
+    case "8-weekly": return format(addWeeks(baseline, 8), "PPP");
+    case "3-monthly": return format(addMonths(baseline, 3), "PPP");
     case "6-monthly": return format(addMonths(baseline, 6), "PPP");
     default: return undefined;
   }
