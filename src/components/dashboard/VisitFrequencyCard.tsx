@@ -70,19 +70,13 @@ export const VisitFrequencyCard = () => {
       <p className="text-muted-foreground text-sm mb-4">
         This information is maintained in the Residence &amp; Homes section of the plan.
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
-          <Input
-            value={visitFrequency ? frequencyLabels[visitFrequency] || visitFrequency : "Not set"}
-            disabled
-            className="bg-muted cursor-not-allowed"
-          />
-        </div>
-        <div>
-          <Label className="mb-2 block text-sm font-medium">Associated legal status start date</Label>
-          <Input value={format(legalStatusStartDate, "PPP")} disabled className="bg-muted cursor-not-allowed" />
-        </div>
+      <div>
+        <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
+        <Input
+          value={visitFrequency ? frequencyLabels[visitFrequency] || visitFrequency : "Not set"}
+          disabled
+          className="bg-muted cursor-not-allowed"
+        />
       </div>
       {visitReason && (
         <div className="mt-4">
