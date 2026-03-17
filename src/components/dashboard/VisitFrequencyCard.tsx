@@ -16,9 +16,11 @@ import { format, addWeeks, addMonths, differenceInDays, isPast, isToday } from "
 export const VisitFrequencyCard = () => {
   const { sections } = usePlan();
   const residenceData = sections["residence"];
+  const planningWithData = sections["planning-with"];
 
-  const visitFrequency = residenceData?.fields?.["visit-frequency"] || "";
-  const visitReason = residenceData?.fields?.["visit-reason"] || "";
+  // Source visit data from planning-with first, fall back to residence
+  const visitFrequency = planningWithData?.fields?.["visit-frequency"] || residenceData?.fields?.["visit-frequency"] || "";
+  const visitReason = planningWithData?.fields?.["visit-reason"] || residenceData?.fields?.["visit-reason"] || "";
   // Demo: simulates "Last visit occurred on" from most recent "Visit to Child" casenote Action Date
   const lastVisitDate = new Date(2026, 1, 25);
   const baseline = lastVisitDate;
