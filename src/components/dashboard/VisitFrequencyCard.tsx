@@ -16,9 +16,11 @@ import { format, addWeeks, addMonths, differenceInDays, isPast, isToday } from "
 export const VisitFrequencyCard = () => {
   const { sections } = usePlan();
   const residenceData = sections["residence"];
+  const planningWithData = sections["planning-with"];
 
-  const visitFrequency = residenceData?.fields?.["visit-frequency"] || "";
-  const visitReason = residenceData?.fields?.["visit-reason"] || "";
+  // Source visit data from planning-with first, fall back to residence
+  const visitFrequency = planningWithData?.fields?.["visit-frequency"] || residenceData?.fields?.["visit-frequency"] || "";
+  const visitReason = planningWithData?.fields?.["visit-reason"] || residenceData?.fields?.["visit-reason"] || "";
   // Demo: simulates "Last visit occurred on" from most recent "Visit to Child" casenote Action Date
   const lastVisitDate = new Date(2026, 1, 25);
   const baseline = lastVisitDate;
@@ -68,7 +70,7 @@ export const VisitFrequencyCard = () => {
     <Card className="p-6">
       <h2 className="text-2xl font-semibold mb-1">Frequency of visits to Samuel</h2>
       <p className="text-muted-foreground text-sm mb-4">
-        This information is maintained in the Residence &amp; Homes section of the plan.
+        This information is maintained in the Planning With and Residence &amp; Homes sections of the plan.
       </p>
       <div>
         <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
@@ -117,7 +119,8 @@ export const VisitFrequencyCard = () => {
 export const useVisitNextDate = () => {
   const { sections } = usePlan();
   const residenceData = sections["residence"];
-  const visitFrequency = residenceData?.fields?.["visit-frequency"] || "";
+  const planningWithData = sections["planning-with"];
+  const visitFrequency = planningWithData?.fields?.["visit-frequency"] || residenceData?.fields?.["visit-frequency"] || "";
   const lastVisitDate = new Date(2026, 1, 25);
   const baseline = lastVisitDate;
 
