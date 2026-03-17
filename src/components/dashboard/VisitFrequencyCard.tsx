@@ -119,7 +119,8 @@ export const VisitFrequencyCard = () => {
 export const useVisitNextDate = () => {
   const { sections } = usePlan();
   const residenceData = sections["residence"];
-  const visitFrequency = residenceData?.fields?.["visit-frequency"] || "";
+  const planningWithData = sections["planning-with"];
+  const visitFrequency = planningWithData?.fields?.["visit-frequency"] || residenceData?.fields?.["visit-frequency"] || "";
   const lastVisitDate = new Date(2026, 1, 25);
   const baseline = lastVisitDate;
 
