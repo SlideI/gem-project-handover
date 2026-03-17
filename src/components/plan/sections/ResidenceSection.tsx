@@ -96,30 +96,29 @@ export const ResidenceSection = () => {
         {(() => {
           const visitFrequency = data?.fields?.["visit-frequency"] || "";
           const visitReason = data?.fields?.["visit-reason"] || "";
-          const legalStatusStartDate = new Date(2026, 1, 20);
           const lastVisitDate = new Date(2026, 1, 25);
-
-          const getBaselineDate = () => lastVisitDate || legalStatusStartDate;
+          const baseline = lastVisitDate;
 
           const getNextVisitDate = () => {
             if (!visitFrequency) return "—";
-            const baseline = getBaselineDate();
             switch (visitFrequency) {
               case "weekly": return format(addWeeks(baseline, 1), "PPP");
               case "fortnightly": return format(addWeeks(baseline, 2), "PPP");
-              case "monthly": return format(addMonths(baseline, 1), "PPP");
+              case "4-weekly": return format(addWeeks(baseline, 4), "PPP");
+              case "8-weekly": return format(addWeeks(baseline, 8), "PPP");
+              case "3-monthly": return format(addMonths(baseline, 3), "PPP");
               case "6-monthly": return format(addMonths(baseline, 6), "PPP");
-              case "never": return "No visit scheduled";
               default: return "—";
             }
           };
 
           const getVisitStatus = (): { label: string; variant: "default" | "destructive" | "secondary" | "outline" } => {
-            if (!visitFrequency || visitFrequency === "never") return { label: "—", variant: "secondary" };
-            const baseline = getBaselineDate();
+            if (!visitFrequency) return { label: "—", variant: "secondary" };
             const nextDate = visitFrequency === "weekly" ? addWeeks(baseline, 1)
               : visitFrequency === "fortnightly" ? addWeeks(baseline, 2)
-              : visitFrequency === "monthly" ? addMonths(baseline, 1)
+              : visitFrequency === "4-weekly" ? addWeeks(baseline, 4)
+              : visitFrequency === "8-weekly" ? addWeeks(baseline, 8)
+              : visitFrequency === "3-monthly" ? addMonths(baseline, 3)
               : visitFrequency === "6-monthly" ? addMonths(baseline, 6)
               : null;
             if (!nextDate) return { label: "—", variant: "secondary" };
@@ -134,33 +133,28 @@ export const ResidenceSection = () => {
 
           return (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
-                  <Select value={visitFrequency} onValueChange={(val) => updateField("residence", "visit-frequency", val)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select visit frequency" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover z-50">
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                      <SelectItem value="fortnightly">Fortnightly</SelectItem>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                      <SelectItem value="6-monthly">6 monthly</SelectItem>
-                      <SelectItem value="never">Never</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label className="mb-2 block text-sm font-medium">Associated legal status start date</Label>
-                  <Input value={format(legalStatusStartDate, "PPP")} disabled className="bg-muted cursor-not-allowed" />
-                </div>
+              <div>
+                <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
+                <Select value={visitFrequency} onValueChange={(val) => updateField("residence", "visit-frequency", val)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Visit Frequency" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover z-50">
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="fortnightly">Fortnightly</SelectItem>
+                    <SelectItem value="4-weekly">4 Weekly</SelectItem>
+                    <SelectItem value="8-weekly">8 Weekly</SelectItem>
+                    <SelectItem value="3-monthly">3-Monthly</SelectItem>
+                    <SelectItem value="6-monthly">6-Monthly</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="mt-4">
-                <Label className="mb-2 block text-sm font-medium">Why this often?</Label>
+                <Label className="mb-2 block text-sm font-medium">Why this often? <span className="text-destructive">*</span></Label>
                 <Textarea
                   value={visitReason}
                   onChange={(e) => updateField("residence", "visit-reason", e.target.value)}
-                  placeholder="Explain the reason for this visit frequency..."
+                  placeholder="Explain the reason for this frequency"
                   className="min-h-[80px]"
                   disabled={isReadOnly}
                 />
