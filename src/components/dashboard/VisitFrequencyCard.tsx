@@ -19,31 +19,30 @@ export const VisitFrequencyCard = () => {
 
   const visitFrequency = residenceData?.fields?.["visit-frequency"] || "";
   const visitReason = residenceData?.fields?.["visit-reason"] || "";
-  const legalStatusStartDate = new Date(2026, 1, 20); // Feb 20, 2026
   // Demo: simulates "Last visit occurred on" from most recent "Visit to Child" casenote Action Date
   const lastVisitDate = new Date(2026, 1, 25);
-
-  const getBaselineDate = () => lastVisitDate || legalStatusStartDate;
+  const baseline = lastVisitDate;
 
   const getNextVisitDate = (): string => {
     if (!visitFrequency) return "—";
-    const baseline = getBaselineDate();
     switch (visitFrequency) {
       case "weekly": return format(addWeeks(baseline, 1), "PPP");
       case "fortnightly": return format(addWeeks(baseline, 2), "PPP");
-      case "monthly": return format(addMonths(baseline, 1), "PPP");
+      case "4-weekly": return format(addWeeks(baseline, 4), "PPP");
+      case "8-weekly": return format(addWeeks(baseline, 8), "PPP");
+      case "3-monthly": return format(addMonths(baseline, 3), "PPP");
       case "6-monthly": return format(addMonths(baseline, 6), "PPP");
-      case "never": return "No visit scheduled";
       default: return "—";
     }
   };
 
   const getVisitStatus = (): { label: string; variant: "default" | "destructive" | "secondary" | "outline" } => {
-    if (!visitFrequency || visitFrequency === "never") return { label: "—", variant: "secondary" };
-    const baseline = getBaselineDate();
+    if (!visitFrequency) return { label: "—", variant: "secondary" };
     const nextDate = visitFrequency === "weekly" ? addWeeks(baseline, 1)
       : visitFrequency === "fortnightly" ? addWeeks(baseline, 2)
-      : visitFrequency === "monthly" ? addMonths(baseline, 1)
+      : visitFrequency === "4-weekly" ? addWeeks(baseline, 4)
+      : visitFrequency === "8-weekly" ? addWeeks(baseline, 8)
+      : visitFrequency === "3-monthly" ? addMonths(baseline, 3)
       : visitFrequency === "6-monthly" ? addMonths(baseline, 6)
       : null;
     if (!nextDate) return { label: "—", variant: "secondary" };
@@ -57,9 +56,10 @@ export const VisitFrequencyCard = () => {
   const frequencyLabels: Record<string, string> = {
     weekly: "Weekly",
     fortnightly: "Fortnightly",
-    monthly: "Monthly",
-    "6-monthly": "6 monthly",
-    never: "Never",
+    "4-weekly": "4 Weekly",
+    "8-weekly": "8 Weekly",
+    "3-monthly": "3-Monthly",
+    "6-monthly": "6-Monthly",
   };
 
   const status = getVisitStatus();
