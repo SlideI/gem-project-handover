@@ -70,7 +70,7 @@ export const VisitFrequencyCard = () => {
     <Card className="p-6">
       <h2 className="text-2xl font-semibold mb-1">Frequency of visits to Samuel</h2>
       <p className="text-muted-foreground text-sm mb-4">
-        This information is maintained in the Residence &amp; Homes section of the plan.
+        This information is maintained in the Planning With and Residence &amp; Homes sections of the plan.
       </p>
       <div>
         <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
