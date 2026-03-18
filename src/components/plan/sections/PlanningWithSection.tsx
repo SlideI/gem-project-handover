@@ -127,9 +127,9 @@ export const PlanningWithSection = () => {
         />
 
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">My Social worker will visit me</h3>
+          <h3 className="text-lg font-semibold">My social worker will visit me</h3>
           <SelectField
-            label="How often?"
+            label="How often does my social worker intend on visiting me?"
             value={data?.fields?.["visit-frequency"] || ""}
             onChange={(value) => updateField("planning-with", "visit-frequency", value)}
             options={[

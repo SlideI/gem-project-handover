@@ -134,7 +134,7 @@ export const ResidenceSection = () => {
           return (
             <>
               <div>
-                <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
+                <Label className="mb-2 block text-sm font-medium">How often does my social worker intend on visiting me?</Label>
                 <Select value={visitFrequency} onValueChange={(val) => updateField("residence", "visit-frequency", val)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Visit Frequency" />

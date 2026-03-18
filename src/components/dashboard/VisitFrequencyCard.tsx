@@ -73,7 +73,7 @@ export const VisitFrequencyCard = () => {
         This information is maintained in the Planning With and Residence &amp; Homes sections of the plan.
       </p>
       <div>
-        <Label className="mb-2 block text-sm font-medium">How often I intend to visit this rāngatahi</Label>
+        <Label className="mb-2 block text-sm font-medium">How often does my social worker intend on visiting me?</Label>
         <Input
           value={visitFrequency ? frequencyLabels[visitFrequency] || visitFrequency : "Not set"}
           disabled
