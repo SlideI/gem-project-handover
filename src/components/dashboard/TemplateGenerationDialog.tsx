@@ -56,14 +56,15 @@ export const TemplateGenerationDialog = ({
             onValueChange={setSelectedTemplate}
             className="space-y-2"
           >
-            {templateTypes.map((template) => (
-              <div key={template.id} className="flex items-center space-x-2">
-                <RadioGroupItem value={template.id} id={`template-${template.id}`} />
+            {templateTypes.map(({ id, label, Icon }) => (
+              <div key={id} className="flex items-center space-x-2">
+                <RadioGroupItem value={id} id={`template-${id}`} />
                 <Label
-                  htmlFor={`template-${template.id}`}
-                  className="text-sm font-normal cursor-pointer"
+                  htmlFor={`template-${id}`}
+                  className="text-sm font-normal cursor-pointer flex items-center gap-2"
                 >
-                  {template.label}
+                  <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+                  {label}
                 </Label>
               </div>
             ))}
