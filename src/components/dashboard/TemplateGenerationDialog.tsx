@@ -3,13 +3,13 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Users, ShieldAlert, HomeIcon, Scale, type LucideIcon } from "lucide-react";
 
-
-const templateTypes = [
-  { id: "multi-agency", label: "Multi-agency Team Meeting" },
-  { id: "roit", label: "ROIT" },
-  { id: "care-request", label: "Care Request" },
-  { id: "youth-justice-admission", label: "Youth Justice Admission Form" },
+const templateTypes: { id: string; label: string; Icon: LucideIcon }[] = [
+  { id: "multi-agency", label: "Multi-agency Team Meeting", Icon: Users },
+  { id: "roit", label: "ROIT", Icon: ShieldAlert },
+  { id: "care-request", label: "Care Request", Icon: HomeIcon },
+  { id: "youth-justice-admission", label: "Youth Justice Admission Form", Icon: Scale },
 ];
 
 interface TemplateGenerationDialogProps {
