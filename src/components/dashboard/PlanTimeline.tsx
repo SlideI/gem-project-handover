@@ -248,8 +248,20 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
   }, [timelineEvents]);
 
   if (timelineEvents.length === 0) {
-    return null;
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Plan Timeline</h3>
+          <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-1" /> Add Event
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground mt-3">No timeline events yet. Add your first custom event to get started.</p>
+        <CustomEventDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      </Card>
+    );
   }
+
 
   const truncateText = (text: string, maxLength: number = 45) => {
     if (text.length <= maxLength) return text;
