@@ -194,8 +194,26 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
       }
     }
 
+    // Add custom events (expand recurring)
+    customEvents.forEach((ev) => {
+      expandCustomEvent(ev).forEach(({ date: d, isOccurrence }) => {
+        events.push({
+          title: ev.title,
+          date: d,
+          category: "Custom",
+          sectionId: "about-me",
+          isPastDue: isPast(d) && !isToday(d),
+          isUpcoming: isFuture(d),
+          isToday: isToday(d),
+          customColor: ev.color,
+          isRecurring: ev.recurring && (isOccurrence || !!ev.recurring),
+        });
+      });
+    });
+
     return events.sort((a, b) => a.date.getTime() - b.date.getTime());
-  }, [sections, planCreatedAt, nextVisitDate]);
+  }, [sections, planCreatedAt, nextVisitDate, customEvents]);
+
 
   // Find where "today" falls in the timeline
   const today = new Date();
