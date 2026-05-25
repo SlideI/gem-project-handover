@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,9 +8,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isToday, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
+import { AddGoalDialog } from "@/components/plan/AddGoalDialog";
 
 interface SummaryTableProps {
   condensed?: boolean;
