@@ -91,48 +91,59 @@ export const SummaryTable = ({ condensed = false }: SummaryTableProps) => {
   const condensedCell = "max-h-[2.5rem] overflow-hidden text-ellipsis";
 
   return (
-    <div className="rounded-md border overflow-x-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Category</TableHead>
-            <TableHead>Needs & Goals</TableHead>
-            <TableHead>Action</TableHead>
-            <TableHead>Who's responsible</TableHead>
-            <TableHead className="w-[90px]">By when</TableHead>
-            <TableHead>How will I know</TableHead>
-            <TableHead className="w-[90px]">Review status</TableHead>
-            <TableHead>Goal Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {allActions.length === 0 ? (
+    <div className="space-y-3">
+      <div className="rounded-md border overflow-x-auto">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                No actions added yet
-              </TableCell>
+              <TableHead>Category</TableHead>
+              <TableHead>Needs & Goals</TableHead>
+              <TableHead>Action</TableHead>
+              <TableHead>Who's responsible</TableHead>
+              <TableHead className="w-[90px]">By when</TableHead>
+              <TableHead>How will I know</TableHead>
+              <TableHead className="w-[90px]">Review status</TableHead>
+              <TableHead>Goal Status</TableHead>
             </TableRow>
-          ) : (
-            allActions.map((action, index) => {
-              const isAchieved = action.review_status?.toLowerCase() === 'achieved';
-              return (
-              <TableRow key={`${action.sectionId}-${index}`} data-achieved={isAchieved ? "true" : "false"} className={cn(condensed && "h-[2.5rem]")}>
-                <TableCell className={cn("font-medium", condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.category}</div></TableCell>
-                <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
-                <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.action}</div></TableCell>
-                <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.responsible || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
-                <TableCell className={cn(condensed && "py-1")}>
-                  <div className={cn(condensed && condensedCell)}>{action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : <span className="text-muted-foreground italic">...</span>}</div>
+          </TableHeader>
+          <TableBody>
+            {allActions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                  No actions added yet
                 </TableCell>
-                <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
-                <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.review_status || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
-                <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{isAchieved ? null : getStatusBadge(action.deadline, action.completed)}</div></TableCell>
               </TableRow>
-              );
-            })
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              allActions.map((action, index) => {
+                const isAchieved = action.review_status?.toLowerCase() === 'achieved';
+                return (
+                <TableRow key={`${action.sectionId}-${index}`} data-achieved={isAchieved ? "true" : "false"} className={cn(condensed && "h-[2.5rem]")}>
+                  <TableCell className={cn("font-medium", condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.category}</div></TableCell>
+                  <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.needs_goals || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
+                  <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.action}</div></TableCell>
+                  <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.responsible || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
+                  <TableCell className={cn(condensed && "py-1")}>
+                    <div className={cn(condensed && condensedCell)}>{action.deadline ? format(parseISO(action.deadline), "dd/MM/yyyy") : <span className="text-muted-foreground italic">...</span>}</div>
+                  </TableCell>
+                  <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.achievement_indicator || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
+                  <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{action.review_status || <span className="text-muted-foreground italic">...</span>}</div></TableCell>
+                  <TableCell className={cn(condensed && "py-1")}><div className={cn(condensed && condensedCell)}>{isAchieved ? null : getStatusBadge(action.deadline, action.completed)}</div></TableCell>
+                </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      {!isReadOnly && (
+        <div>
+          <Button onClick={() => setAddOpen(true)} className="gap-2">
+            <span className="material-icons-outlined text-base">add</span>
+            Add Goal Plan
+          </Button>
+        </div>
+      )}
+      <AddGoalDialog open={addOpen} onOpenChange={setAddOpen} />
     </div>
   );
 };
