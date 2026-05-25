@@ -14,11 +14,11 @@ import { cn } from "@/lib/utils";
 export interface CustomEvent {
   id: string;
   title: string;
-  date: string; // ISO
-  color: string; // hsl token name
+  date: string;
+  color: string;
   recurring: boolean;
   frequency?: "weekly" | "fortnightly" | "monthly" | "yearly";
-  endDate?: string; // ISO
+  endDate?: string;
 }
 
 const STORAGE_KEY = "timeline_custom_events";
@@ -61,7 +61,7 @@ export const CustomEventDialog = ({ open, onOpenChange, editingEventId }: Props)
   const [date, setDate] = useState<Date | undefined>();
   const [color, setColor] = useState("blue");
   const [recurring, setRecurring] = useState(false);
-  const [frequency, setFrequency] = useState<CustomEvent["frequency"]>"weekly");
+  const [frequency, setFrequency] = useState<CustomEvent["frequency"]>("weekly");
   const [endDate, setEndDate] = useState<Date | undefined>();
 
   const isEditing = !!editingEventId;
@@ -262,7 +262,7 @@ export const CustomEventDialog = ({ open, onOpenChange, editingEventId }: Props)
                           <p className="text-sm font-medium truncate">{ev.title}</p>
                           <p className="text-xs text-muted-foreground">
                             {format(new Date(ev.date), "dd/MM/yyyy")}
-                            {ev.recurring && ` \u00b7 ${ev.frequency}${ev.endDate ? ` until ${format(new Date(ev.endDate), "dd/MM/yyyy")}` : ""}`}
+                            {ev.recurring && ` · ${ev.frequency}${ev.endDate ? ` until ${format(new Date(ev.endDate), "dd/MM/yyyy")}` : ""}`}
                           </p>
                         </div>
                       </div>
