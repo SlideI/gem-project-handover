@@ -80,6 +80,8 @@ export const ChargesTable = ({ value, onChange, readOnly = false }: ChargesTable
     }
   }, [value]);
 
+  const [openPopoverIdx, setOpenPopoverIdx] = useState<number | null>(null);
+
   const commit = (next: Charge[]) => onChange(JSON.stringify(next));
 
   const updateCell = (idx: number, key: keyof Charge, v: string) => {
@@ -91,6 +93,9 @@ export const ChargesTable = ({ value, onChange, readOnly = false }: ChargesTable
     commit([...rows, { crn: "", offence: "", offenceDate: "", response: "" }]);
 
   const removeRow = (idx: number) => commit(rows.filter((_, i) => i !== idx));
+
+  const selectedOffenceLabel = (value: string) =>
+    OFFENCE_OPTIONS.find((o) => o.value === value)?.label ?? value;
 
   return (
     <div className="border rounded-md">
