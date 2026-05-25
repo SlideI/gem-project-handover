@@ -130,22 +130,58 @@ export const ChargesTable = ({ value, onChange, readOnly = false }: ChargesTable
                   />
                 </TableCell>
                 <TableCell>
-                  <Select
-                    value={row.offence}
-                    onValueChange={(v) => updateCell(idx, "offence", v)}
-                    disabled={readOnly}
+                  <Popover
+                    open={openPopoverIdx === idx}
+                    onOpenChange={(open) => setOpenPopoverIdx(open ? idx : null)}
                   >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select offence" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-72">
-                      {OFFENCE_OPTIONS.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        disabled={readOnly}
+                        className={cn(
+                          "w-full justify-between text-left font-normal",
+                          !row.offence && "text-muted-foreground",
+                        )}
+                      >
+                        <span className="truncate">
+                          {row.offence
+                            ? selectedOffenceLabel(row.offence)
+                            : "Select offence"}
+                        </span>
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[340px] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search offence code or description…" />
+                        <CommandList>
+                          <CommandEmpty>No offence found.</CommandEmpty>
+                          <CommandGroup>
+                            {OFFENCE_OPTIONS.map((o) => (
+                              <CommandItem
+                                key={o.value}
+                                value={`${o.value} ${o.label}`}
+                                onSelect={() => {
+                                  updateCell(idx, "offence", o.value);
+                                  setOpenPopoverIdx(null);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    row.offence === o.value
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {o.label}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </TableCell>
                 <TableCell>
                   <Popover>
