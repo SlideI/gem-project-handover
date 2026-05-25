@@ -202,12 +202,13 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
           title: ev.title,
           date: d,
           category: "Custom",
-          sectionId: "about-me",
+          sectionId: "custom",
           isPastDue: isPast(d) && !isToday(d),
           isUpcoming: isFuture(d),
           isToday: isToday(d),
           customColor: ev.color,
           isRecurring: ev.recurring && (isOccurrence || !!ev.recurring),
+          customEventId: ev.id,
         });
       });
     });
