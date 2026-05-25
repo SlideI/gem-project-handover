@@ -270,7 +270,7 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
           </Button>
         </div>
         <p className="text-sm text-muted-foreground mt-3">No timeline events yet. Add your first custom event to get started.</p>
-        <CustomEventDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+        <CustomEventDialog open={dialogOpen} onOpenChange={handleDialogClose} editingEventId={editingEventId} />
       </Card>
     );
   }
