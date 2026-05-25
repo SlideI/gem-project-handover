@@ -400,12 +400,6 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                         <span className={`text-xs font-medium ${customStyles.text}`}>Recurring</span>
                       </div>
                     )}
-                    {isCustomEvent && (
-                      <div className="flex items-center justify-center gap-1.5 mb-2">
-                        <Pencil className={`w-3.5 h-3.5 ${customStyles ? customStyles.text : "text-muted-foreground"}`} />
-                        <span className={`text-xs font-medium ${customStyles ? customStyles.text : "text-muted-foreground"}`}>Click to edit</span>
-                      </div>
-                    )}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
