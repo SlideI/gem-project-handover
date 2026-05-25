@@ -325,27 +325,32 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
               }
               
               const event = item.event!;
+              const customStyles = event.customColor ? getColorStyles(event.customColor) : null;
               return (
                 <div 
-                  key={item.index} 
+                  key={`${item.index}-${event.date.getTime()}`} 
                   className="relative flex flex-col items-center"
                   style={{ width: '200px' }}
                 >
                   {/* Timeline point */}
                   <div className="relative z-10">
                     <div
-                      className={`w-4 h-4 rounded-full border-2 ${
-                        event.isPlanCreation
+                      className={`w-4 h-4 rounded-full border-2 shadow-sm ${
+                        customStyles
+                          ? customStyles.dot
+                          : event.isPlanCreation
                           ? "bg-blue-500 border-blue-600"
                           : event.isPastDue
                           ? "bg-muted border-muted-foreground"
                           : "bg-background border-border"
-                      } shadow-sm`}
+                      }`}
                     />
                   </div>
 
                   <div className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer text-center ${
-                    event.isBirthday 
+                    customStyles
+                      ? customStyles.bg
+                      : event.isBirthday 
                       ? "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-950/30 dark:to-purple-950/30 dark:border-pink-800" 
                       : event.isPlanCreation
                       ? "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-800"
@@ -369,6 +374,12 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                       <div className="flex items-center justify-center gap-1.5 mb-2">
                         <CalendarCheck className="w-4 h-4 text-emerald-500" />
                         <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Scheduled Visit</span>
+                      </div>
+                    )}
+                    {event.isRecurring && customStyles && (
+                      <div className="flex items-center justify-center gap-1.5 mb-2">
+                        <Repeat className={`w-3.5 h-3.5 ${customStyles.text}`} />
+                        <span className={`text-xs font-medium ${customStyles.text}`}>Recurring</span>
                       </div>
                     )}
                     <TooltipProvider>
@@ -396,6 +407,7 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                     </p>
                   </div>
                 </div>
+
               );
             })}
           </div>
