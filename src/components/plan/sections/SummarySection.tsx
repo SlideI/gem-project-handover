@@ -16,7 +16,8 @@ import { format, isPast, isToday, parseISO } from "date-fns";
 import { AddGoalDialog } from "../AddGoalDialog";
 
 export const SummarySection = () => {
-  const { sections } = usePlan();
+  const { sections, isReadOnly } = usePlan();
+  const [addOpen, setAddOpen] = useState(false);
 
   const allActions = useMemo(() => {
     const actions: Array<{
