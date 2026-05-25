@@ -339,6 +339,7 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
               
               const event = item.event!;
               const customStyles = event.customColor ? getColorStyles(event.customColor) : null;
+              const isCustomEvent = !!event.customEventId;
               return (
                 <div 
                   key={`${item.index}-${event.date.getTime()}`} 
@@ -360,17 +361,21 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                     />
                   </div>
 
-                  <div className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer text-center ${
-                    customStyles
-                      ? customStyles.bg
-                      : event.isBirthday 
-                      ? "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-950/30 dark:to-purple-950/30 dark:border-pink-800" 
-                      : event.isPlanCreation
-                      ? "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-800"
-                      : event.isNextVisit
-                      ? "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 dark:from-emerald-950/30 dark:to-teal-950/30 dark:border-emerald-800"
-                      : "bg-card border-border"
-                  }`}>
+                  <div 
+                    onClick={() => isCustomEvent && event.customEventId && handleOpenEdit(event.customEventId)}
+                    className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow text-center ${
+                      isCustomEvent ? "cursor-pointer" : "cursor-default"
+                    } ${
+                      customStyles
+                        ? customStyles.bg
+                        : event.isBirthday 
+                        ? "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-950/30 dark:to-purple-950/30 dark:border-pink-800" 
+                        : event.isPlanCreation
+                        ? "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-800"
+                        : event.isNextVisit
+                        ? "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200 dark:from-emerald-950/30 dark:to-teal-950/30 dark:border-emerald-800"
+                        : "bg-card border-border"
+                    }`}>
                     {event.isBirthday && (
                       <div className="flex items-center justify-center gap-1.5 mb-2">
                         <Cake className="w-4 h-4 text-pink-500" />
@@ -395,15 +400,27 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                         <span className={`text-xs font-medium ${customStyles.text}`}>Recurring</span>
                       </div>
                     )}
+                    {isCustomEvent && (
+                      <div className="flex items-center justify-center gap-1.5 mb-2">
+                        <Pencil className={`w-3.5 h-3.5 ${customStyles ? customStyles.text : "text-muted-foreground"}`} />
+                        <span className={`text-xs font-medium ${customStyles ? customStyles.text : "text-muted-foreground"}`}>Click to edit</span>
+                      </div>
+                    )}
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Link
-                            to={`/plan#${event.sectionId}`}
-                            className="text-sm font-medium hover:text-primary transition-colors block mb-2"
-                          >
-                            {truncateText(event.title)}
-                          </Link>
+                          {isCustomEvent ? (
+                            <span className="text-sm font-medium hover:text-primary transition-colors block mb-2 cursor-pointer">
+                              {truncateText(event.title)}
+                            </span>
+                          ) : (
+                            <Link
+                              to={`/plan#${event.sectionId}`}
+                              className="text-sm font-medium hover:text-primary transition-colors block mb-2"
+                            >
+                              {truncateText(event.title)}
+                            </Link>
+                          )}
                         </TooltipTrigger>
                         {event.title.length > 45 && (
                           <TooltipContent>
