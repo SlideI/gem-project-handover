@@ -61,15 +61,25 @@ export const YouthJusticeSection = () => {
       <SectionHeader title="Youth Justice" subtitle="Information related to youth justice involvement and support" />
 
       <div className="space-y-4">
-        <PrePopulatedField
+        <FieldWithPrompt
           label="My active charges"
-          value="No active charges"
-        />
+          prompt="Add each active charge. Until CYRAS integration, offence codes are placeholders."
+        >
+          <ChargesTable
+            value={data?.fields?.["active-charges"] || ""}
+            onChange={(v) => updateField("youth-justice", "active-charges", v)}
+          />
+        </FieldWithPrompt>
 
-        <PrePopulatedField
+        <FieldWithPrompt
           label="My previous youth justice charges and/or involvement (most serious offence to date first)"
-          value="No previous charges"
-        />
+          prompt="List previous charges, most serious first."
+        >
+          <ChargesTable
+            value={data?.fields?.["previous-charges"] || ""}
+            onChange={(v) => updateField("youth-justice", "previous-charges", v)}
+          />
+        </FieldWithPrompt>
 
         <FieldWithPrompt
           label="What are the views of my significant people in relation to me being placed in residence, remand home, remain in police custody, or bailed to the community?"
