@@ -1,11 +1,13 @@
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlan } from "@/contexts/PlanContext";
-import { format, isPast, isFuture, isToday, parse, getMonth, getDate } from "date-fns";
+import { format, isPast, isFuture, isToday, parse, getMonth, getDate, addDays, addMonths, addYears } from "date-fns";
 import { Link } from "react-router-dom";
-import { Cake, FileText, CalendarCheck } from "lucide-react";
+import { Cake, FileText, CalendarCheck, Plus, Repeat } from "lucide-react";
+import { CustomEventDialog, loadCustomEvents, getColorStyles, type CustomEvent } from "./CustomEventDialog";
 
 interface PlanTimelineProps {
   nextVisitDate?: string;
@@ -22,7 +24,28 @@ interface TimelineEvent {
   isBirthday?: boolean;
   isPlanCreation?: boolean;
   isNextVisit?: boolean;
+  customColor?: string;
+  isRecurring?: boolean;
 }
+
+// Expand a recurring custom event into individual occurrences
+const expandCustomEvent = (ev: CustomEvent): Array<{ date: Date; isOccurrence: boolean }> => {
+  const start = new Date(ev.date);
+  if (!ev.recurring || !ev.frequency) return [{ date: start, isOccurrence: false }];
+  const end = ev.endDate ? new Date(ev.endDate) : addYears(start, 2);
+  const out: Array<{ date: Date; isOccurrence: boolean }> = [];
+  let cursor = start;
+  let safety = 0;
+  while (cursor <= end && safety < 500) {
+    out.push({ date: new Date(cursor), isOccurrence: safety > 0 });
+    if (ev.frequency === "weekly") cursor = addDays(cursor, 7);
+    else if (ev.frequency === "fortnightly") cursor = addDays(cursor, 14);
+    else if (ev.frequency === "monthly") cursor = addMonths(cursor, 1);
+    else if (ev.frequency === "yearly") cursor = addYears(cursor, 1);
+    safety++;
+  }
+  return out;
+};
 
 // Define which fields should appear on the timeline
 const TIMELINE_FIELDS = [
@@ -98,6 +121,16 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
   const { sections, planCreatedAt } = usePlan();
   const scrollRef = useRef<HTMLDivElement>(null);
   const todayRef = useRef<HTMLDivElement>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [customEvents, setCustomEvents] = useState<CustomEvent[]>(() => loadCustomEvents());
+
+  useEffect(() => {
+    const handler = () => setCustomEvents(loadCustomEvents());
+    window.addEventListener("custom-events-updated", handler);
+    return () => window.removeEventListener("custom-events-updated", handler);
+  }, []);
+
+
 
   const timelineEvents = useMemo(() => {
     const events: TimelineEvent[] = [];
@@ -161,8 +194,26 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
       }
     }
 
+    // Add custom events (expand recurring)
+    customEvents.forEach((ev) => {
+      expandCustomEvent(ev).forEach(({ date: d, isOccurrence }) => {
+        events.push({
+          title: ev.title,
+          date: d,
+          category: "Custom",
+          sectionId: "about-me",
+          isPastDue: isPast(d) && !isToday(d),
+          isUpcoming: isFuture(d),
+          isToday: isToday(d),
+          customColor: ev.color,
+          isRecurring: ev.recurring && (isOccurrence || !!ev.recurring),
+        });
+      });
+    });
+
     return events.sort((a, b) => a.date.getTime() - b.date.getTime());
-  }, [sections, planCreatedAt, nextVisitDate]);
+  }, [sections, planCreatedAt, nextVisitDate, customEvents]);
+
 
   // Find where "today" falls in the timeline
   const today = new Date();
@@ -197,8 +248,20 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
   }, [timelineEvents]);
 
   if (timelineEvents.length === 0) {
-    return null;
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold">Plan Timeline</h3>
+          <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-1" /> Add Event
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground mt-3">No timeline events yet. Add your first custom event to get started.</p>
+        <CustomEventDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      </Card>
+    );
   }
+
 
   const truncateText = (text: string, maxLength: number = 45) => {
     if (text.length <= maxLength) return text;
@@ -221,7 +284,13 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
 
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Plan Timeline</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold">Plan Timeline</h3>
+        <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-1" /> Add Event
+        </Button>
+      </div>
+      <CustomEventDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       <ScrollArea className="w-full" type="always">
         <div ref={scrollRef} className="relative pb-6">
           {/* Main timeline line */}
@@ -256,27 +325,32 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
               }
               
               const event = item.event!;
+              const customStyles = event.customColor ? getColorStyles(event.customColor) : null;
               return (
                 <div 
-                  key={item.index} 
+                  key={`${item.index}-${event.date.getTime()}`} 
                   className="relative flex flex-col items-center"
                   style={{ width: '200px' }}
                 >
                   {/* Timeline point */}
                   <div className="relative z-10">
                     <div
-                      className={`w-4 h-4 rounded-full border-2 ${
-                        event.isPlanCreation
+                      className={`w-4 h-4 rounded-full border-2 shadow-sm ${
+                        customStyles
+                          ? customStyles.dot
+                          : event.isPlanCreation
                           ? "bg-blue-500 border-blue-600"
                           : event.isPastDue
                           ? "bg-muted border-muted-foreground"
                           : "bg-background border-border"
-                      } shadow-sm`}
+                      }`}
                     />
                   </div>
 
                   <div className={`mt-4 border rounded-lg p-3 shadow-sm w-[180px] hover:shadow-md transition-shadow cursor-pointer text-center ${
-                    event.isBirthday 
+                    customStyles
+                      ? customStyles.bg
+                      : event.isBirthday 
                       ? "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 dark:from-pink-950/30 dark:to-purple-950/30 dark:border-pink-800" 
                       : event.isPlanCreation
                       ? "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 dark:from-blue-950/30 dark:to-indigo-950/30 dark:border-blue-800"
@@ -300,6 +374,12 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                       <div className="flex items-center justify-center gap-1.5 mb-2">
                         <CalendarCheck className="w-4 h-4 text-emerald-500" />
                         <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Scheduled Visit</span>
+                      </div>
+                    )}
+                    {event.isRecurring && customStyles && (
+                      <div className="flex items-center justify-center gap-1.5 mb-2">
+                        <Repeat className={`w-3.5 h-3.5 ${customStyles.text}`} />
+                        <span className={`text-xs font-medium ${customStyles.text}`}>Recurring</span>
                       </div>
                     )}
                     <TooltipProvider>
@@ -327,6 +407,7 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                     </p>
                   </div>
                 </div>
+
               );
             })}
           </div>
