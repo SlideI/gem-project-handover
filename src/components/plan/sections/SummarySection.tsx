@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { SectionHeader } from "../SectionHeader";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { usePlan } from "@/contexts/PlanContext";
 import {
   Table,
@@ -12,9 +13,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format, isPast, isToday, parseISO } from "date-fns";
+import { AddGoalDialog } from "../AddGoalDialog";
 
 export const SummarySection = () => {
-  const { sections } = usePlan();
+  const { sections, isReadOnly } = usePlan();
+  const [addOpen, setAddOpen] = useState(false);
 
   const allActions = useMemo(() => {
     const actions: Array<{
@@ -149,7 +152,16 @@ export const SummarySection = () => {
             </TableBody>
           </Table>
         </div>
+        {!isReadOnly && (
+          <div className="mt-4">
+            <Button onClick={() => setAddOpen(true)} className="gap-2">
+              <span className="material-icons-outlined text-base">add</span>
+              Add Goal Plan
+            </Button>
+          </div>
+        )}
       </Card>
+      <AddGoalDialog open={addOpen} onOpenChange={setAddOpen} />
     </div>
   );
 };
