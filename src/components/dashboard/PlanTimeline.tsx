@@ -26,6 +26,7 @@ interface TimelineEvent {
   isNextVisit?: boolean;
   customColor?: string;
   isRecurring?: boolean;
+  customEventId?: string;
 }
 
 // Expand a recurring custom event into individual occurrences
