@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Home, FileText, Palette } from "lucide-react";
+import { Home, FileText, Palette, ChevronRight, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { PdfGenerationDialog } from "./PdfGenerationDialog";
 import {
@@ -34,51 +33,74 @@ const themes = [
 export const FloatingActionButtons = ({ selectedTheme, onThemeChange }: FloatingActionButtonsProps) => {
   const navigate = useNavigate();
   const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const currentTheme = themes.find(t => t.id === selectedTheme) || themes[0];
 
   return (
     <>
       <PdfGenerationDialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen} />
-      <div className="fixed top-4 right-1 z-50 bg-primary px-3 py-3 rounded-xl shadow-2xl border border-black flex flex-col items-center gap-3">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+      <div
+        className="fixed top-4 right-1 z-50 bg-primary rounded-xl shadow-2xl border border-black flex flex-col items-center transition-all duration-300 ease-in-out"
+        style={{
+          padding: collapsed ? "4px" : "12px",
+          gap: collapsed ? "4px" : "12px",
+        }}
+      >
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-1 transition-colors"
+          title={collapsed ? "Expand panel" : "Collapse panel"}
+        >
+          {collapsed ? (
+            <ChevronLeft className="h-5 w-5" />
+          ) : (
+            <ChevronRight className="h-5 w-5" />
+          )}
+        </button>
+
+        {!collapsed && (
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
+                  title={`Current theme: ${currentTheme.name}`}
+                >
+                  <Palette className="h-6 w-6" />
+                  <span className="text-[10px] font-medium leading-tight">Theme</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="z-[100] bg-background" align="end">
+                {themes.map((theme) => (
+                  <DropdownMenuItem
+                    key={theme.id}
+                    onClick={() => onThemeChange(theme.id)}
+                    className={selectedTheme === theme.id ? "bg-accent font-medium" : ""}
+                  >
+                    {theme.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <button
+              onClick={() => setPdfDialogOpen(true)}
               className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
-              title={`Current theme: ${currentTheme.name}`}
+              title="Generate PDF"
             >
-              <Palette className="h-6 w-6" />
-              <span className="text-[10px] font-medium leading-tight">Theme</span>
+              <FileText className="h-6 w-6" />
+              <span className="text-[10px] font-medium leading-tight">Generate PDF</span>
             </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="z-[100] bg-background" align="end">
-            {themes.map((theme) => (
-              <DropdownMenuItem
-                key={theme.id}
-                onClick={() => onThemeChange(theme.id)}
-                className={selectedTheme === theme.id ? "bg-accent font-medium" : ""}
-              >
-                {theme.name}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <button
-          onClick={() => setPdfDialogOpen(true)}
-          className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
-          title="Generate PDF"
-        >
-          <FileText className="h-6 w-6" />
-          <span className="text-[10px] font-medium leading-tight">Generate PDF</span>
-        </button>
-        <button
-          onClick={() => navigate("/")}
-          className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
-          title="Home"
-        >
-          <Home className="h-6 w-6" />
-          <span className="text-[10px] font-medium leading-tight">Dashboard</span>
-        </button>
+            <button
+              onClick={() => navigate("/")}
+              className="flex flex-col items-center gap-1 text-primary-foreground hover:bg-primary-foreground/20 rounded-lg p-2 transition-colors"
+              title="Home"
+            >
+              <Home className="h-6 w-6" />
+              <span className="text-[10px] font-medium leading-tight">Dashboard</span>
+            </button>
+          </>
+        )}
       </div>
     </>
   );
