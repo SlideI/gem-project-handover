@@ -61,7 +61,7 @@ export const CustomEventDialog = ({ open, onOpenChange, editingEventId }: Props)
   const [date, setDate] = useState<Date | undefined>();
   const [color, setColor] = useState("blue");
   const [recurring, setRecurring] = useState(false);
-  const [frequency, setFrequency] = useState<CustomEvent["frequency"]("weekly");
+  const [frequency, setFrequency] = useState<CustomEvent["frequency"]>"weekly");
   const [endDate, setEndDate] = useState<Date | undefined>();
 
   const isEditing = !!editingEventId;
