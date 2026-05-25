@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Plus, Trash2 } from "lucide-react";
+import { CalendarIcon, Plus, Trash2, Pencil } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,11 @@ import { cn } from "@/lib/utils";
 export interface CustomEvent {
   id: string;
   title: string;
-  date: string; // ISO
-  color: string; // hsl token name
+  date: string;
+  color: string;
   recurring: boolean;
   frequency?: "weekly" | "fortnightly" | "monthly" | "yearly";
-  endDate?: string; // ISO
+  endDate?: string;
 }
 
 const STORAGE_KEY = "timeline_custom_events";
@@ -52,9 +52,10 @@ export const saveCustomEvents = (events: CustomEvent[]) => {
 interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
+  editingEventId?: string | null;
 }
 
-export const CustomEventDialog = ({ open, onOpenChange }: Props) => {
+export const CustomEventDialog = ({ open, onOpenChange, editingEventId }: Props) => {
   const [events, setEvents] = useState<CustomEvent[]>([]);
   const [title, setTitle] = useState("");
   const [date, setDate] = useState<Date | undefined>();
@@ -63,29 +64,67 @@ export const CustomEventDialog = ({ open, onOpenChange }: Props) => {
   const [frequency, setFrequency] = useState<CustomEvent["frequency"]>("weekly");
   const [endDate, setEndDate] = useState<Date | undefined>();
 
+  const isEditing = !!editingEventId;
+
   useEffect(() => {
-    if (open) setEvents(loadCustomEvents());
-  }, [open]);
+    if (open) {
+      const loaded = loadCustomEvents();
+      setEvents(loaded);
+
+      if (editingEventId) {
+        const ev = loaded.find((e) => e.id === editingEventId);
+        if (ev) {
+          setTitle(ev.title);
+          setDate(new Date(ev.date));
+          setColor(ev.color);
+          setRecurring(ev.recurring);
+          setFrequency(ev.frequency ?? "weekly");
+          setEndDate(ev.endDate ? new Date(ev.endDate) : undefined);
+        }
+      } else {
+        reset();
+      }
+    }
+  }, [open, editingEventId]);
 
   const reset = () => {
     setTitle(""); setDate(undefined); setColor("blue");
     setRecurring(false); setFrequency("weekly"); setEndDate(undefined);
   };
 
-  const handleAdd = () => {
+  const handleSave = () => {
     if (!title.trim() || !date) return;
-    const newEvent: CustomEvent = {
-      id: crypto.randomUUID(),
-      title: title.trim(),
-      date: date.toISOString(),
-      color,
-      recurring,
-      ...(recurring ? { frequency, endDate: endDate?.toISOString() } : {}),
-    };
-    const updated = [...events, newEvent];
-    setEvents(updated);
-    saveCustomEvents(updated);
-    reset();
+    if (isEditing && editingEventId) {
+      const updated = events.map((e) =>
+        e.id === editingEventId
+          ? {
+              ...e,
+              title: title.trim(),
+              date: date.toISOString(),
+              color,
+              recurring,
+              ...(recurring ? { frequency, endDate: endDate?.toISOString() } : { frequency: undefined, endDate: undefined }),
+            }
+          : e
+      );
+      setEvents(updated);
+      saveCustomEvents(updated);
+      reset();
+      onOpenChange(false);
+    } else {
+      const newEvent: CustomEvent = {
+        id: crypto.randomUUID(),
+        title: title.trim(),
+        date: date.toISOString(),
+        color,
+        recurring,
+        ...(recurring ? { frequency, endDate: endDate?.toISOString() } : {}),
+      };
+      const updated = [...events, newEvent];
+      setEvents(updated);
+      saveCustomEvents(updated);
+      reset();
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -94,12 +133,27 @@ export const CustomEventDialog = ({ open, onOpenChange }: Props) => {
     saveCustomEvents(updated);
   };
 
+  const handleEditFromList = (ev: CustomEvent) => {
+    setTitle(ev.title);
+    setDate(new Date(ev.date));
+    setColor(ev.color);
+    setRecurring(ev.recurring);
+    setFrequency(ev.frequency ?? "weekly");
+    setEndDate(ev.endDate ? new Date(ev.endDate) : undefined);
+  };
+
+  const canSave = !!title.trim() && !!date && (!recurring || !!endDate);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Manage Timeline Events</DialogTitle>
-          <DialogDescription>Add custom events to your Plan Timeline. Recurring events will repeat at the chosen frequency up to the end date.</DialogDescription>
+          <DialogTitle>{isEditing ? "Edit Timeline Event" : "Manage Timeline Events"}</DialogTitle>
+          <DialogDescription>
+            {isEditing
+              ? "Update your custom timeline event. Changes apply immediately."
+              : "Add custom events to your Plan Timeline. Recurring events will repeat at the chosen frequency up to the end date."}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 border-b pb-6">
@@ -179,40 +233,54 @@ export const CustomEventDialog = ({ open, onOpenChange }: Props) => {
             </div>
           )}
 
-          <Button onClick={handleAdd} disabled={!title.trim() || !date || (recurring && !endDate)} className="w-full">
-            <Plus className="h-4 w-4 mr-1" /> Add event
-          </Button>
+          <div className="flex gap-2">
+            {isEditing && (
+              <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+                Cancel
+              </Button>
+            )}
+            <Button onClick={handleSave} disabled={!canSave} className="flex-1">
+              <Plus className="h-4 w-4 mr-1" /> {isEditing ? "Update event" : "Add event"}
+            </Button>
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <h4 className="text-sm font-semibold">Your custom events ({events.length})</h4>
-          {events.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">No custom events yet.</p>
-          ) : (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {events.map((ev) => {
-                const c = getColorStyles(ev.color);
-                return (
-                  <div key={ev.id} className={cn("flex items-center justify-between rounded-md border p-3", c.bg)}>
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className={cn("h-3 w-3 rounded-full shrink-0", c.dot)} />
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{ev.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {format(new Date(ev.date), "dd/MM/yyyy")}
-                          {ev.recurring && ` · ${ev.frequency}${ev.endDate ? ` until ${format(new Date(ev.endDate), "dd/MM/yyyy")}` : ""}`}
-                        </p>
+        {!isEditing && (
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Your custom events ({events.length})</h4>
+            {events.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-4">No custom events yet.</p>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {events.map((ev) => {
+                  const c = getColorStyles(ev.color);
+                  return (
+                    <div key={ev.id} className={cn("flex items-center justify-between rounded-md border p-3", c.bg)}>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={cn("h-3 w-3 rounded-full shrink-0", c.dot)} />
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{ev.title}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(ev.date), "dd/MM/yyyy")}
+                            {ev.recurring && ` · ${ev.frequency}${ev.endDate ? ` until ${format(new Date(ev.endDate), "dd/MM/yyyy")}` : ""}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditFromList(ev)} title="Edit">
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(ev.id)} title="Delete">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(ev.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Close</Button>
