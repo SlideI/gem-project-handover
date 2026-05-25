@@ -2,7 +2,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { SectionHeader } from "../SectionHeader";
 import { usePlan } from "@/contexts/PlanContext";
 import { ActionTable } from "@/components/plan/ActionTable";
-import { PrePopulatedField } from "@/components/plan/PrePopulatedField";
+import { ChargesTable } from "@/components/plan/ChargesTable";
 import { CheckboxField } from "@/components/plan/CheckboxField";
 import { ConditionalField } from "@/components/plan/ConditionalField";
 import { FieldWithPrompt } from "@/components/plan/FieldWithPrompt";
