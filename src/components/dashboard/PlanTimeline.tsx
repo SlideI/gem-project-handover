@@ -121,6 +121,16 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
   const { sections, planCreatedAt } = usePlan();
   const scrollRef = useRef<HTMLDivElement>(null);
   const todayRef = useRef<HTMLDivElement>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [customEvents, setCustomEvents] = useState<CustomEvent[]>(() => loadCustomEvents());
+
+  useEffect(() => {
+    const handler = () => setCustomEvents(loadCustomEvents());
+    window.addEventListener("custom-events-updated", handler);
+    return () => window.removeEventListener("custom-events-updated", handler);
+  }, []);
+
+
 
   const timelineEvents = useMemo(() => {
     const events: TimelineEvent[] = [];
