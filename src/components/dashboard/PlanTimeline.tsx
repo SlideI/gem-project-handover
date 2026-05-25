@@ -303,8 +303,8 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
           <Plus className="h-4 w-4 mr-1" /> Add Event
         </Button>
       </div>
-      <CustomEventDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-      <ScrollArea className="w-full" type="always">
+        <CustomEventDialog open={dialogOpen} onOpenChange={handleDialogClose} editingEventId={editingEventId} />
+        <ScrollArea className="w-full" type="always">
         <div ref={scrollRef} className="relative pb-6">
           {/* Main timeline line */}
           <div className="absolute top-[60px] left-0 h-0.5 bg-border" style={{ width: `${renderItems.length * 220}px` }} />
