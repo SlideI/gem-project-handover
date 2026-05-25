@@ -19,7 +19,8 @@ interface SummaryTableProps {
 }
 
 export const SummaryTable = ({ condensed = false }: SummaryTableProps) => {
-  const { sections } = usePlan();
+  const { sections, isReadOnly } = usePlan();
+  const [addOpen, setAddOpen] = useState(false);
 
   const allActions = useMemo(() => {
     const actions: Array<{
