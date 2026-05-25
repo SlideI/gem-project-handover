@@ -1,11 +1,13 @@
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePlan } from "@/contexts/PlanContext";
-import { format, isPast, isFuture, isToday, parse, getMonth, getDate } from "date-fns";
+import { format, isPast, isFuture, isToday, parse, getMonth, getDate, addDays, addMonths, addYears } from "date-fns";
 import { Link } from "react-router-dom";
-import { Cake, FileText, CalendarCheck } from "lucide-react";
+import { Cake, FileText, CalendarCheck, Plus, Repeat } from "lucide-react";
+import { CustomEventDialog, loadCustomEvents, getColorStyles, type CustomEvent } from "./CustomEventDialog";
 
 interface PlanTimelineProps {
   nextVisitDate?: string;
@@ -22,7 +24,28 @@ interface TimelineEvent {
   isBirthday?: boolean;
   isPlanCreation?: boolean;
   isNextVisit?: boolean;
+  customColor?: string;
+  isRecurring?: boolean;
 }
+
+// Expand a recurring custom event into individual occurrences
+const expandCustomEvent = (ev: CustomEvent): Array<{ date: Date; isOccurrence: boolean }> => {
+  const start = new Date(ev.date);
+  if (!ev.recurring || !ev.frequency) return [{ date: start, isOccurrence: false }];
+  const end = ev.endDate ? new Date(ev.endDate) : addYears(start, 2);
+  const out: Array<{ date: Date; isOccurrence: boolean }> = [];
+  let cursor = start;
+  let safety = 0;
+  while (cursor <= end && safety < 500) {
+    out.push({ date: new Date(cursor), isOccurrence: safety > 0 });
+    if (ev.frequency === "weekly") cursor = addDays(cursor, 7);
+    else if (ev.frequency === "fortnightly") cursor = addDays(cursor, 14);
+    else if (ev.frequency === "monthly") cursor = addMonths(cursor, 1);
+    else if (ev.frequency === "yearly") cursor = addYears(cursor, 1);
+    safety++;
+  }
+  return out;
+};
 
 // Define which fields should appear on the timeline
 const TIMELINE_FIELDS = [
