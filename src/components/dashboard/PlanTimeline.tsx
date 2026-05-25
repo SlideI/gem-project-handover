@@ -123,6 +123,7 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const todayRef = useRef<HTMLDivElement>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [customEvents, setCustomEvents] = useState<CustomEvent[]>(() => loadCustomEvents());
 
   useEffect(() => {
@@ -130,6 +131,16 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
     window.addEventListener("custom-events-updated", handler);
     return () => window.removeEventListener("custom-events-updated", handler);
   }, []);
+
+  const handleOpenEdit = (eventId: string) => {
+    setEditingEventId(eventId);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) setEditingEventId(null);
+  };
 
 
 
