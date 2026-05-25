@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isFuture, isToday, parse, getMonth, getDate, addDays, addMonths, addYears } from "date-fns";
 import { Link } from "react-router-dom";
-import { Cake, FileText, CalendarCheck, Plus, Repeat, Pencil } from "lucide-react";
+import { Cake, FileText, CalendarCheck, Plus, Repeat } from "lucide-react";
 import { CustomEventDialog, loadCustomEvents, getColorStyles, type CustomEvent } from "./CustomEventDialog";
 
 interface PlanTimelineProps {
@@ -398,12 +398,6 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
                       <div className="flex items-center justify-center gap-1.5 mb-2">
                         <Repeat className={`w-3.5 h-3.5 ${customStyles.text}`} />
                         <span className={`text-xs font-medium ${customStyles.text}`}>Recurring</span>
-                      </div>
-                    )}
-                    {isCustomEvent && (
-                      <div className="flex items-center justify-center gap-1.5 mb-2">
-                        <Pencil className={`w-3.5 h-3.5 ${customStyles ? customStyles.text : "text-muted-foreground"}`} />
-                        <span className={`text-xs font-medium ${customStyles ? customStyles.text : "text-muted-foreground"}`}>Click to edit</span>
                       </div>
                     )}
                     <TooltipProvider>
