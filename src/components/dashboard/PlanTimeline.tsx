@@ -284,7 +284,13 @@ export const PlanTimeline = ({ nextVisitDate }: PlanTimelineProps) => {
 
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Plan Timeline</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold">Plan Timeline</h3>
+        <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-1" /> Add Event
+        </Button>
+      </div>
+      <CustomEventDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       <ScrollArea className="w-full" type="always">
         <div ref={scrollRef} className="relative pb-6">
           {/* Main timeline line */}
