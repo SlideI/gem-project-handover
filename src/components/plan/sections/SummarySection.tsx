@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { SectionHeader } from "../SectionHeader";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { usePlan } from "@/contexts/PlanContext";
 import {
   Table,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format, isPast, isToday, parseISO } from "date-fns";
+import { AddGoalDialog } from "../AddGoalDialog";
 
 export const SummarySection = () => {
   const { sections } = usePlan();
