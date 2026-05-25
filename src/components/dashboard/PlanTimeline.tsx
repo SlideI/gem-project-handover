@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { usePlan } from "@/contexts/PlanContext";
 import { format, isPast, isFuture, isToday, parse, getMonth, getDate, addDays, addMonths, addYears } from "date-fns";
 import { Link } from "react-router-dom";
-import { Cake, FileText, CalendarCheck, Plus, Repeat, Pencil } from "lucide-react";
+import { Cake, FileText, CalendarCheck, Plus, Repeat } from "lucide-react";
 import { CustomEventDialog, loadCustomEvents, getColorStyles, type CustomEvent } from "./CustomEventDialog";
 
 interface PlanTimelineProps {
