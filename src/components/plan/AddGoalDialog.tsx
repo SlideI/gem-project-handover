@@ -83,7 +83,7 @@ export const AddGoalDialog = ({ open, onOpenChange }: AddGoalDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto py-[5px]">
         <DialogHeader>
           <DialogTitle>Add Goal Plan</DialogTitle>
         </DialogHeader>
