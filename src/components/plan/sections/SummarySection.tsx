@@ -152,7 +152,16 @@ export const SummarySection = () => {
             </TableBody>
           </Table>
         </div>
+        {!isReadOnly && (
+          <div className="mt-4">
+            <Button onClick={() => setAddOpen(true)} className="gap-2">
+              <span className="material-icons-outlined text-base">add</span>
+              Add Goal Plan
+            </Button>
+          </div>
+        )}
       </Card>
+      <AddGoalDialog open={addOpen} onOpenChange={setAddOpen} />
     </div>
   );
 };
